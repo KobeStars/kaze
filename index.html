@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaze 風</title>
+<meta name="description" content="Kaze, le navigateur Windows léger, rapide et élégant. Navigue comme le vent.">
+<meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Kaze 風 — Navigue comme le vent">
+<meta property="og:description" content="Un navigateur Windows léger, rapide et élégant, pour les développeurs et les créateurs.">
+<meta property="og:image" content="https://kobestars.github.io/kaze/images/kaze-accueil.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="images/kanji-encre.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" href="images/kanji-washi.png" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Shippori+Mincho:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Mise en page « rouleau » : une colonne étroite de légendes verticales en kanji,
+     le contenu à droite, et les vraies captures de Kaze en grand. */
+  :root {
+    --paper: #f5f2eb;
+    --paper-2: #ebe6da;
+    --ink: #111111;
+    --ink-soft: #3d3b37;
+    --muted: #716d64;
+    --line: rgba(17, 17, 17, 0.13);
+    --seal: #d7372a;
+    --seal-text: #b42b20;
+    --on-seal: #ffffff;
+    --shot-shadow: 0 30px 70px rgba(40, 28, 10, 0.22), 0 4px 14px rgba(40, 28, 10, 0.1);
+    --logo-light: block;
+    --logo-dark: none;
+
+    --font-display: 'Shippori Mincho', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+    --rail: 72px;
+    --measure: 1120px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #111111;
+      --paper-2: #19191b;
+      --ink: #f5f2eb;
+      --ink-soft: #d3cfc6;
+      --muted: #8f939a;
+      --line: rgba(245, 242, 235, 0.12);
+      --seal: #d7372a;
+      --seal-text: #ff6b5c;
+      --on-seal: #ffffff;
+      --shot-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.4);
+      --logo-light: none;
+      --logo-dark: block;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #111111;
+    --paper-2: #19191b;
+    --ink: #f5f2eb;
+    --ink-soft: #d3cfc6;
+    --muted: #8f939a;
+    --line: rgba(245, 242, 235, 0.12);
+    --seal: #d7372a;
+    --seal-text: #ff6b5c;
+    --on-seal: #ffffff;
+    --shot-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.4);
+    --logo-light: none;
+    --logo-dark: block;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Bande au-dessus de l'en-tête collant (encoche des téléphones). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 10;
+    background: var(--paper);
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* ───── En-tête ───── */
+  .top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 9;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; gap: 24px; padding-block: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+  .brand .logo-light, .brand .logo-dark { width: 30px; height: 30px; object-fit: contain; }
+  .logo-light { display: var(--logo-light); }
+  .logo-dark { display: var(--logo-dark); }
+  .top nav { display: flex; gap: 22px; margin-left: auto; font-size: 14px; }
+  .top nav a { text-decoration: none; color: var(--ink-soft); }
+  .top nav a:hover { color: var(--seal-text); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--seal);
+    color: var(--on-seal);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: transform 0.18s, background 0.18s;
+  }
+  .btn:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--seal) 86%, #000); }
+  .btn--small { padding: 8px 16px; font-size: 14px; }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+  .ghost { color: var(--ink-soft); font-size: 15px; text-underline-offset: 4px; }
+
+  /* ───── Ouverture ───── */
+  .hero { padding-block: 64px 40px; }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 48px; align-items: center; }
+  .hero-kanji .logo-light, .hero-kanji .logo-dark { width: min(100%, 440px); aspect-ratio: 1; object-fit: contain; margin: 0 auto; }
+  .eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; color: var(--seal-text); margin: 0 0 18px; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 800; text-wrap: balance; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(44px, 6.4vw, 84px); line-height: 1.02; margin: 0 0 22px; }
+  .lede { font-size: clamp(18px, 2vw, 21px); color: var(--ink-soft); max-width: 34ch; margin: 0 0 32px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 26px; }
+  .meta { margin: 22px 0 0; font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* ───── Captures ───── */
+  .shot {
+    margin: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shot-shadow);
+    border: 1px solid var(--line);
+    background: #111;
+  }
+  .shot img { width: 100%; height: auto; }
+  figure.with-caption { margin: 0; }
+  figcaption { margin-top: 14px; font-size: 14px; color: var(--muted); }
+  .hero-shot { padding-block: 8px 72px; }
+
+  /* ───── Sections avec légende verticale ───── */
+  .scroll { padding-block: 72px; border-top: 1px solid var(--line); }
+  .scroll .wrap { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: 32px; }
+  .rail {
+    writing-mode: vertical-rl;
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--seal-text);
+    align-self: start;
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 88px);
+  }
+  .rail small { font-family: var(--font-body); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); font-weight: 500; margin-top: 14px; }
+  h2 { font-size: clamp(32px, 4vw, 48px); line-height: 1.1; margin: 0 0 14px; }
+  .intro { color: var(--ink-soft); max-width: 62ch; margin: 0 0 40px; font-size: 18px; }
+
+  /* Fonctions signature : deux en grand avec capture, les autres en liste */
+  .feature { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 40px; align-items: center; margin-bottom: 64px; }
+  .feature.reverse { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+  .feature.reverse .feature-text { order: 2; }
+  .feature-text h3 { font-size: 30px; margin: 0 0 10px; display: flex; align-items: baseline; gap: 14px; }
+  .feature-text h3 .k { font-size: 44px; color: var(--seal-text); line-height: 1; }
+  .feature-text p { color: var(--ink-soft); margin: 0 0 14px; }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    background: var(--paper-2);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .winds { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+  .wind { padding: 26px 24px 26px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; }
+  .wind .k { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; color: var(--ink); }
+  .wind h3 { font-size: 20px; margin: 2px 0 6px; }
+  .wind p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  /* Studio */
+  .checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 32px; }
+  .checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; color: var(--ink-soft); font-size: 15px; }
+  .checks li::before { content: "筆"; font-family: var(--font-display); color: var(--seal-text); font-weight: 700; }
+
+  /* Personnalisation : les six palettes réelles de Kaze */
+  .palettes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; margin: 40px 0 0; }
+  .palette { margin: 0; }
+  .palette .mini { display: flex; height: 92px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+  .palette .side { width: 30%; display: flex; flex-direction: column; gap: 5px; padding: 9px 6px; }
+  .palette .side span { height: 9px; border-radius: 3px; }
+  .palette .main { flex: 1; display: flex; flex-direction: column; gap: 7px; padding: 9px; }
+  .palette .bar { height: 11px; border-radius: 4px; }
+  .palette .txt { height: 5px; border-radius: 3px; width: 78%; }
+  .palette .txt.short { width: 48%; }
+  .palette .acc { margin-top: auto; width: 36%; height: 11px; border-radius: 4px; }
+  .palette figcaption { margin-top: 8px; font-size: 14px; color: var(--ink); font-weight: 500; }
+  .palette figcaption span { color: var(--muted); font-weight: 400; }
+
+  /* Raccourcis */
+  .keys-table { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 15px; }
+  td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  td:first-child { width: 40%; }
+  td:last-child { color: var(--ink-soft); }
+
+  /* Vie privée */
+  .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 28px 40px; }
+  .trust h3 { font-size: 20px; margin: 0 0 6px; }
+  .trust p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  /* Téléchargement */
+  .download { padding-block: 96px; border-top: 1px solid var(--line); background: var(--paper-2); text-align: center; }
+  .download .big-k { font-family: var(--font-display); font-weight: 800; font-size: clamp(90px, 14vw, 160px); line-height: 1; margin: 0; color: var(--ink); }
+  .download h2 { margin: 12px 0 10px; }
+  .download p { color: var(--ink-soft); margin: 0 auto 30px; max-width: 54ch; }
+  .reqs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; margin: 28px 0 0; padding: 0; list-style: none; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  .note { font-size: 14px; color: var(--muted); max-width: 60ch; margin: 22px auto 0; }
+
+  footer { padding-block: 32px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
+
+  @media (max-width: 860px) {
+    .top nav { display: none; }
+    .hero .wrap, .feature, .feature.reverse { grid-template-columns: minmax(0, 1fr); }
+    .feature.reverse .feature-text { order: 0; }
+    .hero-kanji .logo-light, .hero-kanji .logo-dark { width: min(70%, 300px); }
+    .scroll .wrap { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .rail { writing-mode: horizontal-tb; position: static; font-size: 22px; letter-spacing: 0.2em; }
+    .rail small { margin: 0 0 0 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#haut" aria-label="Kaze, retour en haut">
+      <img class="logo-light" src="images/kanji-encre.png" alt="">
+      <img class="logo-dark" src="images/kanji-washi.png" alt="">
+      Kaze
+    </a>
+    <nav aria-label="Sections">
+      <a href="#fonctions">Fonctions</a>
+      <a href="#studio">Kaze Studio</a>
+      <a href="#apparence">Apparence</a>
+      <a href="#raccourcis">Raccourcis</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/KobeStars/kaze/releases/latest" data-download>Télécharger</a>
+  </div>
+</header>
+
+<main id="haut">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-kanji">
+        <img class="logo-light" src="images/kanji-encre-sceau.png" alt="Le kanji 風 calligraphié à l’encre, avec un sceau vermillon">
+        <img class="logo-dark" src="images/kanji-washi-sceau.png" alt="Le kanji 風 calligraphié, avec un sceau vermillon">
+      </div>
+      <div>
+        <p class="eyebrow">風 KAZE · « VENT » EN JAPONAIS</p>
+        <h1>Navigue comme le vent</h1>
+        <p class="lede"><strong>Léger. Rapide. Libre.</strong> Un navigateur pour Windows pensé pour les développeurs et les créateurs : beau, minimaliste, et fait pour travailler vite au clavier.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://github.com/KobeStars/kaze/releases/latest" data-download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
+            Télécharger pour Windows
+          </a>
+          <a class="ghost" href="#fonctions">Voir les fonctions</a>
+        </div>
+        <p class="meta">Version <span data-version>0.2.3</span> · Windows 10 et 11, 64 bits · <span data-size>129 Mo</span> · mises à jour automatiques</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="hero-shot">
+    <div class="wrap">
+      <figure class="with-caption">
+        <div class="shot"><img src="images/kaze-accueil.jpg" alt="Kaze avec ses onglets verticaux et sa page d’accueil : bambous dans la nuit, lune, horloge, barre de recherche et raccourcis" width="1702" height="1020"></div>
+        <figcaption>La page d’accueil : un paysage de bambous qui ploient au vent, l’horloge, la recherche et vos sites favoris.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <section class="scroll" id="fonctions" aria-labelledby="t-fonctions">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">機能<small>FONCTIONS</small></p>
+      <div>
+        <h2 id="t-fonctions">Des fonctions qui portent le nom du vent</h2>
+        <p class="intro">Tout ce qu’on attend d’un navigateur, plus des outils pensés pour rester concentré et aller vite.</p>
+
+        <div class="feature">
+          <div class="feature-text">
+            <h3><span class="k" aria-hidden="true">息</span>Souffle</h3>
+            <p>La palette de commandes. Ouvrir un site, retrouver un onglet, chercher dans l’historique ou les favoris, changer de thème ou lancer une Tempête : tout se fait au clavier.</p>
+            <p><kbd>Ctrl</kbd> + <kbd>K</kbd></p>
+          </div>
+          <div class="shot"><img src="images/kaze-souffle.jpg" alt="La palette Souffle ouverte par-dessus une page Wikipédia, avec la liste des actions" width="1702" height="1020" loading="lazy"></div>
+        </div>
+
+        <div class="feature reverse">
+          <div class="feature-text">
+            <h3><span class="k" aria-hidden="true">双</span>Split view</h3>
+            <p>Deux sites côte à côte dans la même fenêtre, avec une séparation réglable. Pratique pour coder avec la documentation sous les yeux.</p>
+            <p><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd></p>
+          </div>
+          <div class="shot"><img src="images/kaze-split.jpg" alt="Kaze en split view : Wikipédia à gauche, la documentation MDN à droite" width="1702" height="1020" loading="lazy"></div>
+        </div>
+
+        <div class="winds">
+          <div class="wind">
+            <span class="k" aria-hidden="true">流</span>
+            <div>
+              <h3>Courants</h3>
+              <p>Des espaces de travail avec leurs propres onglets, un nom, une couleur et une icône. Travail, projets, loisirs : chacun son courant.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">盾</span>
+            <div>
+              <h3>Bouclier de vent</h3>
+              <p>Bloqueur de publicités et de traqueurs intégré, basé sur les listes EasyList et EasyPrivacy, avec un compteur par page. Désactivable site par site.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">微</span>
+            <div>
+              <h3>Brise</h3>
+              <p>Les onglets inactifs sont mis en veille pour libérer la mémoire, puis rechargés dès que vous y revenez. Ceux qui jouent du son restent éveillés.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">嵐</span>
+            <div>
+              <h3>Tempête</h3>
+              <p>Le mode focus : les sites qui vous dispersent sont bloqués pendant 15, 25, 50 ou 90 minutes. Même un redémarrage n’y échappe pas.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">側</span>
+            <div>
+              <h3>Panneau latéral</h3>
+              <p>Épinglez vos web apps à droite (Discord, Claude, Notion…) et gardez-les ouvertes pendant que vous naviguez.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">縦</span>
+            <div>
+              <h3>Onglets verticaux</h3>
+              <p>Une barre latérale repliable, ou des onglets en haut, en bas, à gauche ou à droite. Glisser-déposer, clic molette pour fermer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" id="studio" aria-labelledby="t-studio">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">筆<small>KAZE STUDIO</small></p>
+      <div>
+        <h2 id="t-studio">Un éditeur de code dans le navigateur</h2>
+        <p class="intro">Kaze Studio ouvre un dossier ou un fichier local et affiche le site à côté du code, mis à jour pendant que vous tapez. <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd> pour l’ouvrir.</p>
+        <div class="shot"><img src="images/kaze-studio.jpg" alt="Kaze Studio : l’arborescence des fichiers, index.html ouvert dans l’éditeur et l’aperçu du site à droite, avec la console en dessous" width="1702" height="1020" loading="lazy"></div>
+        <ul class="checks">
+          <li>Le moteur de VS Code (Monaco) : coloration, autocomplétion, Emmet, multi-curseurs</li>
+          <li>Aperçu en direct, et CSS rechargé à chaud sans recharger la page</li>
+          <li>Modes mobile, tablette, bureau ou taille perso, avec rotation</li>
+          <li>Console intégrée : les erreurs cliquables renvoient à la bonne ligne</li>
+          <li>Mini serveur local : chemins relatifs, fetch et modules ES fonctionnent</li>
+          <li>« Ouvrir dans Kaze Studio » copie une page web pour l’expérimenter en local</li>
+          <li>Formatage Prettier, snippets intégrés et snippets perso</li>
+          <li>Export du projet en .zip</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" id="apparence" aria-labelledby="t-apparence">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">彩<small>APPARENCE</small></p>
+      <div>
+        <h2 id="t-apparence">À votre image, jusqu’au curseur</h2>
+        <p class="intro">Six thèmes prêts à l’emploi, un créateur de thème avec pipette, vos polices (y compris Google Fonts, téléchargées en local), la densité, le flou, les animations et la page d’accueil avec ses widgets déplaçables. Le tout s’exporte en un fichier .kazetheme.</p>
+        <figure class="with-caption">
+          <div class="shot"><img src="images/kaze-sakura.jpg" alt="Kaze avec le thème Sakura rose pâle et les onglets placés en haut de la fenêtre" width="1702" height="1020" loading="lazy"></div>
+          <figcaption>Thème Sakura, onglets en haut.</figcaption>
+        </figure>
+
+        <div class="palettes" role="list" aria-label="Les six thèmes de Kaze">
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#111111;border-color:#26272B">
+              <div class="side" style="background:#141416"><span style="background:#212226"></span><span style="background:#1A1B1E"></span></div>
+              <div class="main"><span class="bar" style="background:#1A1B1E"></span><span class="txt" style="background:#F5F2EB"></span><span class="txt short" style="background:#8B9097"></span><span class="acc" style="background:#D7372A"></span></div>
+            </div>
+            <figcaption>Encre <span>· sombre</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#F5F2EB;border-color:#DEDAD1">
+              <div class="side" style="background:#EFEBE2"><span style="background:#FFFFFF"></span><span style="background:#FBF9F4"></span></div>
+              <div class="main"><span class="bar" style="background:#FBF9F4"></span><span class="txt" style="background:#111111"></span><span class="txt short" style="background:#6B7078"></span><span class="acc" style="background:#D7372A"></span></div>
+            </div>
+            <figcaption>Washi <span>· clair</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#FBF2F4;border-color:#EBD5DC">
+              <div class="side" style="background:#F6E7EB"><span style="background:#FFFFFF"></span><span style="background:#FFF8FA"></span></div>
+              <div class="main"><span class="bar" style="background:#FFF8FA"></span><span class="txt" style="background:#3A2A30"></span><span class="txt short" style="background:#8E7480"></span><span class="acc" style="background:#D45D79"></span></div>
+            </div>
+            <figcaption>Sakura <span>· clair</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#0D0E1A;border-color:#25275A">
+              <div class="side" style="background:#10112A"><span style="background:#1E2046"></span><span style="background:#171936"></span></div>
+              <div class="main"><span class="bar" style="background:#171936"></span><span class="txt" style="background:#E8E6FF"></span><span class="txt short" style="background:#8A88B8"></span><span class="acc" style="background:#FF3D7F"></span></div>
+            </div>
+            <figcaption>Nuit de Tokyo <span>· sombre</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#0F150E;border-color:#263425">
+              <div class="side" style="background:#131B12"><span style="background:#212E20"></span><span style="background:#1A2419"></span></div>
+              <div class="main"><span class="bar" style="background:#1A2419"></span><span class="txt" style="background:#E9F0E2"></span><span class="txt short" style="background:#8FA48A"></span><span class="acc" style="background:#8DBF4E"></span></div>
+            </div>
+            <figcaption>Bambou <span>· sombre</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#15181C;border-color:#2C333B">
+              <div class="side" style="background:#1A1E23"><span style="background:#283039"></span><span style="background:#21262C"></span></div>
+              <div class="main"><span class="bar" style="background:#21262C"></span><span class="txt" style="background:#E6EAEE"></span><span class="txt short" style="background:#8A939C"></span><span class="acc" style="background:#6C9BD2"></span></div>
+            </div>
+            <figcaption>Acier <span>· sombre</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" id="raccourcis" aria-labelledby="t-raccourcis">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">鍵<small>RACCOURCIS</small></p>
+      <div>
+        <h2 id="t-raccourcis">Les mains restent sur le clavier</h2>
+        <p class="intro">Les raccourcis habituels de Chrome, plus ceux de Kaze. Tous modifiables dans les paramètres.</p>
+        <div class="keys-table">
+          <table>
+            <tbody>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>K</kbd></td><td>Souffle, la palette de commandes</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>T</kbd> · <kbd>Ctrl</kbd> + <kbd>W</kbd></td><td>Nouvel onglet · fermer l’onglet</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>T</kbd></td><td>Rouvrir le dernier onglet fermé</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>1</kbd> … <kbd>9</kbd></td><td>Aller directement à un onglet</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td><td>Barre d’adresse : une adresse ou une recherche</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd></td><td>Split view</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd></td><td>Kaze Studio</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>D</kbd> · <kbd>Ctrl</kbd> + <kbd>H</kbd></td><td>Ajouter aux favoris · historique</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>B</kbd></td><td>Replier la barre latérale</td></tr>
+              <tr><td><kbd>F12</kbd></td><td>Outils de développement</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" aria-labelledby="t-confiance">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">守<small>VIE PRIVÉE</small></p>
+      <div>
+        <h2 id="t-confiance">Vos données restent chez vous</h2>
+        <div class="trust">
+          <div>
+            <h3>Rien dans le cloud</h3>
+            <p>Favoris, historique, paramètres et onglets sont enregistrés sur votre PC, dans votre dossier utilisateur.</p>
+          </div>
+          <div>
+            <h3>Pages isolées</h3>
+            <p>Chaque site tourne dans un bac à sable, sans aucun accès à Windows ni à vos fichiers.</p>
+          </div>
+          <div>
+            <h3>Permissions demandées</h3>
+            <p>Caméra, micro, position, notifications : Kaze vous demande pour chaque site et retient votre choix.</p>
+          </div>
+          <div>
+            <h3>Toujours à jour</h3>
+            <p>Les nouvelles versions se téléchargent en arrière-plan et s’installent au redémarrage suivant.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="download" id="telecharger" aria-labelledby="t-telecharger">
+    <div class="wrap">
+      <p class="big-k" aria-hidden="true">風</p>
+      <h2 id="t-telecharger">Le web, sans résistance</h2>
+      <p>Téléchargez l’installateur depuis la page des versions, lancez-le, et Kaze se met ensuite à jour tout seul.</p>
+      <a class="btn" href="https://github.com/KobeStars/kaze/releases/latest" data-download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
+        Télécharger Kaze <span data-version>0.2.3</span>
+      </a>
+      <ul class="reqs">
+        <li>Windows 10 ou 11</li>
+        <li>64 bits</li>
+        <li data-size>129 Mo</li>
+        <li>Gratuit</li>
+      </ul>
+      <p class="note">L’installateur n’est pas encore signé : au premier lancement, Windows peut afficher « Windows a protégé votre ordinateur ». Cliquez sur « Informations complémentaires », puis « Exécuter quand même ». Les contenus protégés par DRM (vidéos Netflix, musique Spotify) ne sont pas encore pris en charge.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Kaze 風 · Conçu par Kordix Studio</span>
+    <a href="https://github.com/KobeStars/kaze">github.com/KobeStars/kaze</a>
+  </div>
+</footer>
+
+<script>
+  // Dernière version publiée : numéro, taille, et lien direct vers l'installateur.
+  // Si GitHub ne répond pas, la page garde les valeurs écrites ci-dessus.
+  fetch('https://api.github.com/repos/KobeStars/kaze/releases/latest')
+    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+    .then((release) => {
+      const exe = (release.assets || []).find((a) => /\.exe$/i.test(a.name));
+      const version = String(release.tag_name || '').replace(/^v/, '');
+      if (version) document.querySelectorAll('[data-version]').forEach((el) => (el.textContent = version));
+      if (exe) {
+        const size = Math.round(exe.size / 1e6) + ' Mo';
+        document.querySelectorAll('[data-size]').forEach((el) => (el.textContent = size));
+        document.querySelectorAll('[data-download]').forEach((el) => (el.href = exe.browser_download_url));
+      }
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>
