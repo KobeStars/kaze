@@ -212,6 +212,9 @@
   .checks li::before { content: "筆"; font-family: var(--font-display); color: var(--seal-text); font-weight: 700; }
 
   /* Personnalisation : les six palettes réelles de Kaze */
+  .perso-title { font-size: 26px; margin: 64px 0 6px; }
+  .perso-intro { margin: 0 0 20px; color: var(--ink-soft); }
+  .winds.perso { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
   .palettes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; margin: 40px 0 0; }
   .palette { margin: 0; }
   .palette .mini { display: flex; height: 92px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
@@ -397,6 +400,13 @@
             </div>
           </div>
           <div class="wind">
+            <span class="k" aria-hidden="true">霧</span>
+            <div>
+              <h3>Brume</h3>
+              <p>Le VPN intégré, gratuit et sans compte : vos onglets passent par le réseau Tor, avec le pays de sortie au choix. Si Tor décroche, rien ne repart avec votre vraie adresse.</p>
+            </div>
+          </div>
+          <div class="wind">
             <span class="k" aria-hidden="true">縦</span>
             <div>
               <h3>Onglets verticaux</h3>
@@ -483,6 +493,74 @@
             </div>
             <figcaption>Acier <span>· sombre</span></figcaption>
           </figure>
+        </div>
+
+        <h3 class="perso-title">Tout ce qui se règle</h3>
+        <p class="perso-intro">Paramètres → Apparence, avec un aperçu en direct. Chaque partie se remet à zéro séparément.</p>
+        <div class="winds perso">
+          <div class="wind">
+            <span class="k" aria-hidden="true">色</span>
+            <div>
+              <h3>Thèmes</h3>
+              <p>Six thèmes, ou le vôtre : neuf couleurs à choisir, pipette comprise. Thème fixe, clair le jour et sombre la nuit aux heures que vous voulez, ou calé sur Windows. Une couleur d’accent par Courant, si vous le souhaitez.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">字</span>
+            <div>
+              <h3>Polices</h3>
+              <p>Une police pour l’interface, une pour les titres, une pour le code : taille, graisse, interligne, espacement, ligatures. Importez vos fichiers ou n’importe quelle Google Font, gardée sur votre PC.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">形</span>
+            <div>
+              <h3>Disposition</h3>
+              <p>Onglets à gauche, à droite, en haut ou en bas. Densité compacte, normale ou aérée, arrondis, flou et transparence de la fenêtre, ombres, barre d’adresse centrée ou classique.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">具</span>
+            <div>
+              <h3>Barre d’outils</h3>
+              <p>Choisissez les boutons affichés et leur ordre par glisser-déposer. Icônes au trait, pleines ou façon pinceau, de la taille qui vous convient.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">庭</span>
+            <div>
+              <h3>Page d’accueil</h3>
+              <p>Fond animé, image, vidéo, couleur, dégradé ou ciel qui suit l’heure. Widgets à placer où vous voulez : horloge, météo, raccourcis, notes, citation, tâches. Quatre styles de barre de recherche.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">動</span>
+            <div>
+              <h3>Animations</h3>
+              <p>Trait d’encre, feuilles qui volent, écran de démarrage, indicateur de chargement : chacune s’active à part, avec une vitesse réglable et un mode mouvements réduits.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">音</span>
+            <div>
+              <h3>Sons et curseur</h3>
+              <p>Quatre ambiances sonores discrètes (bambou, cloche, goutte, minimal) avec leur volume. Curseur pinceau, point, celui de Windows ou le vôtre.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">技</span>
+            <div>
+              <h3>CSS et JS par site</h3>
+              <p>Des règles pour retoucher les sites que vous visitez (mode sombre maison, éléments masqués…) et une feuille de style pour l’interface de Kaze elle-même.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">渡</span>
+            <div>
+              <h3>Partage</h3>
+              <p>Votre réglage complet tient dans un fichier .kazetheme : exportez-le, envoyez-le, importez celui d’un ami en un clic.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
