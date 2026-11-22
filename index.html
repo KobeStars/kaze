@@ -216,6 +216,33 @@
   .perso-title { font-size: 26px; margin: 64px 0 6px; }
   .perso-intro { margin: 0 0 20px; color: var(--ink-soft); }
   .winds.perso { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+  /* Templates : mini fenêtres aux couleurs et aux arrondis de chaque style (comme dans Kaze) */
+  .tpls { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px 18px; margin: 0 0 8px; }
+  .tpl { margin: 0; }
+  .tpl__win { display: flex; height: 120px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); box-shadow: 0 10px 24px rgba(40, 28, 10, 0.1); transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .tpl:hover .tpl__win { transform: translateY(-3px); }
+  .tpl__win i, .tpl__win b { display: block; }
+  .tpl__side { width: 28%; display: flex; flex-direction: column; gap: 5px; padding: 10px 6px; background: var(--chrome); }
+  .tpl__side i { height: 11px; border-radius: var(--s); background: var(--surface); }
+  .tpl__side i.on { background: var(--tab); box-shadow: inset 3px 0 0 var(--accent); }
+  .tpl__main { flex: 1; display: flex; flex-direction: column; gap: 7px; padding: 10px; }
+  .tpl__bar { height: 12px; border: 1px solid var(--border); border-radius: var(--s); background: var(--address); }
+  .tpl__page { position: relative; flex: 1; display: flex; flex-direction: column; gap: 5px; padding: 9px; border: 1px solid var(--border); border-radius: var(--s); background: var(--surface); }
+  .tpl__page b { position: absolute; right: 9px; top: 5px; font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1; color: var(--text); }
+  .tpl__page .l { width: 56%; height: 5px; border-radius: 3px; background: var(--text); }
+  .tpl__page .l.s { width: 34%; background: var(--muted); }
+  .tpl__page .cta { width: 36%; height: 12px; margin-top: auto; border-radius: var(--s); background: var(--accent); }
+  .tpl figcaption { margin-top: 10px; font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+  .tpl figcaption strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 17px; }
+  /* Téléphone : deux par ligne, plus compact */
+  @media (max-width: 640px) {
+    .tpls { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
+    .tpl__win { height: 92px; }
+    .tpl__page b { font-size: 22px; }
+    .tpl figcaption { font-size: 12.5px; }
+    .tpl figcaption strong { font-size: 15px; }
+  }
   .palettes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; margin: 40px 0 0; }
   .palette { margin: 0; }
   .palette .mini { display: flex; height: 92px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
@@ -338,7 +365,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .btn, .shot, .wind, .wind .k { transition: none; }
+    .btn, .shot, .wind, .wind .k, .tpl__win { transition: none; }
     .brush path { animation: none; stroke-dashoffset: 0; }
     .js .reveal { opacity: 1; transform: none; transition: none; }
   }
@@ -569,6 +596,109 @@
           </figure>
         </div>
 
+        <h3 class="perso-title" id="templates">14 templates, un clic chacun</h3>
+        <p class="perso-intro">Paramètres → Templates : chaque style change d’un coup les couleurs, les formes, le flou, les polices et ajoute son propre CSS, que vous pouvez retoucher. Un bouton remet votre style d’avant.</p>
+        <div class="tpls" role="list" aria-label="Les templates de style de Kaze">
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#F4EFE4;--chrome:#EDE6D6;--tab:#FFFDF8;--surface:#FBF8F1;--text:#16130F;--muted:#6E665A;--border:#DDD3C0;--accent:#C8321F;--address:#FBF8F1;--r:6px;--s:3px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>墨</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Sumi-e</strong> Encre noire sur papier washi, un trait de pinceau vermillon.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#0B0B1A;--chrome:#0E0E22;--tab:#1B1A3A;--surface:#15152E;--text:#EDEBFF;--muted:#8A87B8;--border:#2A2850;--accent:#FF2E88;--address:#121229;--r:12px;--s:6px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>夜</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Néon Tokyo</strong> Nuit bleu nuit, néons magenta et cyan qui brillent.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#050805;--chrome:#070B07;--tab:#0F1A0F;--surface:#0C120C;--text:#C8F7C5;--muted:#5E8A5B;--border:#1B2A1B;--accent:#39FF6A;--address:#0A100A;--r:4px;--s:0px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>端</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Terminal</strong> Phosphore vert sur noir, tout en police à chasse fixe, angles droits.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#EEF2F8;--chrome:#E6ECF5;--tab:#FFFFFF;--surface:#FFFFFF;--text:#0F172A;--muted:#64748B;--border:#D6DEEA;--accent:#3B82F6;--address:#F7F9FC;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>雲</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Verre givré</strong> Clair et translucide, grands arrondis, flou profond.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#FFFDF5;--chrome:#FFFDF5;--tab:#FFFFFF;--surface:#FFFFFF;--text:#0A0A0A;--muted:#4A4A4A;--border:#0A0A0A;--accent:#FFD60A;--address:#FFFFFF;--r:4px;--s:0px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>角</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Brutaliste</strong> Blanc, bordures noires épaisses, jaune vif et ombres franches.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#121A14;--chrome:#0F1611;--tab:#1D2A1F;--surface:#18221A;--text:#E7EFE3;--muted:#8FA38E;--border:#263427;--accent:#8FBF6A;--address:#162018;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>森</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Forêt</strong> Vert sous-bois, calme et aéré, titres en italique.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#F6EEE3;--chrome:#EFE3D2;--tab:#FFF9F1;--surface:#FCF7F0;--text:#2B1D12;--muted:#8A7360;--border:#E2D2BD;--accent:#C2410C;--address:#FBF4EA;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>砂</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Dune</strong> Sable chaud et terre cuite, tout en courbes.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#ECE9D8;--chrome:#D6DFF7;--tab:#FFFFFF;--surface:#FFFFFF;--text:#000000;--muted:#555555;--border:#7F9DB9;--accent:#316AC5;--address:#FFFFFF;--r:4px;--s:2px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>窓</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Rétro XP</strong> Hommage aux bureaux des années 2000 : barre bleue en dégradé, boutons bombés, bouton vert.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#0D0D0D;--chrome:#101010;--tab:#1F1F1F;--surface:#171717;--text:#F2F2F2;--muted:#8C8C8C;--border:#262626;--accent:#F2F2F2;--address:#141414;--r:8px;--s:4px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>白</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Monochrome</strong> Noir et blanc, sans couleur, dense et sobre.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#C0C0C0;--chrome:#C0C0C0;--tab:#C0C0C0;--surface:#FFFFFF;--text:#000000;--muted:#404040;--border:#808080;--accent:#000080;--address:#FFFFFF;--r:4px;--s:0px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>灰</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Classique 98</strong> Gris, reliefs en 3D, barre bleu marine : les fenêtres de la fin des années 90.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#1A0B2E;--chrome:#12062A;--tab:#2E1652;--surface:#241040;--text:#FBE9FF;--muted:#A88BC7;--border:#3D1F66;--accent:#FF6AD5;--address:#1E0D38;--r:10px;--s:5px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>夕</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Synthwave</strong> Coucher de soleil rétro : violet, rose et orange, titres en majuscules.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#FBF7EC;--chrome:#F3EBD6;--tab:#FFF3A8;--surface:#FFFDF6;--text:#1F2A44;--muted:#6B7280;--border:#E3D8BC;--accent:#2F5BEA;--address:#FFFDF6;--r:4px;--s:2px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>帳</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Carnet</strong> Cahier à lignes et marge rouge, onglet actif en post-it, titres manuscrits.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#FFF1F7;--chrome:#FCE7F3;--tab:#FFFFFF;--surface:#FFFFFF;--text:#4A2040;--muted:#9D6B8F;--border:#F6CFE3;--accent:#F472B6;--address:#FFFFFF;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>桜</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Pastel</strong> Rose et lilas tout doux, pilules et ombres légères.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#000000;--chrome:#000000;--tab:#000000;--surface:#0A0A0A;--text:#FFFFFF;--muted:#E0E0E0;--border:#FFFFFF;--accent:#FFE600;--address:#000000;--r:4px;--s:2px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>明</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Haut contraste</strong> Noir, blanc et jaune, gros contours : le plus lisible, animations réduites.</figcaption>
+          </figure>
+        </div>
+
         <h3 class="perso-title">Tout ce qui se règle</h3>
         <p class="perso-intro">Paramètres → Apparence, avec un aperçu en direct. Chaque partie se remet à zéro séparément.</p>
         <div class="winds perso">
@@ -604,7 +734,7 @@
             <span class="k" aria-hidden="true">庭</span>
             <div>
               <h3>Page d’accueil</h3>
-              <p>Fond animé, image, vidéo, couleur, dégradé ou ciel qui suit l’heure. Widgets à placer où vous voulez : horloge, météo, raccourcis, notes, citation, tâches. Quatre styles de barre de recherche.</p>
+              <p>Paysage animé, galerie de 20 fonds originaux (Fuji, aurore, koïs, synthwave…), image du jour, image, vidéo, couleur ou dégradé. Widgets à placer où vous voulez : horloge, météo, raccourcis, notes, citation, tâches. Quatre styles de barre de recherche.</p>
             </div>
           </div>
           <div class="wind">
