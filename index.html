@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kaze 風</title>
-<meta name="description" content="Kaze, le navigateur Windows léger, rapide et élégant. Navigue comme le vent.">
+<meta name="description" content="Kaze, le navigateur Windows rapide et élégant, avec VPN intégré, bloqueur de pubs, mode responsive et éditeur de code. Navigue comme le vent.">
 <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
 <meta property="og:title" content="Kaze 風 — Navigue comme le vent">
-<meta property="og:description" content="Un navigateur Windows léger, rapide et élégant, pour les développeurs et les créateurs.">
+<meta property="og:description" content="Un navigateur Windows rapide et élégant, pour les développeurs et les créateurs.">
 <meta property="og:image" content="https://kobestars.github.io/kaze/images/kaze-accueil.jpg">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/png" href="images/kanji-encre.png" media="(prefers-color-scheme: light)">
@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Shippori+Mincho:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<script>document.documentElement.classList.add('js')</script>
 <style>
   /* Mise en page « rouleau » : une colonne étroite de légendes verticales en kanji,
      le contenu à droite, et les vraies captures de Kaze en grand. */
@@ -236,7 +237,8 @@
   td:last-child { color: var(--ink-soft); }
 
   /* Vie privée */
-  .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 28px 40px; }
+  /* Quatre colonnes sur ordinateur (2 x 2 ou 1 colonne sur les petits écrans) */
+  .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 28px 32px; margin-top: 28px; }
   .trust h3 { font-size: 20px; margin: 0 0 6px; }
   .trust p { margin: 0; color: var(--ink-soft); font-size: 15px; }
 
@@ -272,6 +274,59 @@
   footer { padding-block: 32px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
 
+  /* ───── Embellissements ───── */
+  /* Halo vermillon derrière le kanji de l'ouverture */
+  .hero-kanji { position: relative; }
+  .hero-kanji::before {
+    content: "";
+    position: absolute;
+    inset: 8% 10%;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--seal) 20%, transparent), transparent 68%);
+    filter: blur(10px);
+    z-index: -1;
+  }
+  .hero { position: relative; isolation: isolate; overflow: hidden; }
+  /* Trait de pinceau sous « le vent », tracé à l'arrivée */
+  .brush { position: relative; white-space: nowrap; }
+  .brush svg { position: absolute; left: -2%; bottom: -0.12em; width: 104%; height: 0.32em; overflow: visible; pointer-events: none; }
+  .brush path { fill: none; stroke: var(--seal); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 520; stroke-dashoffset: 520; animation: trace 1.1s 0.35s cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+  @keyframes trace { to { stroke-dashoffset: 0; } }
+
+  /* Les atouts phares, sous le bouton de téléchargement */
+  /* Deux par ligne : 2 + 2, plutôt que 3 + 1 */
+  .highlights { display: grid; grid-template-columns: repeat(2, max-content); gap: 10px; margin: 26px 0 0; padding: 0; list-style: none; }
+  .highlights li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; color: var(--ink-soft); background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+  .highlights .k { font-family: var(--font-display); font-weight: 800; font-size: 17px; line-height: 1; color: var(--seal-text); }
+
+  /* Captures : légère élévation au survol */
+  .shot { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s; }
+  .feature .shot:hover, .hero-shot .shot:hover { transform: translateY(-4px); }
+
+  /* Fonctions en cartes qui réagissent au survol */
+  .winds { gap: 14px; border-top: 0; }
+  .wind { padding: 24px 22px; border: 1px solid var(--line); border-radius: 14px; transition: background 0.25s, border-color 0.25s; }
+  .wind:hover { border-color: color-mix(in srgb, var(--seal) 45%, transparent); }
+  /* Carte seule sur la dernière ligne (grille de 3) : elle prend toute la largeur */
+  @media (min-width: 1100px) { .wind:last-child:nth-child(3n + 1) { grid-column: 1 / -1; } }
+  .wind:hover { background: var(--paper-2); }
+  .wind .k { transition: color 0.25s, transform 0.25s; }
+  .wind:hover .k { color: var(--seal-text); transform: translateY(-2px); }
+  .feature-text .tag { display: inline-block; margin: 0 0 12px; padding: 3px 10px; border-radius: 999px; background: var(--seal); color: var(--on-seal); font: 600 12px/1.6 var(--font-body); letter-spacing: 0.02em; }
+
+  /* Bandeau final à l'encre, avec une lueur vermillon */
+  .download {
+    --paper: #151517; --paper-2: #1d1d20; --ink: #f5f2eb; --ink-soft: #d3cfc6; --muted: #9a9ea5; --line: rgba(245, 242, 235, 0.14); --seal-text: #ff6b5c;
+    color: var(--ink);
+    background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(215, 55, 42, 0.28), transparent 70%), #0e0e0f;
+    border-top: 0;
+  }
+  .download .big-k { text-shadow: 0 0 60px rgba(215, 55, 42, 0.45); }
+
+  /* Apparition douce au défilement (seulement si JavaScript tourne) */
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .js .reveal.is-in { opacity: 1; transform: none; }
+
   @media (max-width: 860px) {
     .top nav { display: none; }
     .hero .wrap, .feature, .feature.reverse { grid-template-columns: minmax(0, 1fr); }
@@ -283,7 +338,9 @@
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .btn { transition: none; }
+    .btn, .shot, .wind, .wind .k { transition: none; }
+    .brush path { animation: none; stroke-dashoffset: 0; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
   }
 </style>
 </head>
@@ -315,8 +372,8 @@
       </div>
       <div>
         <p class="eyebrow">風 KAZE · « VENT » EN JAPONAIS</p>
-        <h1>Navigue comme le vent</h1>
-        <p class="lede"><strong>Léger. Rapide. Libre.</strong> Un navigateur pour Windows pensé pour les développeurs et les créateurs : beau, minimaliste, et fait pour travailler vite au clavier.</p>
+        <h1>Navigue comme <span class="brush">le vent<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 13 C 60 6, 120 4, 180 8 S 270 14, 296 7"/></svg></span></h1>
+        <p class="lede"><strong>Rapide. Élégant. Gratuit.</strong> Un navigateur pour Windows pensé pour les développeurs et les créateurs : beau, minimaliste, et fait pour travailler vite au clavier.</p>
         <div class="cta-row">
           <a class="btn" href="https://github.com/KobeStars/kaze/releases/latest" data-download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
@@ -324,14 +381,20 @@
           </a>
           <a class="ghost" href="#fonctions">Voir les fonctions</a>
         </div>
-        <p class="meta">Version <span data-version>0.2.3</span> · Windows 10 et 11, 64 bits · <span data-size>129 Mo</span> · mises à jour automatiques</p>
+        <p class="meta">Version <span data-version>0.2.7</span> · Windows 10 et 11, 64 bits · <span data-size>134 Mo</span> · mises à jour automatiques</p>
+        <ul class="highlights" aria-label="Les atouts de Kaze">
+          <li><span class="k" aria-hidden="true">霧</span>VPN intégré</li>
+          <li><span class="k" aria-hidden="true">盾</span>Bloqueur de pubs</li>
+          <li><span class="k" aria-hidden="true">端</span>Mode responsive</li>
+          <li><span class="k" aria-hidden="true">筆</span>Éditeur de code</li>
+        </ul>
       </div>
     </div>
   </section>
 
   <div class="hero-shot">
     <div class="wrap">
-      <figure class="with-caption">
+      <figure class="with-caption reveal">
         <div class="shot"><img src="images/kaze-accueil.jpg" alt="Kaze avec ses onglets verticaux et sa page d’accueil : bambous dans la nuit, lune, horloge, barre de recherche et raccourcis" width="1702" height="1020"></div>
         <figcaption>La page d’accueil : un paysage de bambous qui ploient au vent, l’horloge, la recherche et vos sites favoris.</figcaption>
       </figure>
@@ -345,7 +408,7 @@
         <h2 id="t-fonctions">Des fonctions qui portent le nom du vent</h2>
         <p class="intro">Tout ce qu’on attend d’un navigateur, plus des outils pensés pour rester concentré et aller vite.</p>
 
-        <div class="feature">
+        <div class="feature reveal">
           <div class="feature-text">
             <h3><span class="k" aria-hidden="true">息</span>Souffle</h3>
             <p>La palette de commandes. Ouvrir un site, retrouver un onglet, chercher dans l’historique ou les favoris, changer de thème ou lancer une Tempête : tout se fait au clavier.</p>
@@ -354,7 +417,7 @@
           <div class="shot"><img src="images/kaze-souffle.jpg" alt="La palette Souffle ouverte par-dessus une page Wikipédia, avec la liste des actions" width="1702" height="1020" loading="lazy"></div>
         </div>
 
-        <div class="feature reverse">
+        <div class="feature reverse reveal">
           <div class="feature-text">
             <h3><span class="k" aria-hidden="true">双</span>Split view</h3>
             <p>Deux sites côte à côte dans la même fenêtre, avec une séparation réglable. Pratique pour coder avec la documentation sous les yeux.</p>
@@ -363,7 +426,18 @@
           <div class="shot"><img src="images/kaze-split.jpg" alt="Kaze en split view : Wikipédia à gauche, la documentation MDN à droite" width="1702" height="1020" loading="lazy"></div>
         </div>
 
-        <div class="winds">
+        <div class="feature reveal" id="responsive">
+          <div class="feature-text">
+            <span class="tag">Nouveau</span>
+            <h3><span class="k" aria-hidden="true">端</span>Mode responsive</h3>
+            <p>Votre site sur un téléphone, une tablette et un ordinateur en même temps, côte à côte. Faites défiler, cliquez ou tapez sur l’un : les autres suivent.</p>
+            <p>Huit appareils au choix (iPhone, Pixel, Galaxy, iPad, portable, écran Full HD), en portrait ou en paysage, avec l’agent et le tactile du vrai appareil.</p>
+            <p><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>M</kbd></p>
+          </div>
+          <div class="shot"><img src="images/kaze-responsive.jpg" alt="Le mode responsive de Kaze : un article Wikipédia affiché en même temps sur un iPhone 15, un iPad Air et un ordinateur portable" width="1324" height="700" loading="lazy"></div>
+        </div>
+
+        <div class="winds reveal">
           <div class="wind">
             <span class="k" aria-hidden="true">流</span>
             <div>
@@ -424,7 +498,7 @@
       <div>
         <h2 id="t-studio">Un éditeur de code dans le navigateur</h2>
         <p class="intro">Kaze Studio ouvre un dossier ou un fichier local et affiche le site à côté du code, mis à jour pendant que vous tapez. <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd> pour l’ouvrir.</p>
-        <div class="shot"><img src="images/kaze-studio.jpg" alt="Kaze Studio : l’arborescence des fichiers, index.html ouvert dans l’éditeur et l’aperçu du site à droite, avec la console en dessous" width="1702" height="1020" loading="lazy"></div>
+        <div class="shot reveal"><img src="images/kaze-studio.jpg" alt="Kaze Studio : l’arborescence des fichiers, index.html ouvert dans l’éditeur et l’aperçu du site à droite, avec la console en dessous" width="1702" height="1020" loading="lazy"></div>
         <ul class="checks">
           <li>Le moteur de VS Code (Monaco) : coloration, autocomplétion, Emmet, multi-curseurs</li>
           <li>Aperçu en direct, et CSS rechargé à chaud sans recharger la page</li>
@@ -581,6 +655,7 @@
               <tr><td><kbd>Ctrl</kbd> + <kbd>1</kbd> … <kbd>9</kbd></td><td>Aller directement à un onglet</td></tr>
               <tr><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td><td>Barre d’adresse : une adresse ou une recherche</td></tr>
               <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd></td><td>Split view</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>M</kbd></td><td>Mode responsive : mobile, tablette et ordinateur</td></tr>
               <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd></td><td>Kaze Studio</td></tr>
               <tr><td><kbd>Ctrl</kbd> + <kbd>D</kbd> · <kbd>Ctrl</kbd> + <kbd>H</kbd></td><td>Ajouter aux favoris · historique</td></tr>
               <tr><td><kbd>Ctrl</kbd> + <kbd>B</kbd></td><td>Replier la barre latérale</td></tr>
@@ -626,12 +701,12 @@
       <p>Téléchargez l’installateur depuis la page des versions, lancez-le, et Kaze se met ensuite à jour tout seul.</p>
       <a class="btn" href="https://github.com/KobeStars/kaze/releases/latest" data-download>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
-        Télécharger Kaze <span data-version>0.2.3</span>
+        Télécharger Kaze <span data-version>0.2.7</span>
       </a>
       <ul class="reqs">
         <li>Windows 10 ou 11</li>
         <li>64 bits</li>
-        <li data-size>129 Mo</li>
+        <li data-size>134 Mo</li>
         <li>Gratuit</li>
       </ul>
       <aside class="smartscreen" id="smartscreen" aria-labelledby="t-smartscreen">
@@ -672,6 +747,12 @@
 <script>
   // Dernière version publiée : numéro, taille, et lien direct vers l'installateur.
   // Si GitHub ne répond pas, la page garde les valeurs écrites ci-dessus.
+  // Apparition douce des blocs quand ils arrivent à l'écran.
+  const reveal = new IntersectionObserver((entries) => {
+    for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-in'); reveal.unobserve(entry.target) }
+  }, { rootMargin: '0px 0px -8% 0px' })
+  document.querySelectorAll('.reveal').forEach((el) => reveal.observe(el))
+
   fetch('https://api.github.com/repos/KobeStars/kaze/releases/latest')
     .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
     .then((release) => {
