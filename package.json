@@ -4,7 +4,7 @@
   "version": "0.2.15",
   "description": "Kaze 風 — Navigue comme le vent. Un navigateur léger, rapide et élégant.",
   "author": "Kordix Studio",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "main": "./out/main/index.js",
   "scripts": {

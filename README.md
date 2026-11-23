@@ -1,119 +1,160 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://kobestars.github.io/kaze/images/kanji-washi-sceau.png">
+  <img src="https://kobestars.github.io/kaze/images/kanji-encre-sceau.png" alt="Le kanji 風 calligraphié, avec un sceau vermillon" width="180">
+</picture>
+
 # Kaze 風
 
-> « Navigue comme le vent » — Léger. Rapide. Libre. Le web, sans résistance.
+**Navigue comme le vent.**<br>
+Un navigateur pour Windows, rapide et élégant, pensé pour les développeurs et les créateurs.
 
-Navigateur web pour Windows, à l'identité japonaise, construit avec Electron 45, TypeScript, Vite et React.
-Conçu par Kordix Studio.
+[![Version](https://img.shields.io/github/v/release/KobeStars/kaze?label=version&color=d7372a)](https://github.com/KobeStars/kaze/releases/latest)
+[![Téléchargements](https://img.shields.io/github/downloads/KobeStars/kaze/total?label=t%C3%A9l%C3%A9chargements&color=111111)](https://github.com/KobeStars/kaze/releases)
+![Windows 10 et 11](https://img.shields.io/badge/Windows-10%20%7C%2011-3d3b37)
+![Gratuit](https://img.shields.io/badge/prix-gratuit-3d3b37)
+[![Licence MIT](https://img.shields.io/badge/licence-MIT-3d3b37)](LICENSE)
 
-## Démarrer
+[**Télécharger pour Windows**](https://github.com/KobeStars/kaze/releases/latest) · [Site de présentation](https://kobestars.github.io/kaze/) · [Toutes les versions](https://github.com/KobeStars/kaze/releases)
 
-```bash
-npm install          # installe aussi le binaire Electron (postinstall)
-npm run dev          # interface avec rechargement à chaud
-npm run build        # vérification des types + compilation dans out/
-npm run preview      # lance la version compilée
-npm run dist         # installateur Windows : dist/Kaze-Setup-<version>.exe
-```
+<br>
 
-Autres scripts :
+<img src="https://kobestars.github.io/kaze/images/kaze-accueil.jpg" alt="Kaze avec ses onglets verticaux et sa page d’accueil : bambous dans la nuit, lune, horloge, barre de recherche et raccourcis" width="900">
 
-- `npm run typecheck` : vérifie les types (processus principal, preloads, interface).
-- `npm run logo` : détoure `assets/logo/kaze-logo.(png|jpg|webp)` et génère toutes les icônes.
-- `npm run polices` : extrait de Shippori Mincho uniquement les kanji utilisés (≈ 500 Ko au lieu de 11 Mo).
+</div>
 
-Pour tester sans toucher à votre profil : `KAZE_PROFIL=C:\chemin\profil-test` (variable d'environnement)
-envoie toutes les données (favoris, historique, cookies) dans ce dossier.
+---
 
-## Fonctionnalités
+## En bref
 
-| | |
-|---|---|
-| Fenêtre | Sans cadre, barre de titre maison, boutons Windows 11 (Fermer en vermillon) |
-| Onglets | Verticaux repliables (défaut) ou horizontaux ; glisser-déposer, clic molette, menu clic droit |
-| Barre d'adresse | Adresse ou recherche (Google, DuckDuckGo, Brave), suggestions onglets / favoris / historique |
-| Favoris, historique, téléchargements | Tiroir latéral avec recherche ; téléchargements avec pause, reprise, annulation |
-| **Souffle** (Ctrl+K) | Palette de commandes : sites, onglets, historique, actions |
-| **Courants** | Espaces de travail avec leurs onglets, nom, couleur et icône kanji |
-| **Bouclier de vent** | Bloqueur pubs + traqueurs (EasyList / EasyPrivacy via le moteur Ghostery), compteur, désactivable par site |
-| **Brise** | Met en veille les onglets inactifs (page déchargée de la mémoire) |
-| **Tempête** | Mode focus : bloque une liste de sites pendant une durée choisie (survit au redémarrage) |
-| Split view | Deux pages côte à côte, séparation réglable (Ctrl+Maj+S) |
-| Panneau latéral | Web apps épinglées (Discord, Spotify, Claude…) |
-| Accueil | Paysage animé (bambous au vent, lune ou soleil-sceau), horloge, recherche, raccourcis favoris |
-| Paramètres | Thème sombre / clair / Windows, moteur, page d'accueil, Brise, Tempête, raccourcis modifiables… |
+- **Rapide au clavier** : une palette de commandes (<kbd>Ctrl</kbd> + <kbd>K</kbd>) pour tout faire sans la souris.
+- **Fait pour coder** : un éditeur de code intégré, le mode responsive multi-écrans et les outils de développement.
+- **Vie privée d’abord** : bloqueur de publicités, VPN intégré par Tor, données gardées sur votre PC.
+- **À votre image** : 14 templates de style, 6 thèmes, 20 fonds d’accueil, vos polices et votre CSS.
+- **Compatible** : extensions Chrome, Netflix et Spotify, mises à jour automatiques.
+
+## Fonctions
+
+Chaque fonction porte un nom de vent.
+
+| | Fonction | Ce qu’elle fait |
+|:-:|---|---|
+| 息 | **Souffle** | La palette de commandes : ouvrir un site, retrouver un onglet, chercher dans l’historique, changer de thème… <kbd>Ctrl</kbd> + <kbd>K</kbd> |
+| 双 | **Split view** | Deux sites côte à côte, séparation réglable. <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd> |
+| 端 | **Mode responsive** | Votre site sur un téléphone, une tablette et un ordinateur en même temps ; défilement, clics et saisie synchronisés. <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>M</kbd> |
+| 流 | **Courants** | Des espaces de travail avec leurs onglets, leur nom, leur couleur et leur icône. |
+| 盾 | **Bouclier de vent** | Bloqueur de publicités et de traqueurs (listes EasyList et EasyPrivacy), désactivable site par site. |
+| 霧 | **Brume** | Le VPN intégré, gratuit et sans compte : vos onglets passent par le réseau Tor, pays de sortie au choix. |
+| 微 | **Brise** | Met en veille les onglets inactifs pour libérer la mémoire. |
+| 嵐 | **Tempête** | Le mode focus : les sites qui vous dispersent sont bloqués le temps de votre session. |
+| 側 | **Panneau latéral** | Vos web apps épinglées à droite (Discord, Notion, Claude…). |
+| 拡 | **Extensions Chrome** | Collez le lien d’une extension du Chrome Web Store : Kaze l’installe, avec son bouton et sa fenêtre. |
+| 映 | **Netflix et Spotify** | Les contenus protégés (Widevine) se lisent comme dans Chrome. |
+| 縦 | **Onglets verticaux** | Onglets à gauche, à droite, en haut ou en bas ; glisser-déposer, clic molette pour fermer. |
+
+<table>
+  <tr>
+    <td width="50%"><img src="https://kobestars.github.io/kaze/images/kaze-souffle.jpg" alt="La palette Souffle ouverte par-dessus une page Wikipédia"><p align="center"><sub>Souffle, la palette de commandes</sub></p></td>
+    <td width="50%"><img src="https://kobestars.github.io/kaze/images/kaze-split.jpg" alt="Kaze en split view : Wikipédia à gauche, la documentation MDN à droite"><p align="center"><sub>Split view</sub></p></td>
+  </tr>
+</table>
+
+<p align="center"><img src="https://kobestars.github.io/kaze/images/kaze-responsive.jpg" alt="Le mode responsive : un article affiché en même temps sur un iPhone, un iPad et un ordinateur portable" width="900"><br><sub>Mode responsive : huit appareils au choix, en portrait ou en paysage</sub></p>
+
+## Kaze Studio 筆
+
+Un éditeur de code dans le navigateur (<kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd>) : il ouvre un dossier ou un fichier local et affiche le site à côté du code, mis à jour pendant que vous tapez.
+
+- Le moteur de VS Code (Monaco) : coloration, autocomplétion, Emmet, multi-curseurs
+- Aperçu en direct, CSS rechargé à chaud, console intégrée
+- Mini serveur local : chemins relatifs, `fetch` et modules ES fonctionnent
+- « Ouvrir dans Kaze Studio » copie une page web pour l’expérimenter en local
+- Formatage, snippets et export du projet en .zip
+
+<p align="center"><img src="https://kobestars.github.io/kaze/images/kaze-studio.jpg" alt="Kaze Studio : arborescence, éditeur et aperçu du site avec la console" width="900"></p>
+
+## Apparence 彩
+
+<p align="center"><img src="https://kobestars.github.io/kaze/images/kaze-sakura.jpg" alt="Kaze avec le thème Sakura rose pâle et les onglets en haut" width="900"></p>
+
+- **14 templates de style**, appliqués en un clic : Sumi-e, Néon Tokyo, Terminal, Verre givré, Brutaliste, Rétro XP, Classique 98, Synthwave, Carnet, Pastel, Haut contraste…
+- **6 thèmes** et un créateur de thème avec pipette ; clair le jour, sombre la nuit, ou calé sur Windows.
+- **20 fonds d’accueil** originaux (Fuji, aurore boréale, koïs, synthwave…), ou votre image, votre vidéo, une couleur, un dégradé.
+- **Polices** pour l’interface, les titres et le code, y compris Google Fonts gardées sur votre PC.
+- **CSS et JS par site**, et une feuille de style pour l’interface de Kaze.
+- Tout se partage dans un fichier **.kazetheme**.
+
+## Installation
+
+1. Téléchargez **`Kaze-Setup-x.y.z.exe`** depuis la [dernière version](https://github.com/KobeStars/kaze/releases/latest).
+2. Lancez-le et choisissez le dossier d’installation.
+3. C’est tout : Kaze se met ensuite **à jour tout seul**, en arrière-plan.
+
+> [!NOTE]
+> **Un écran bleu « Windows a protégé votre ordinateur » ?** C’est normal : l’installateur n’est pas encore signé par un certificat payant, alors Windows ne le connaît pas. Cliquez sur **Informations complémentaires**, puis sur **Exécuter quand même**. Une seule fois.
+
+**Configuration requise** : Windows 10 ou 11, 64 bits.
 
 ## Raccourcis
 
-Ctrl+T nouvel onglet · Ctrl+W fermer · Ctrl+Maj+T rouvrir · Ctrl+L adresse · Ctrl+K Souffle ·
-Ctrl+Tab / Ctrl+Maj+Tab onglet suivant / précédent · Ctrl+1…9 aller à l'onglet · F5 / Ctrl+R recharger ·
-Ctrl+F5 sans cache · F12 DevTools · Ctrl+D favori · Ctrl+H historique · Ctrl+J téléchargements ·
-Ctrl+F rechercher dans la page · Ctrl+B barre latérale · Ctrl+Maj+S split view · Ctrl+, paramètres ·
-Alt+← / Alt+→ navigation · Ctrl+= / Ctrl+- / Ctrl+0 zoom · F11 plein écran.
-Tous modifiables dans Paramètres → Raccourcis.
+| Raccourci | Action |
+|---|---|
+| <kbd>Ctrl</kbd> + <kbd>K</kbd> | Souffle, la palette de commandes |
+| <kbd>Ctrl</kbd> + <kbd>T</kbd> · <kbd>Ctrl</kbd> + <kbd>W</kbd> | Nouvel onglet · fermer l’onglet |
+| <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>T</kbd> | Rouvrir le dernier onglet fermé |
+| <kbd>Ctrl</kbd> + <kbd>L</kbd> | Barre d’adresse |
+| <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd> | Split view |
+| <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>M</kbd> | Mode responsive |
+| <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd> | Kaze Studio |
+| <kbd>Ctrl</kbd> + <kbd>B</kbd> | Replier la barre latérale |
+| <kbd>F12</kbd> | Outils de développement |
 
-## Architecture
+Tous les raccourcis se changent dans les paramètres.
 
+## Vie privée 守
+
+- **Rien dans le cloud** : favoris, historique, paramètres et onglets restent sur votre PC.
+- **Pages isolées** : chaque site tourne dans un bac à sable, sans accès à Windows ni à vos fichiers.
+- **Permissions demandées** : caméra, micro, position, notifications ; Kaze vous demande pour chaque site.
+- **Brume** fait passer vos onglets par Tor, et rien ne repart avec votre vraie adresse si Tor décroche.
+
+## Questions fréquentes
+
+<details>
+<summary><b>Kaze est-il gratuit ?</b></summary>
+
+Oui, entièrement.
+</details>
+
+<details>
+<summary><b>Le code source est-il disponible ?</b></summary>
+
+Oui, ici même, sous licence [MIT](LICENSE) : vous pouvez le lire, le modifier et le reprendre.
+</details>
+
+<details>
+<summary><b>Comment signaler un problème ou proposer une idée ?</b></summary>
+
+Ouvrez une [issue](https://github.com/KobeStars/kaze/issues) en décrivant ce qui se passe et votre version de Kaze (Paramètres → À propos).
+</details>
+
+## Développer
+
+```bash
+npm install
+npm run dev     # Kaze avec rechargement à chaud
+npm run dist    # installateur Windows dans dist/
 ```
-src/
-  main/                 processus principal (Node)
-    index.ts            démarrage, sessions, instance unique
-    window.ts           fenêtre frameless
-    protocol.ts         protocole kaze:// (interface + page d'accueil)
-    security.ts         garde-fous globaux, agent utilisateur
-    store.ts            stockage JSON atomique (%APPDATA%\Kaze)
-    browser/
-      controller.ts     source de vérité : onglets, Courants, split, panneau, Brise, raccourcis
-      tab.ts            un onglet = une WebContentsView
-      menus.ts          menus contextuels natifs
-    services/           paramètres, historique, favoris, téléchargements,
-                        Bouclier, Tempête, permissions des sites
-    ipc/
-      router.ts         IPC typé : vérification de l'expéditeur + validation zod
-      handlers.ts       branchement de tous les canaux
-  preload/
-    index.ts            pont de l'interface (contextBridge)
-    interne.ts          pont de la page d'accueil (kaze://accueil uniquement)
-  shared/               types, contrat IPC (zod), paramètres, URL, raccourcis
-  renderer/
-    index.html          interface du navigateur (React)
-    interne.html        page d'accueil (React + canvas)
-    src/ui/             composants de l'interface
-    src/interne/        page d'accueil et paysage animé
-    src/styles/         jetons de couleur, styles
-assets/logo/            logo source
-build/                  icônes générées (icon.ico, icons/*.png)
-scripts/                logo.mjs, polices-jp.mjs
-```
 
-### Choix techniques
+Architecture, scripts, tests automatiques et choix techniques : [docs/DEVELOPPEMENT.md](docs/DEVELOPPEMENT.md). Les propositions de correction sont bienvenues : ouvrez une issue ou une pull request.
 
-- **React plutôt que vanilla TS** : l'interface a beaucoup d'état partagé (onglets, Courants, palette,
-  tiroirs, paramètres). React + `useSyncExternalStore` suffit, sans bibliothèque d'état.
-- **Le processus principal est la source de vérité** : il diffuse l'état complet (`browser:state`), l'interface
-  l'affiche et envoie des commandes. Pas de double état à synchroniser.
-- **Pages dans des WebContentsView** placées par le principal dans les zones que l'interface mesure.
-  Les vues passant toujours au-dessus de l'interface, les fenêtres flottantes (Souffle, paramètres,
-  suggestions) « figent » les pages : capture affichée, vraies vues retirées le temps de l'affichage.
-- **Sécurité** : `contextIsolation`, `sandbox`, pas de `nodeIntegration`, CSP stricte, protocole `kaze://`
-  au lieu de `file://`, chaque message IPC vérifié (expéditeur + arguments zod), `<webview>` interdit,
-  les pages web ne peuvent pas ouvrir de page interne, permissions des sites demandées et mémorisées.
-- **Stockage JSON** plutôt que SQLite : volumes faibles, aucun module natif à recompiler pour Electron.
-- **Bouclier** : moteur `@ghostery/adblocker` (syntaxe EasyList), listes mises en cache et rafraîchies chaque
-  semaine ; Kaze garde la main sur les requêtes pour compter par onglet et autoriser site par site.
+## Merci
 
-## Logo
+Kaze s’appuie sur de beaux projets : [Electron](https://www.electronjs.org/) (version [castLabs](https://github.com/castlabs/electron-releases) pour Widevine), [Tor](https://www.torproject.org/), le moteur de blocage de [Ghostery](https://github.com/ghostery/adblocker), l’éditeur [Monaco](https://microsoft.github.io/monaco-editor/) et la police [Shippori Mincho](https://github.com/fontdasu/ShipporiMincho) (licence SIL OFL 1.1).
 
-`npm run logo` détoure automatiquement le logo officiel (papier washi rendu transparent, slogan retiré)
-et produit : versions encre / washi pour l'interface, icônes 16 → 256 px (kanji seul jusqu'à 32 px),
-`build/icon.ico` et `build/icon.png`. Si le résultat d'un nouveau logo ne convient pas, détourez-le à la
-main : Photopea (gratuit, en ligne) ou Photoshop → Sélection → Plage de couleurs sur le papier → Supprimer,
-puis exportez en PNG transparent sous `assets/logo/kaze-logo.png` et relancez `npm run logo`.
+---
 
-## Limites connues
-
-- Pas de Widevine (DRM) dans Electron : Netflix ne marche pas, Spotify web refuse de lire la musique.
-  Solution possible : la version Electron de castLabs (ECS).
-- Kaze ne s'enregistre pas encore comme navigateur par défaut de Windows.
-- L'installateur n'est pas signé : Windows SmartScreen affichera un avertissement au premier lancement.
-- NSIS ne gère pas les chemins très longs : si `npm run dist` échoue sur un `!include`, placez le projet
-  dans un dossier au chemin court.
+<div align="center">
+<sub>Conçu par <b>Kordix Studio</b> · © 2026 Kordix Studio · <a href="LICENSE">Licence MIT</a></sub>
+</div>
