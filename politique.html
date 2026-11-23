@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Signature et confidentialité · Kaze 風</title>
+<meta name="description" content="Politique de signature du code (code signing policy) et politique de confidentialité du navigateur Kaze.">
+<meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" href="images/kanji-encre.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" href="images/kanji-washi.png" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Shippori+Mincho:wght@700&display=swap">
+<style>
+  :root {
+    --paper: #f5f2eb; --paper-2: #ebe6da; --ink: #111111; --ink-soft: #3d3b37; --muted: #716d64;
+    --line: rgba(17, 17, 17, 0.13); --seal: #d7372a; --seal-text: #b42b20;
+    --font-display: 'Shippori Mincho', 'Yu Mincho', serif;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #111111; --paper-2: #19191b; --ink: #f5f2eb; --ink-soft: #d3cfc6; --muted: #8f939a;
+      --line: rgba(245, 242, 235, 0.12); --seal-text: #ff6b5c; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #111111; --paper-2: #19191b; --ink: #f5f2eb; --ink-soft: #d3cfc6; --muted: #8f939a;
+    --line: rgba(245, 242, 235, 0.12); --seal-text: #ff6b5c; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink-soft); font: 16px/1.65 var(--font-body); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 28px 0 8px; }
+  header a { color: var(--ink); text-decoration: none; font: 700 22px var(--font-display); }
+  h1, h2 { font-family: var(--font-display); color: var(--ink); line-height: 1.25; }
+  h1 { font-size: clamp(30px, 6vw, 44px); margin: 32px 0 8px; }
+  h2 { font-size: 25px; margin: 56px 0 12px; padding-top: 24px; border-top: 1px solid var(--line); }
+  h3 { color: var(--ink); font-size: 17px; margin: 28px 0 6px; }
+  a { color: var(--seal-text); }
+  .lead { color: var(--muted); margin-top: 0; }
+  .encart { background: var(--paper-2); border-left: 3px solid var(--seal); padding: 14px 18px; border-radius: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--ink); font-weight: 600; }
+  td:first-child { white-space: nowrap; }
+  @media (max-width: 560px) { td:first-child { white-space: normal; } th, td { padding: 8px 4px; } }
+  footer { margin-top: 64px; padding: 28px 0 40px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header><div class="wrap"><a href="./">Kaze 風</a></div></header>
+
+<main class="wrap">
+  <h1>Signature et confidentialité</h1>
+  <p class="lead">Comment l’installateur de Kaze est construit et signé, et ce que Kaze envoie sur Internet.</p>
+
+  <h2 id="signature">Politique de signature du code <span lang="en">(code signing policy)</span></h2>
+
+  <p class="encart" lang="en">Free code signing provided by <a href="https://about.signpath.io/">SignPath.io</a>, certificate by <a href="https://signpath.org/">SignPath Foundation</a>.<br><span lang="fr">Kaze a demandé à en bénéficier : tant que la demande n’est pas acceptée, l’installateur n’est pas signé.</span></p>
+
+  <h3>Ce qui est signé</h3>
+  <p>Seul l’installateur <code>Kaze-Setup-x.y.z.exe</code> publié sur la <a href="https://github.com/KobeStars/kaze/releases">page des versions</a> est signé. Il est construit à partir du <a href="https://github.com/KobeStars/kaze">code source public</a> (licence MIT), sur les machines de GitHub Actions, par le workflow <a href="https://github.com/KobeStars/kaze/blob/main/.github/workflows/publier.yml"><code>publier.yml</code></a>. Chaque demande de signature est approuvée à la main.</p>
+  <p>L’installateur contient aussi des programmes d’autres projets libres, livrés tels quels : Electron dans sa version <a href="https://github.com/castlabs/electron-releases">castLabs</a> (qui sert de base à <code>Kaze.exe</code>) et <code>tor.exe</code> du <a href="https://www.torproject.org/">Tor Project</a>, dont l’empreinte SHA-256 est vérifiée à chaque construction.</p>
+
+  <h3>Équipe</h3>
+  <table>
+    <tr><th>Rôle</th><th>Membres</th></tr>
+    <tr><td>Auteurs (committers)</td><td><a href="https://github.com/KobeStars">KobeStars</a> (Kordix Studio)</td></tr>
+    <tr><td>Relecteurs (reviewers)</td><td><a href="https://github.com/KobeStars">KobeStars</a> : toute contribution extérieure passe par une pull request relue avant d’être fusionnée.</td></tr>
+    <tr><td>Approbateurs (approvers)</td><td><a href="https://github.com/KobeStars">KobeStars</a></td></tr>
+  </table>
+
+  <h2 id="confidentialite">Politique de confidentialité</h2>
+
+  <p>Kaze n’a ni compte, ni publicité, ni télémétrie, ni statistiques d’utilisation. Vos favoris, votre historique, vos cookies, vos paramètres et vos onglets restent sur votre PC, dans <code>%APPDATA%\Kaze</code>. Kordix Studio ne reçoit aucune donnée.</p>
+
+  <h3>Connexions que Kaze fait tout seul</h3>
+  <table>
+    <tr><th>Service</th><th>Pourquoi, et comment l’arrêter</th></tr>
+    <tr><td>GitHub</td><td>Vérifier et télécharger les mises à jour de Kaze, peu après le démarrage puis régulièrement. GitHub voit votre adresse IP et la version demandée. À couper dans Paramètres → À propos → « Mises à jour automatiques ».</td></tr>
+    <tr><td>Ghostery</td><td>Télécharger les listes de filtres du Bouclier (EasyList, EasyPrivacy), au plus une fois par semaine. Aucune donnée de navigation n’est envoyée : le filtrage se fait sur votre PC.</td></tr>
+    <tr><td>Google</td><td>Télécharger et mettre à jour le module Widevine, qui lit les vidéos et la musique protégées (Netflix, Spotify).</td></tr>
+  </table>
+
+  <h3>Connexions qui ne se font que si vous les demandez</h3>
+  <ul>
+    <li>Les sites que vous ouvrez, et le moteur de recherche que vous avez choisi pour ce que vous tapez dans la barre d’adresse.</li>
+    <li><strong>Brume</strong> (VPN) : le réseau Tor, plus check.torproject.org et onionoo.torproject.org pour afficher l’adresse et le pays de sortie.</li>
+    <li>Le widget météo de l’accueil : open-meteo.com, avec la ville que vous avez saisie.</li>
+    <li>Le fond d’accueil « Image du jour (Bing) » : bing.com.</li>
+    <li>Les polices Google Fonts que vous ajoutez : fonts.googleapis.com, une seule fois, puis elles sont gardées sur votre PC.</li>
+    <li>Les extensions Chrome que vous installez : leur téléchargement depuis Google.</li>
+  </ul>
+
+  <h3>Ce que l’installateur change dans Windows</h3>
+  <p>Il installe Kaze dans le dossier que vous choisissez, crée ses raccourcis et l’ajoute au menu « Ouvrir avec » des fichiers .html et .htm. Il ne change pas votre navigateur par défaut. Kaze se désinstalle depuis Paramètres Windows → Applications, comme tout logiciel.</p>
+  <p>Une question : ouvrez une <a href="https://github.com/KobeStars/kaze/issues">issue sur GitHub</a>.</p>
+</main>
+
+<footer><div class="wrap">Kaze 風 · Conçu par Kordix Studio · <a href="./">Retour à l’accueil</a></div></footer>
+</body>
+</html>
