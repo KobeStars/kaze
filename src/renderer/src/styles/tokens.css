@@ -1,0 +1,97 @@
+/*
+ * Jetons de style de Kaze.
+ *
+ * Les couleurs de base (--accent, --bg, --chrome, --surface, --text, --muted, --border,
+ * --tab, --address) viennent du thème actif et sont posées en JavaScript
+ * (src/renderer/src/commun/apparence.ts). Les valeurs ci-dessous sont celles du thème
+ * « Encre », utilisées avant le premier rendu. Tout le reste en découle.
+ */
+:root {
+  --vermillon: #d7372a;
+  --encre: #111111;
+  --washi: #f5f2eb;
+
+  --accent: #d7372a;
+  --bg: #111111;
+  --chrome: #141416;
+  --surface: #1a1b1e;
+  --text: #f5f2eb;
+  --muted: #8b9097;
+  --border: #26272b;
+  --tab: #212226;
+  --address: #1a1b1e;
+  --on-accent: #ffffff;
+  --glass: rgba(26, 27, 30, 0.72);
+
+  /* Couleurs dérivées */
+  --bg-chrome: var(--chrome);
+  --surface-2: var(--tab);
+  --surface-hover: color-mix(in srgb, var(--text) 6%, transparent);
+  --surface-active: color-mix(in srgb, var(--text) 10%, transparent);
+  --text-muted: var(--muted);
+  --text-faint: color-mix(in srgb, var(--muted) 62%, var(--bg));
+  --border-strong: color-mix(in srgb, var(--text) 16%, transparent);
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-text: color-mix(in srgb, var(--accent) 78%, var(--text));
+  --accent-hover: color-mix(in srgb, var(--accent) 84%, #000);
+  --ink: var(--text);
+  --backdrop: color-mix(in srgb, var(--bg) 42%, transparent);
+
+  /* Formes et effets (réglables dans Apparence → Interface) */
+  --radius: 10px;
+  --radius-s: calc(var(--radius) * 0.6);
+  --radius-m: var(--radius);
+  --radius-l: calc(var(--radius) * 1.4);
+  --blur: 28px;
+  --shadow: 0 24px 64px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --d: 1;
+  --icon-size: 18px;
+  --icon-stroke: 1.6;
+
+  /* Polices (réglables dans Apparence → Polices) */
+  --ui-family: 'Inter Variable', 'Segoe UI', system-ui, sans-serif;
+  --ui-size: 13px;
+  --ui-weight: 400;
+  --ui-line: 1.4;
+  --ui-spacing: 0em;
+  --titres-family: 'Shippori Mincho', 'Yu Mincho', serif;
+  --titres-weight: 700;
+  --titres-spacing: 0em;
+  --code-family: 'JetBrains Mono Variable', 'Cascadia Code', Consolas, monospace;
+  --font-ui: var(--ui-family);
+  --font-jp: var(--titres-family);
+  --font-code: var(--code-family);
+  --font-icons: 'Segoe Fluent Icons', 'Segoe MDL2 Assets';
+
+  --titlebar-h: calc(40px * var(--d));
+  --toolbar-h: calc(44px * var(--d));
+  --rail-w: 48px;
+
+  /* Animations (vitesse réglable) */
+  --vitesse: 1;
+  --ease-vent: cubic-bezier(0.22, 1, 0.36, 1);
+  --duree: calc(180ms / var(--vitesse));
+}
+
+:root[data-theme='sombre'] {
+  color-scheme: dark;
+}
+
+:root[data-theme='clair'] {
+  color-scheme: light;
+}
+
+/* Mode « animations réduites » (Paramètres) ou réglage de Windows */
+:root[data-reduced='on'] *,
+:root[data-reduced='on'] *::before,
+:root[data-reduced='on'] *::after {
+  animation-duration: 1ms !important;
+  animation-delay: 0ms !important;
+  transition-duration: 1ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duree: 0ms;
+  }
+}

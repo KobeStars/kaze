@@ -1,0 +1,365 @@
+/* Page de bienvenue de Kaze — même esprit que la page de présentation (rouleau, kanji). */
+
+/* Ces règles ne s'appliquent qu'à la page de bienvenue (classe posée sur <html>). */
+html.bienvenue,
+html.bienvenue body,
+html.bienvenue #root {
+  height: auto;
+  min-height: 100%;
+  margin: 0;
+}
+
+html.bienvenue body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.b-page button,
+.b-page input {
+  font: inherit;
+  color: inherit;
+}
+
+.b-page :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.b-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 56px 32px 72px;
+}
+
+.b-hero {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.b-hero__logo {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+}
+
+.b-hero__kanji {
+  font-family: var(--font-jp);
+  font-weight: 700;
+  font-size: 160px;
+  line-height: 1;
+}
+
+.b-eyebrow {
+  margin: 0 0 12px;
+  font-family: var(--font-code);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
+}
+
+.b-page h1,
+.b-page h2,
+.b-page h3 {
+  font-family: var(--font-jp);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.b-page h1 {
+  margin: 0 0 12px;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+}
+
+.b-lede {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 17px;
+  color: var(--text-muted);
+}
+
+.b-step {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 24px;
+  padding: 36px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.b-rail {
+  margin: 0;
+  font-family: var(--font-jp);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--accent-text);
+}
+
+.b-step h2 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+
+.b-hint {
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.b-input {
+  width: min(360px, 100%);
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  outline: 0;
+  font-size: 16px;
+}
+
+.b-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+/* Thèmes */
+.b-themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.b-theme {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.b-theme__mini {
+  display: flex;
+  height: 86px;
+  border: 2px solid;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 160ms, box-shadow 160ms;
+}
+
+.b-theme:hover .b-theme__mini {
+  transform: translateY(-2px);
+}
+
+.b-theme.is-selected .b-theme__mini {
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.b-theme__side {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 5px;
+}
+
+.b-theme__side i {
+  display: block;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.b-theme__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.b-theme__main i {
+  display: block;
+  border-radius: 3px;
+}
+
+.b-theme__bar {
+  height: 10px;
+}
+
+.b-theme__txt {
+  height: 5px;
+  width: 78%;
+}
+
+.b-theme__txt--short {
+  width: 48%;
+}
+
+.b-theme__acc {
+  margin-top: auto;
+  width: 36%;
+  height: 10px;
+}
+
+.b-theme__name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Choix segmentés */
+.b-segment {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--surface-hover);
+}
+
+.b-segment button {
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.b-segment button:hover {
+  color: var(--text);
+}
+
+.b-segment button.is-selected {
+  background: var(--tab);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Raccourcis */
+.b-keys {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.b-keys li {
+  display: grid;
+  grid-template-columns: 40px minmax(150px, auto) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.b-keys__k {
+  font-family: var(--font-jp);
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.b-keys__label {
+  color: var(--text-muted);
+}
+
+kbd {
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  background: var(--surface);
+}
+
+/* Ce que fait Kaze */
+.b-winds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px 32px;
+}
+
+.b-wind {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.b-wind__k {
+  font-family: var(--font-jp);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.1;
+  color: var(--accent-text);
+}
+
+.b-wind h3 {
+  margin: 0 0 2px;
+  font-size: 17px;
+}
+
+.b-wind p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Fin */
+.b-end {
+  padding-top: 40px;
+  text-align: center;
+}
+
+.b-start {
+  height: 50px;
+  padding: 0 32px;
+  margin-bottom: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms, background 160ms;
+}
+
+.b-start:hover {
+  transform: translateY(-1px);
+  background: var(--accent-hover);
+}
+
+@media (max-width: 720px) {
+  .b-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .b-step {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .b-keys li {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+  .b-keys__label {
+    grid-column: 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b-theme__mini,
+  .b-start {
+    transition: none;
+  }
+}

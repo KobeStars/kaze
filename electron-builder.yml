@@ -1,0 +1,68 @@
+# Packaging Windows de Kaze : installateur NSIS (.exe) avec choix du dossier.
+# Lancer : npm run dist   →   dist/Kaze-Setup-<version>.exe
+appId: fr.kordix.kaze
+productName: Kaze
+copyright: © 2026 Kordix Studio
+directories:
+  output: dist
+  buildResources: build
+# Seul le code compilé est embarqué (les dépendances de production sont ajoutées
+# automatiquement : zod et le moteur du Bouclier de vent).
+files:
+  - out/**
+  - package.json
+  - '!**/*.map'
+asar: true
+# Electron de castLabs (avec Widevine pour Netflix, Spotify…) : on empaquette celui
+# installé dans node_modules plutôt que l'Electron standard.
+electronDist: node_modules/electron/dist
+# Signature VMP castLabs, exigée par Netflix et Spotify (voir scripts/vmp.cjs). Sous Windows elle
+# doit venir APRÈS l'édition de l'exe (icône, version) et la signature Authenticode : afterSign.
+afterSign: scripts/vmp.cjs
+# Tor (moteur de Brume, le VPN) : programme séparé, installé par npm run tor,
+# copié à côté de l'application dans resources/tor.
+extraResources:
+  - from: resources/tor
+    to: tor
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: build/icon.ico
+  executableName: Kaze
+  # Signature de code (Authenticode). Sans certificat configuré, rien n'est signé.
+  # Le certificat est fourni au moment de la publication (voir scripts/publier.mjs) :
+  #  - fichier .pfx : variables CSC_LINK et CSC_KEY_PASSWORD ;
+  #  - certificat installé dans Windows (Certum SimplySign…) : variable KAZE_CERT_SHA1.
+  signtoolOptions:
+    signingHashAlgorithms: [sha256]
+    rfc3161TimeStampServer: http://time.certum.pl
+# « Ouvrir avec » de Windows : Kaze sait afficher les pages .html et .htm. L'application par
+# défaut reste celle choisie par l'utilisateur (Windows protège ce choix).
+fileAssociations:
+  - ext: [html, htm]
+    name: Kaze.HTML
+    description: Page web HTML
+    role: Viewer
+    # Chemin relatif au dossier build (buildResources)
+    icon: icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Kaze
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  uninstallDisplayName: Kaze
+  artifactName: Kaze-Setup-${version}.${ext}
+  installerLanguages: [fr_FR]
+  language: '1036'
+# Mises à jour automatiques : Kaze lit les versions publiées sur GitHub Releases.
+# Publier une version : npm run release (voir scripts/publier.mjs).
+publish:
+  provider: github
+  owner: KobeStars
+  repo: kaze
+  releaseType: release

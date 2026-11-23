@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaze 風</title>
+<meta name="description" content="Kaze, le navigateur Windows rapide et élégant : extensions Chrome, Netflix et Spotify, VPN intégré, bloqueur de pubs, mode responsive et éditeur de code. Navigue comme le vent.">
+<meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Kaze 風 — Navigue comme le vent">
+<meta property="og:description" content="Un navigateur Windows rapide et élégant, pour les développeurs et les créateurs.">
+<meta property="og:image" content="https://kobestars.github.io/kaze/images/kaze-accueil.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="images/kanji-encre.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" href="images/kanji-washi.png" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Shippori+Mincho:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+  /* Mise en page « rouleau » : une colonne étroite de légendes verticales en kanji,
+     le contenu à droite, et les vraies captures de Kaze en grand. */
+  :root {
+    --paper: #f5f2eb;
+    --paper-2: #ebe6da;
+    --ink: #111111;
+    --ink-soft: #3d3b37;
+    --muted: #716d64;
+    --line: rgba(17, 17, 17, 0.13);
+    --seal: #d7372a;
+    --seal-text: #b42b20;
+    --on-seal: #ffffff;
+    --shot-shadow: 0 30px 70px rgba(40, 28, 10, 0.22), 0 4px 14px rgba(40, 28, 10, 0.1);
+    --logo-light: block;
+    --logo-dark: none;
+
+    --font-display: 'Shippori Mincho', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+    --rail: 72px;
+    --measure: 1120px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #111111;
+      --paper-2: #19191b;
+      --ink: #f5f2eb;
+      --ink-soft: #d3cfc6;
+      --muted: #8f939a;
+      --line: rgba(245, 242, 235, 0.12);
+      --seal: #d7372a;
+      --seal-text: #ff6b5c;
+      --on-seal: #ffffff;
+      --shot-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.4);
+      --logo-light: none;
+      --logo-dark: block;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #111111;
+    --paper-2: #19191b;
+    --ink: #f5f2eb;
+    --ink-soft: #d3cfc6;
+    --muted: #8f939a;
+    --line: rgba(245, 242, 235, 0.12);
+    --seal: #d7372a;
+    --seal-text: #ff6b5c;
+    --on-seal: #ffffff;
+    --shot-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.4);
+    --logo-light: none;
+    --logo-dark: block;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Bande au-dessus de l'en-tête collant (encoche des téléphones). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 10;
+    background: var(--paper);
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* ───── En-tête ───── */
+  .top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 9;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; gap: 24px; padding-block: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+  .brand .logo-light, .brand .logo-dark { width: 30px; height: 30px; object-fit: contain; }
+  .logo-light { display: var(--logo-light); }
+  .logo-dark { display: var(--logo-dark); }
+  .top nav { display: flex; gap: 22px; margin-left: auto; font-size: 14px; }
+  .top nav a { text-decoration: none; color: var(--ink-soft); }
+  .top nav a:hover { color: var(--seal-text); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--seal);
+    color: var(--on-seal);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: transform 0.18s, background 0.18s;
+  }
+  .btn:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--seal) 86%, #000); }
+  .btn--small { padding: 8px 16px; font-size: 14px; }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+  .ghost { color: var(--ink-soft); font-size: 15px; text-underline-offset: 4px; }
+
+  /* ───── Ouverture ───── */
+  .hero { padding-block: 64px 40px; }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 48px; align-items: center; }
+  .hero-kanji .logo-light, .hero-kanji .logo-dark { width: min(100%, 440px); aspect-ratio: 1; object-fit: contain; margin: 0 auto; }
+  .eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; color: var(--seal-text); margin: 0 0 18px; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 800; text-wrap: balance; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(44px, 6.4vw, 84px); line-height: 1.02; margin: 0 0 22px; }
+  .lede { font-size: clamp(18px, 2vw, 21px); color: var(--ink-soft); max-width: 34ch; margin: 0 0 32px; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 26px; }
+  .meta { margin: 22px 0 0; font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* ───── Captures ───── */
+  .shot {
+    margin: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shot-shadow);
+    border: 1px solid var(--line);
+    background: #111;
+  }
+  .shot img { width: 100%; height: auto; }
+  figure.with-caption { margin: 0; }
+  figcaption { margin-top: 14px; font-size: 14px; color: var(--muted); }
+  .hero-shot { padding-block: 8px 72px; }
+
+  /* ───── Sections avec légende verticale ───── */
+  .scroll { padding-block: 72px; border-top: 1px solid var(--line); }
+  .scroll .wrap { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: 32px; }
+  .rail {
+    writing-mode: vertical-rl;
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--seal-text);
+    align-self: start;
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 88px);
+  }
+  .rail small { font-family: var(--font-body); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); font-weight: 500; margin-top: 14px; }
+  h2 { font-size: clamp(32px, 4vw, 48px); line-height: 1.1; margin: 0 0 14px; }
+  .intro { color: var(--ink-soft); max-width: 62ch; margin: 0 0 40px; font-size: 18px; }
+
+  /* Fonctions signature : deux en grand avec capture, les autres en liste */
+  .feature { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 40px; align-items: center; margin-bottom: 64px; }
+  .feature.reverse { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+  .feature.reverse .feature-text { order: 2; }
+  .feature-text h3 { font-size: 30px; margin: 0 0 10px; display: flex; align-items: baseline; gap: 14px; }
+  .feature-text h3 .k { font-size: 44px; color: var(--seal-text); line-height: 1; }
+  .feature-text p { color: var(--ink-soft); margin: 0 0 14px; }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    background: var(--paper-2);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .winds { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+  .wind { padding: 26px 24px 26px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; }
+  .wind .k { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; color: var(--ink); }
+  .wind h3 { font-size: 20px; margin: 2px 0 6px; }
+  .wind p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  /* Studio */
+  .checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 32px; }
+  .checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; color: var(--ink-soft); font-size: 15px; }
+  .checks li::before { content: "筆"; font-family: var(--font-display); color: var(--seal-text); font-weight: 700; }
+
+  /* Personnalisation : les six palettes réelles de Kaze */
+  .perso-title { font-size: 26px; margin: 64px 0 6px; }
+  .perso-intro { margin: 0 0 20px; color: var(--ink-soft); }
+  .winds.perso { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+  /* Templates : mini fenêtres aux couleurs et aux arrondis de chaque style (comme dans Kaze) */
+  .tpls { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 22px 18px; margin: 0 0 8px; }
+  .tpl { margin: 0; }
+  .tpl__win { display: flex; height: 120px; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg); box-shadow: 0 10px 24px rgba(40, 28, 10, 0.1); transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .tpl:hover .tpl__win { transform: translateY(-3px); }
+  .tpl__win i, .tpl__win b { display: block; }
+  .tpl__side { width: 28%; display: flex; flex-direction: column; gap: 5px; padding: 10px 6px; background: var(--chrome); }
+  .tpl__side i { height: 11px; border-radius: var(--s); background: var(--surface); }
+  .tpl__side i.on { background: var(--tab); box-shadow: inset 3px 0 0 var(--accent); }
+  .tpl__main { flex: 1; display: flex; flex-direction: column; gap: 7px; padding: 10px; }
+  .tpl__bar { height: 12px; border: 1px solid var(--border); border-radius: var(--s); background: var(--address); }
+  .tpl__page { position: relative; flex: 1; display: flex; flex-direction: column; gap: 5px; padding: 9px; border: 1px solid var(--border); border-radius: var(--s); background: var(--surface); }
+  .tpl__page b { position: absolute; right: 9px; top: 5px; font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1; color: var(--text); }
+  .tpl__page .l { width: 56%; height: 5px; border-radius: 3px; background: var(--text); }
+  .tpl__page .l.s { width: 34%; background: var(--muted); }
+  .tpl__page .cta { width: 36%; height: 12px; margin-top: auto; border-radius: var(--s); background: var(--accent); }
+  .tpl figcaption { margin-top: 10px; font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+  .tpl figcaption strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 17px; }
+  /* Téléphone : deux par ligne, plus compact */
+  @media (max-width: 640px) {
+    .tpls { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
+    .tpl__win { height: 92px; }
+    .tpl__page b { font-size: 22px; }
+    .tpl figcaption { font-size: 12.5px; }
+    .tpl figcaption strong { font-size: 15px; }
+  }
+  .palettes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; margin: 40px 0 0; }
+  .palette { margin: 0; }
+  .palette .mini { display: flex; height: 92px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+  .palette .side { width: 30%; display: flex; flex-direction: column; gap: 5px; padding: 9px 6px; }
+  .palette .side span { height: 9px; border-radius: 3px; }
+  .palette .main { flex: 1; display: flex; flex-direction: column; gap: 7px; padding: 9px; }
+  .palette .bar { height: 11px; border-radius: 4px; }
+  .palette .txt { height: 5px; border-radius: 3px; width: 78%; }
+  .palette .txt.short { width: 48%; }
+  .palette .acc { margin-top: auto; width: 36%; height: 11px; border-radius: 4px; }
+  .palette figcaption { margin-top: 8px; font-size: 14px; color: var(--ink); font-weight: 500; }
+  .palette figcaption span { color: var(--muted); font-weight: 400; }
+
+  /* Raccourcis */
+  .keys-table { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 15px; }
+  td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  td:first-child { width: 40%; }
+  td:last-child { color: var(--ink-soft); }
+
+  /* Vie privée */
+  /* Quatre colonnes sur ordinateur (2 x 2 ou 1 colonne sur les petits écrans) */
+  .trust { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 28px 32px; margin-top: 28px; }
+  .trust h3 { font-size: 20px; margin: 0 0 6px; }
+  .trust p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  /* Téléchargement */
+  .download { padding-block: 96px; border-top: 1px solid var(--line); background: var(--paper-2); text-align: center; }
+  .download .big-k { font-family: var(--font-display); font-weight: 800; font-size: clamp(90px, 14vw, 160px); line-height: 1; margin: 0; color: var(--ink); }
+  .download h2 { margin: 12px 0 10px; }
+  .download p { color: var(--ink-soft); margin: 0 auto 30px; max-width: 54ch; }
+  .reqs { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; margin: 28px 0 0; padding: 0; list-style: none; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+  .note { font-size: 14px; color: var(--muted); max-width: 60ch; margin: 22px auto 0; }
+
+  /* Aide SmartScreen : les deux clics pour passer l'écran bleu de Windows */
+  .smartscreen { max-width: 760px; margin: 44px auto 0; padding: 28px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-align: left; }
+  .smartscreen h3 { margin: 0 0 6px; font-size: 22px; }
+  .smartscreen > p { margin: 0 0 22px; max-width: none; font-size: 15px; }
+  .ss-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
+  .ss-steps li { display: flex; flex-direction: column; gap: 12px; }
+  .ss-steps .label { display: flex; gap: 10px; align-items: baseline; font-size: 15px; color: var(--ink); }
+  .ss-steps .num { flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--seal); color: var(--on-seal); font-family: var(--font-mono); font-size: 13px; font-weight: 600; }
+  /* Fenêtre schématique (pas une capture) : fond bleu SmartScreen, élément à cliquer cerclé de vermillon */
+  .ss-win { display: flex; flex-direction: column; gap: 8px; min-height: 150px; padding: 16px 18px; border-radius: 8px; background: #0f4c81; color: #ffffff; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; line-height: 1.4; }
+  .ss-win strong { font-size: 16px; font-weight: 600; }
+  .ss-win .faint { color: rgba(255, 255, 255, 0.78); }
+  .ss-win .link { align-self: flex-start; text-decoration: underline; }
+  .ss-win .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: auto; }
+  .ss-win .wbtn { padding: 5px 14px; border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 3px; }
+  .ss-win .target { outline: 3px solid var(--seal); outline-offset: 3px; border-radius: 3px; }
+  @media (max-width: 640px) {
+    .smartscreen { padding: 20px 16px; }
+    .ss-steps { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  footer { padding-block: 32px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
+
+  /* ───── Embellissements ───── */
+  /* Halo vermillon derrière le kanji de l'ouverture */
+  .hero-kanji { position: relative; }
+  .hero-kanji::before {
+    content: "";
+    position: absolute;
+    inset: 8% 10%;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--seal) 20%, transparent), transparent 68%);
+    filter: blur(10px);
+    z-index: -1;
+  }
+  .hero { position: relative; isolation: isolate; overflow: hidden; }
+  /* Trait de pinceau sous « le vent », tracé à l'arrivée */
+  .brush { position: relative; white-space: nowrap; }
+  .brush svg { position: absolute; left: -2%; bottom: -0.12em; width: 104%; height: 0.32em; overflow: visible; pointer-events: none; }
+  .brush path { fill: none; stroke: var(--seal); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 520; stroke-dashoffset: 520; animation: trace 1.1s 0.35s cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+  @keyframes trace { to { stroke-dashoffset: 0; } }
+
+  /* Les atouts phares, sous le bouton de téléchargement */
+  /* Deux par ligne : 2 + 2, plutôt que 3 + 1 */
+  .highlights { display: grid; grid-template-columns: repeat(2, max-content); gap: 10px; margin: 26px 0 0; padding: 0; list-style: none; }
+  .highlights li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; color: var(--ink-soft); background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+  .highlights .k { font-family: var(--font-display); font-weight: 800; font-size: 17px; line-height: 1; color: var(--seal-text); }
+
+  /* Captures : légère élévation au survol */
+  .shot { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s; }
+  .feature .shot:hover, .hero-shot .shot:hover { transform: translateY(-4px); }
+
+  /* Fonctions en cartes qui réagissent au survol */
+  .winds { gap: 14px; border-top: 0; }
+  .wind { padding: 24px 22px; border: 1px solid var(--line); border-radius: 14px; transition: background 0.25s, border-color 0.25s; }
+  .wind:hover { border-color: color-mix(in srgb, var(--seal) 45%, transparent); }
+  /* Carte seule sur la dernière ligne (grille de 3) : elle prend toute la largeur */
+  @media (min-width: 1100px) { .wind:last-child:nth-child(3n + 1) { grid-column: 1 / -1; } }
+  .wind:hover { background: var(--paper-2); }
+  .wind .k { transition: color 0.25s, transform 0.25s; }
+  .wind:hover .k { color: var(--seal-text); transform: translateY(-2px); }
+  .feature-text .tag { display: inline-block; margin: 0 0 12px; padding: 3px 10px; border-radius: 999px; background: var(--seal); color: var(--on-seal); font: 600 12px/1.6 var(--font-body); letter-spacing: 0.02em; }
+
+  /* Bandeau final à l'encre, avec une lueur vermillon */
+  .download {
+    --paper: #151517; --paper-2: #1d1d20; --ink: #f5f2eb; --ink-soft: #d3cfc6; --muted: #9a9ea5; --line: rgba(245, 242, 235, 0.14); --seal-text: #ff6b5c;
+    color: var(--ink);
+    background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(215, 55, 42, 0.28), transparent 70%), #0e0e0f;
+    border-top: 0;
+  }
+  .download .big-k { text-shadow: 0 0 60px rgba(215, 55, 42, 0.45); }
+
+  /* Apparition douce au défilement (seulement si JavaScript tourne) */
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .js .reveal.is-in { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) {
+    .top nav { display: none; }
+    .hero .wrap, .feature, .feature.reverse { grid-template-columns: minmax(0, 1fr); }
+    .feature.reverse .feature-text { order: 0; }
+    .hero-kanji .logo-light, .hero-kanji .logo-dark { width: min(70%, 300px); }
+    .scroll .wrap { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .rail { writing-mode: horizontal-tb; position: static; font-size: 22px; letter-spacing: 0.2em; }
+    .rail small { margin: 0 0 0 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn, .shot, .wind, .wind .k, .tpl__win { transition: none; }
+    .brush path { animation: none; stroke-dashoffset: 0; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#haut" aria-label="Kaze, retour en haut">
+      <img class="logo-light" src="images/kanji-encre.png" alt="">
+      <img class="logo-dark" src="images/kanji-washi.png" alt="">
+      Kaze
+    </a>
+    <nav aria-label="Sections">
+      <a href="#fonctions">Fonctions</a>
+      <a href="#studio">Kaze Studio</a>
+      <a href="#apparence">Apparence</a>
+      <a href="#raccourcis">Raccourcis</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/KobeStars/kaze/releases/latest" data-download>Télécharger</a>
+  </div>
+</header>
+
+<main id="haut">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-kanji">
+        <img class="logo-light" src="images/kanji-encre-sceau.png" alt="Le kanji 風 calligraphié à l’encre, avec un sceau vermillon">
+        <img class="logo-dark" src="images/kanji-washi-sceau.png" alt="Le kanji 風 calligraphié, avec un sceau vermillon">
+      </div>
+      <div>
+        <p class="eyebrow">風 KAZE · « VENT » EN JAPONAIS</p>
+        <h1>Navigue comme <span class="brush">le vent<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 13 C 60 6, 120 4, 180 8 S 270 14, 296 7"/></svg></span></h1>
+        <p class="lede"><strong>Rapide. Élégant. Gratuit.</strong> Un navigateur pour Windows pensé pour les développeurs et les créateurs : beau, minimaliste, et fait pour travailler vite au clavier.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://github.com/KobeStars/kaze/releases/latest" data-download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
+            Télécharger pour Windows
+          </a>
+          <a class="ghost" href="#fonctions">Voir les fonctions</a>
+        </div>
+        <p class="meta">Version <span data-version>0.2.7</span> · Windows 10 et 11, 64 bits · <span data-size>134 Mo</span> · mises à jour automatiques</p>
+        <ul class="highlights" aria-label="Les atouts de Kaze">
+          <li><span class="k" aria-hidden="true">霧</span>VPN intégré</li>
+          <li><span class="k" aria-hidden="true">盾</span>Bloqueur de pubs</li>
+          <li><span class="k" aria-hidden="true">端</span>Mode responsive</li>
+          <li><span class="k" aria-hidden="true">筆</span>Éditeur de code</li>
+          <li><span class="k" aria-hidden="true">拡</span>Extensions Chrome</li>
+          <li><span class="k" aria-hidden="true">映</span>Netflix et Spotify</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="hero-shot">
+    <div class="wrap">
+      <figure class="with-caption reveal">
+        <div class="shot"><img src="images/kaze-accueil.jpg" alt="Kaze avec ses onglets verticaux et sa page d’accueil : bambous dans la nuit, lune, horloge, barre de recherche et raccourcis" width="1702" height="1020"></div>
+        <figcaption>La page d’accueil : un paysage de bambous qui ploient au vent, l’horloge, la recherche et vos sites favoris.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <section class="scroll" id="fonctions" aria-labelledby="t-fonctions">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">機能<small>FONCTIONS</small></p>
+      <div>
+        <h2 id="t-fonctions">Des fonctions qui portent le nom du vent</h2>
+        <p class="intro">Tout ce qu’on attend d’un navigateur, plus des outils pensés pour rester concentré et aller vite.</p>
+
+        <div class="feature reveal">
+          <div class="feature-text">
+            <h3><span class="k" aria-hidden="true">息</span>Souffle</h3>
+            <p>La palette de commandes. Ouvrir un site, retrouver un onglet, chercher dans l’historique ou les favoris, changer de thème ou lancer une Tempête : tout se fait au clavier.</p>
+            <p><kbd>Ctrl</kbd> + <kbd>K</kbd></p>
+          </div>
+          <div class="shot"><img src="images/kaze-souffle.jpg" alt="La palette Souffle ouverte par-dessus une page Wikipédia, avec la liste des actions" width="1702" height="1020" loading="lazy"></div>
+        </div>
+
+        <div class="feature reverse reveal">
+          <div class="feature-text">
+            <h3><span class="k" aria-hidden="true">双</span>Split view</h3>
+            <p>Deux sites côte à côte dans la même fenêtre, avec une séparation réglable. Pratique pour coder avec la documentation sous les yeux.</p>
+            <p><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd></p>
+          </div>
+          <div class="shot"><img src="images/kaze-split.jpg" alt="Kaze en split view : Wikipédia à gauche, la documentation MDN à droite" width="1702" height="1020" loading="lazy"></div>
+        </div>
+
+        <div class="feature reveal" id="responsive">
+          <div class="feature-text">
+            <span class="tag">Nouveau</span>
+            <h3><span class="k" aria-hidden="true">端</span>Mode responsive</h3>
+            <p>Votre site sur un téléphone, une tablette et un ordinateur en même temps, côte à côte. Faites défiler, cliquez ou tapez sur l’un : les autres suivent.</p>
+            <p>Huit appareils au choix (iPhone, Pixel, Galaxy, iPad, portable, écran Full HD), en portrait ou en paysage, avec l’agent et le tactile du vrai appareil.</p>
+            <p><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>M</kbd></p>
+          </div>
+          <div class="shot"><img src="images/kaze-responsive.jpg" alt="Le mode responsive de Kaze : un article Wikipédia affiché en même temps sur un iPhone 15, un iPad Air et un ordinateur portable" width="1324" height="700" loading="lazy"></div>
+        </div>
+
+        <div class="winds reveal">
+          <div class="wind">
+            <span class="k" aria-hidden="true">流</span>
+            <div>
+              <h3>Courants</h3>
+              <p>Des espaces de travail avec leurs propres onglets, un nom, une couleur et une icône. Travail, projets, loisirs : chacun son courant.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">盾</span>
+            <div>
+              <h3>Bouclier de vent</h3>
+              <p>Bloqueur de publicités et de traqueurs intégré, basé sur les listes EasyList et EasyPrivacy, avec un compteur par page. Désactivable site par site.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">微</span>
+            <div>
+              <h3>Brise</h3>
+              <p>Les onglets inactifs sont mis en veille pour libérer la mémoire, puis rechargés dès que vous y revenez. Ceux qui jouent du son restent éveillés.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">嵐</span>
+            <div>
+              <h3>Tempête</h3>
+              <p>Le mode focus : les sites qui vous dispersent sont bloqués pendant 15, 25, 50 ou 90 minutes. Même un redémarrage n’y échappe pas.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">側</span>
+            <div>
+              <h3>Panneau latéral</h3>
+              <p>Épinglez vos web apps à droite (Discord, Claude, Notion…) et gardez-les ouvertes pendant que vous naviguez.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">霧</span>
+            <div>
+              <h3>Brume</h3>
+              <p>Le VPN intégré, gratuit et sans compte : vos onglets passent par le réseau Tor, avec le pays de sortie au choix. Si Tor décroche, rien ne repart avec votre vraie adresse.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">縦</span>
+            <div>
+              <h3>Onglets verticaux</h3>
+              <p>Une barre latérale repliable, ou des onglets en haut, en bas, à gauche ou à droite. Glisser-déposer, clic molette pour fermer.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">拡</span>
+            <div>
+              <h3>Extensions Chrome</h3>
+              <p>Collez le lien d’une extension du Chrome Web Store : Kaze l’installe, avec son bouton et sa fenêtre dans la barre d’outils. Dark Reader, outils de développement React…</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">映</span>
+            <div>
+              <h3>Netflix et Spotify</h3>
+              <p>Les vidéos et la musique protégées se lisent comme dans Chrome. Et « Ouvrir avec Kaze » sur un fichier .html de votre PC l’ouvre directement dedans.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" id="studio" aria-labelledby="t-studio">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">筆<small>KAZE STUDIO</small></p>
+      <div>
+        <h2 id="t-studio">Un éditeur de code dans le navigateur</h2>
+        <p class="intro">Kaze Studio ouvre un dossier ou un fichier local et affiche le site à côté du code, mis à jour pendant que vous tapez. <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd> pour l’ouvrir.</p>
+        <div class="shot reveal"><img src="images/kaze-studio.jpg" alt="Kaze Studio : l’arborescence des fichiers, index.html ouvert dans l’éditeur et l’aperçu du site à droite, avec la console en dessous" width="1702" height="1020" loading="lazy"></div>
+        <ul class="checks">
+          <li>Le moteur de VS Code (Monaco) : coloration, autocomplétion, Emmet, multi-curseurs</li>
+          <li>Aperçu en direct, et CSS rechargé à chaud sans recharger la page</li>
+          <li>Modes mobile, tablette, bureau ou taille perso, avec rotation</li>
+          <li>Console intégrée : les erreurs cliquables renvoient à la bonne ligne</li>
+          <li>Mini serveur local : chemins relatifs, fetch et modules ES fonctionnent</li>
+          <li>« Ouvrir dans Kaze Studio » copie une page web pour l’expérimenter en local</li>
+          <li>Formatage Prettier, snippets intégrés et snippets perso</li>
+          <li>Export du projet en .zip</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" id="apparence" aria-labelledby="t-apparence">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">彩<small>APPARENCE</small></p>
+      <div>
+        <h2 id="t-apparence">À votre image, jusqu’au curseur</h2>
+        <p class="intro">Six thèmes prêts à l’emploi, un créateur de thème avec pipette, vos polices (y compris Google Fonts, téléchargées en local), la densité, le flou, les animations et la page d’accueil avec ses widgets déplaçables. Le tout s’exporte en un fichier .kazetheme.</p>
+        <figure class="with-caption">
+          <div class="shot"><img src="images/kaze-sakura.jpg" alt="Kaze avec le thème Sakura rose pâle et les onglets placés en haut de la fenêtre" width="1702" height="1020" loading="lazy"></div>
+          <figcaption>Thème Sakura, onglets en haut.</figcaption>
+        </figure>
+
+        <div class="palettes" role="list" aria-label="Les six thèmes de Kaze">
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#111111;border-color:#26272B">
+              <div class="side" style="background:#141416"><span style="background:#212226"></span><span style="background:#1A1B1E"></span></div>
+              <div class="main"><span class="bar" style="background:#1A1B1E"></span><span class="txt" style="background:#F5F2EB"></span><span class="txt short" style="background:#8B9097"></span><span class="acc" style="background:#D7372A"></span></div>
+            </div>
+            <figcaption>Encre <span>· sombre</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#F5F2EB;border-color:#DEDAD1">
+              <div class="side" style="background:#EFEBE2"><span style="background:#FFFFFF"></span><span style="background:#FBF9F4"></span></div>
+              <div class="main"><span class="bar" style="background:#FBF9F4"></span><span class="txt" style="background:#111111"></span><span class="txt short" style="background:#6B7078"></span><span class="acc" style="background:#D7372A"></span></div>
+            </div>
+            <figcaption>Washi <span>· clair</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#FBF2F4;border-color:#EBD5DC">
+              <div class="side" style="background:#F6E7EB"><span style="background:#FFFFFF"></span><span style="background:#FFF8FA"></span></div>
+              <div class="main"><span class="bar" style="background:#FFF8FA"></span><span class="txt" style="background:#3A2A30"></span><span class="txt short" style="background:#8E7480"></span><span class="acc" style="background:#D45D79"></span></div>
+            </div>
+            <figcaption>Sakura <span>· clair</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#0D0E1A;border-color:#25275A">
+              <div class="side" style="background:#10112A"><span style="background:#1E2046"></span><span style="background:#171936"></span></div>
+              <div class="main"><span class="bar" style="background:#171936"></span><span class="txt" style="background:#E8E6FF"></span><span class="txt short" style="background:#8A88B8"></span><span class="acc" style="background:#FF3D7F"></span></div>
+            </div>
+            <figcaption>Nuit de Tokyo <span>· sombre</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#0F150E;border-color:#263425">
+              <div class="side" style="background:#131B12"><span style="background:#212E20"></span><span style="background:#1A2419"></span></div>
+              <div class="main"><span class="bar" style="background:#1A2419"></span><span class="txt" style="background:#E9F0E2"></span><span class="txt short" style="background:#8FA48A"></span><span class="acc" style="background:#8DBF4E"></span></div>
+            </div>
+            <figcaption>Bambou <span>· sombre</span></figcaption>
+          </figure>
+          <figure class="palette" role="listitem">
+            <div class="mini" style="background:#15181C;border-color:#2C333B">
+              <div class="side" style="background:#1A1E23"><span style="background:#283039"></span><span style="background:#21262C"></span></div>
+              <div class="main"><span class="bar" style="background:#21262C"></span><span class="txt" style="background:#E6EAEE"></span><span class="txt short" style="background:#8A939C"></span><span class="acc" style="background:#6C9BD2"></span></div>
+            </div>
+            <figcaption>Acier <span>· sombre</span></figcaption>
+          </figure>
+        </div>
+
+        <h3 class="perso-title" id="templates">14 templates, un clic chacun</h3>
+        <p class="perso-intro">Paramètres → Templates : chaque style change d’un coup les couleurs, les formes, le flou, les polices et ajoute son propre CSS, que vous pouvez retoucher. Un bouton remet votre style d’avant.</p>
+        <div class="tpls" role="list" aria-label="Les templates de style de Kaze">
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#F4EFE4;--chrome:#EDE6D6;--tab:#FFFDF8;--surface:#FBF8F1;--text:#16130F;--muted:#6E665A;--border:#DDD3C0;--accent:#C8321F;--address:#FBF8F1;--r:6px;--s:3px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>墨</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Sumi-e</strong> Encre noire sur papier washi, un trait de pinceau vermillon.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#0B0B1A;--chrome:#0E0E22;--tab:#1B1A3A;--surface:#15152E;--text:#EDEBFF;--muted:#8A87B8;--border:#2A2850;--accent:#FF2E88;--address:#121229;--r:12px;--s:6px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>夜</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Néon Tokyo</strong> Nuit bleu nuit, néons magenta et cyan qui brillent.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#050805;--chrome:#070B07;--tab:#0F1A0F;--surface:#0C120C;--text:#C8F7C5;--muted:#5E8A5B;--border:#1B2A1B;--accent:#39FF6A;--address:#0A100A;--r:4px;--s:0px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>端</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Terminal</strong> Phosphore vert sur noir, tout en police à chasse fixe, angles droits.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#EEF2F8;--chrome:#E6ECF5;--tab:#FFFFFF;--surface:#FFFFFF;--text:#0F172A;--muted:#64748B;--border:#D6DEEA;--accent:#3B82F6;--address:#F7F9FC;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>雲</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Verre givré</strong> Clair et translucide, grands arrondis, flou profond.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#FFFDF5;--chrome:#FFFDF5;--tab:#FFFFFF;--surface:#FFFFFF;--text:#0A0A0A;--muted:#4A4A4A;--border:#0A0A0A;--accent:#FFD60A;--address:#FFFFFF;--r:4px;--s:0px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>角</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Brutaliste</strong> Blanc, bordures noires épaisses, jaune vif et ombres franches.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#121A14;--chrome:#0F1611;--tab:#1D2A1F;--surface:#18221A;--text:#E7EFE3;--muted:#8FA38E;--border:#263427;--accent:#8FBF6A;--address:#162018;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>森</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Forêt</strong> Vert sous-bois, calme et aéré, titres en italique.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#F6EEE3;--chrome:#EFE3D2;--tab:#FFF9F1;--surface:#FCF7F0;--text:#2B1D12;--muted:#8A7360;--border:#E2D2BD;--accent:#C2410C;--address:#FBF4EA;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>砂</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Dune</strong> Sable chaud et terre cuite, tout en courbes.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#ECE9D8;--chrome:#D6DFF7;--tab:#FFFFFF;--surface:#FFFFFF;--text:#000000;--muted:#555555;--border:#7F9DB9;--accent:#316AC5;--address:#FFFFFF;--r:4px;--s:2px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>窓</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Rétro XP</strong> Hommage aux bureaux des années 2000 : barre bleue en dégradé, boutons bombés, bouton vert.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#0D0D0D;--chrome:#101010;--tab:#1F1F1F;--surface:#171717;--text:#F2F2F2;--muted:#8C8C8C;--border:#262626;--accent:#F2F2F2;--address:#141414;--r:8px;--s:4px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>白</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Monochrome</strong> Noir et blanc, sans couleur, dense et sobre.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#C0C0C0;--chrome:#C0C0C0;--tab:#C0C0C0;--surface:#FFFFFF;--text:#000000;--muted:#404040;--border:#808080;--accent:#000080;--address:#FFFFFF;--r:4px;--s:0px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>灰</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Classique 98</strong> Gris, reliefs en 3D, barre bleu marine : les fenêtres de la fin des années 90.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#1A0B2E;--chrome:#12062A;--tab:#2E1652;--surface:#241040;--text:#FBE9FF;--muted:#A88BC7;--border:#3D1F66;--accent:#FF6AD5;--address:#1E0D38;--r:10px;--s:5px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>夕</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Synthwave</strong> Coucher de soleil rétro : violet, rose et orange, titres en majuscules.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#FBF7EC;--chrome:#F3EBD6;--tab:#FFF3A8;--surface:#FFFDF6;--text:#1F2A44;--muted:#6B7280;--border:#E3D8BC;--accent:#2F5BEA;--address:#FFFDF6;--r:4px;--s:2px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>帳</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Carnet</strong> Cahier à lignes et marge rouge, onglet actif en post-it, titres manuscrits.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#FFF1F7;--chrome:#FCE7F3;--tab:#FFFFFF;--surface:#FFFFFF;--text:#4A2040;--muted:#9D6B8F;--border:#F6CFE3;--accent:#F472B6;--address:#FFFFFF;--r:14px;--s:7px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>桜</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Pastel</strong> Rose et lilas tout doux, pilules et ombres légères.</figcaption>
+          </figure>
+          <figure class="tpl" role="listitem">
+            <div class="tpl__win" style="--bg:#000000;--chrome:#000000;--tab:#000000;--surface:#0A0A0A;--text:#FFFFFF;--muted:#E0E0E0;--border:#FFFFFF;--accent:#FFE600;--address:#000000;--r:4px;--s:2px" aria-hidden="true">
+              <span class="tpl__side"><i class="on"></i><i></i><i></i></span>
+              <span class="tpl__main"><i class="tpl__bar"></i><span class="tpl__page"><b>明</b><i class="l"></i><i class="l s"></i><i class="cta"></i></span></span>
+            </div>
+            <figcaption><strong>Haut contraste</strong> Noir, blanc et jaune, gros contours : le plus lisible, animations réduites.</figcaption>
+          </figure>
+        </div>
+
+        <h3 class="perso-title">Tout ce qui se règle</h3>
+        <p class="perso-intro">Paramètres → Apparence, avec un aperçu en direct. Chaque partie se remet à zéro séparément.</p>
+        <div class="winds perso">
+          <div class="wind">
+            <span class="k" aria-hidden="true">色</span>
+            <div>
+              <h3>Thèmes</h3>
+              <p>Six thèmes, ou le vôtre : neuf couleurs à choisir, pipette comprise. Thème fixe, clair le jour et sombre la nuit aux heures que vous voulez, ou calé sur Windows. Une couleur d’accent par Courant, si vous le souhaitez.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">字</span>
+            <div>
+              <h3>Polices</h3>
+              <p>Une police pour l’interface, une pour les titres, une pour le code : taille, graisse, interligne, espacement, ligatures. Importez vos fichiers ou n’importe quelle Google Font, gardée sur votre PC.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">形</span>
+            <div>
+              <h3>Disposition</h3>
+              <p>Onglets à gauche, à droite, en haut ou en bas. Densité compacte, normale ou aérée, arrondis, flou et transparence de la fenêtre, ombres, barre d’adresse centrée ou classique.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">具</span>
+            <div>
+              <h3>Barre d’outils</h3>
+              <p>Choisissez les boutons affichés et leur ordre par glisser-déposer. Icônes au trait, pleines ou façon pinceau, de la taille qui vous convient.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">庭</span>
+            <div>
+              <h3>Page d’accueil</h3>
+              <p>Paysage animé, galerie de 20 fonds originaux (Fuji, aurore, koïs, synthwave…), image du jour, image, vidéo, couleur ou dégradé. Widgets à placer où vous voulez : horloge, météo, raccourcis, notes, citation, tâches. Quatre styles de barre de recherche.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">動</span>
+            <div>
+              <h3>Animations</h3>
+              <p>Trait d’encre, feuilles qui volent, écran de démarrage, indicateur de chargement : chacune s’active à part, avec une vitesse réglable et un mode mouvements réduits.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">音</span>
+            <div>
+              <h3>Sons et curseur</h3>
+              <p>Quatre ambiances sonores discrètes (bambou, cloche, goutte, minimal) avec leur volume. Curseur pinceau, point, celui de Windows ou le vôtre.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">技</span>
+            <div>
+              <h3>CSS et JS par site</h3>
+              <p>Des règles pour retoucher les sites que vous visitez (mode sombre maison, éléments masqués…) et une feuille de style pour l’interface de Kaze elle-même.</p>
+            </div>
+          </div>
+          <div class="wind">
+            <span class="k" aria-hidden="true">渡</span>
+            <div>
+              <h3>Partage</h3>
+              <p>Votre réglage complet tient dans un fichier .kazetheme : exportez-le, envoyez-le, importez celui d’un ami en un clic.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" id="raccourcis" aria-labelledby="t-raccourcis">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">鍵<small>RACCOURCIS</small></p>
+      <div>
+        <h2 id="t-raccourcis">Les mains restent sur le clavier</h2>
+        <p class="intro">Les raccourcis habituels de Chrome, plus ceux de Kaze. Tous modifiables dans les paramètres.</p>
+        <div class="keys-table">
+          <table>
+            <tbody>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>K</kbd></td><td>Souffle, la palette de commandes</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>T</kbd> · <kbd>Ctrl</kbd> + <kbd>W</kbd></td><td>Nouvel onglet · fermer l’onglet</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>T</kbd></td><td>Rouvrir le dernier onglet fermé</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>1</kbd> … <kbd>9</kbd></td><td>Aller directement à un onglet</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td><td>Barre d’adresse : une adresse ou une recherche</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd></td><td>Split view</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>M</kbd></td><td>Mode responsive : mobile, tablette et ordinateur</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>E</kbd></td><td>Kaze Studio</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>D</kbd> · <kbd>Ctrl</kbd> + <kbd>H</kbd></td><td>Ajouter aux favoris · historique</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>B</kbd></td><td>Replier la barre latérale</td></tr>
+              <tr><td><kbd>F12</kbd></td><td>Outils de développement</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scroll" aria-labelledby="t-confiance">
+    <div class="wrap">
+      <p class="rail" aria-hidden="true">守<small>VIE PRIVÉE</small></p>
+      <div>
+        <h2 id="t-confiance">Vos données restent chez vous</h2>
+        <div class="trust">
+          <div>
+            <h3>Rien dans le cloud</h3>
+            <p>Favoris, historique, paramètres et onglets sont enregistrés sur votre PC, dans votre dossier utilisateur.</p>
+          </div>
+          <div>
+            <h3>Pages isolées</h3>
+            <p>Chaque site tourne dans un bac à sable, sans aucun accès à Windows ni à vos fichiers.</p>
+          </div>
+          <div>
+            <h3>Permissions demandées</h3>
+            <p>Caméra, micro, position, notifications : Kaze vous demande pour chaque site et retient votre choix.</p>
+          </div>
+          <div>
+            <h3>Toujours à jour</h3>
+            <p>Les nouvelles versions se téléchargent en arrière-plan et s’installent au redémarrage suivant.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="download" id="telecharger" aria-labelledby="t-telecharger">
+    <div class="wrap">
+      <p class="big-k" aria-hidden="true">風</p>
+      <h2 id="t-telecharger">Le web, sans résistance</h2>
+      <p>Téléchargez l’installateur depuis la page des versions, lancez-le, et Kaze se met ensuite à jour tout seul.</p>
+      <a class="btn" href="https://github.com/KobeStars/kaze/releases/latest" data-download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
+        Télécharger Kaze <span data-version>0.2.7</span>
+      </a>
+      <ul class="reqs">
+        <li>Windows 10 ou 11</li>
+        <li>64 bits</li>
+        <li data-size>134 Mo</li>
+        <li>Gratuit</li>
+      </ul>
+      <aside class="smartscreen" id="smartscreen" aria-labelledby="t-smartscreen">
+        <h3 id="t-smartscreen">Un écran bleu « Windows a protégé votre ordinateur » ?</h3>
+        <p>C’est normal : l’installateur de Kaze n’est pas encore signé par un certificat payant, alors Windows ne le connaît pas. Deux clics suffisent, une seule fois.</p>
+        <ol class="ss-steps">
+          <li>
+            <span class="label"><span class="num">1</span>Cliquez sur « Informations complémentaires »</span>
+            <div class="ss-win" aria-hidden="true">
+              <strong>Windows a protégé votre ordinateur</strong>
+              <span class="faint">Microsoft Defender SmartScreen a empêché le démarrage d’une application non reconnue.</span>
+              <span class="link target">Informations complémentaires</span>
+              <span class="actions"><span class="wbtn">Ne pas exécuter</span></span>
+            </div>
+          </li>
+          <li>
+            <span class="label"><span class="num">2</span>Puis sur « Exécuter quand même »</span>
+            <div class="ss-win" aria-hidden="true">
+              <strong>Windows a protégé votre ordinateur</strong>
+              <span class="faint">Application : Kaze-Setup.exe<br>Éditeur : Éditeur inconnu</span>
+              <span class="actions"><span class="wbtn target">Exécuter quand même</span><span class="wbtn">Ne pas exécuter</span></span>
+            </div>
+          </li>
+        </ol>
+      </aside>
+      <p class="note">Netflix, Spotify et les autres contenus protégés par DRM (Widevine) se lisent dans Kaze depuis la version 0.2.14.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Kaze 風 · Conçu par Kordix Studio</span>
+    <a href="https://github.com/KobeStars/kaze">github.com/KobeStars/kaze</a>
+  </div>
+</footer>
+
+<script>
+  // Dernière version publiée : numéro, taille, et lien direct vers l'installateur.
+  // Si GitHub ne répond pas, la page garde les valeurs écrites ci-dessus.
+  // Apparition douce des blocs quand ils arrivent à l'écran.
+  const reveal = new IntersectionObserver((entries) => {
+    for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-in'); reveal.unobserve(entry.target) }
+  }, { rootMargin: '0px 0px -8% 0px' })
+  document.querySelectorAll('.reveal').forEach((el) => reveal.observe(el))
+
+  fetch('https://api.github.com/repos/KobeStars/kaze/releases/latest')
+    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+    .then((release) => {
+      const exe = (release.assets || []).find((a) => /\.exe$/i.test(a.name));
+      const version = String(release.tag_name || '').replace(/^v/, '');
+      if (version) document.querySelectorAll('[data-version]').forEach((el) => (el.textContent = version));
+      if (exe) {
+        const size = Math.round(exe.size / 1e6) + ' Mo';
+        document.querySelectorAll('[data-size]').forEach((el) => (el.textContent = size));
+        document.querySelectorAll('[data-download]').forEach((el) => (el.href = exe.browser_download_url));
+      }
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>

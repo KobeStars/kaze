@@ -1,0 +1,533 @@
+/* Page d'accueil de Kaze */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  cursor: var(--cursor, auto);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-weight: var(--ui-weight);
+  letter-spacing: var(--ui-spacing);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+.accueil {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ───────────── Fonds ───────────── */
+
+.fond {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+}
+
+.fond--media {
+  object-fit: cover;
+}
+
+.fond__voile {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+}
+
+.fond__credit {
+  position: absolute;
+  left: 16px;
+  bottom: 12px;
+  margin: 0;
+  max-width: 50%;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Sur une photo ou une vidéo, le texte passe en clair avec une ombre. */
+.accueil--image,
+.accueil--video,
+.accueil--jour,
+.accueil--degrade,
+.accueil--galerie {
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.82);
+  --text-muted: rgba(255, 255, 255, 0.82);
+  --text-faint: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  /* Redéclarée ici : le body a déjà calculé sa couleur avec le thème. */
+  color: var(--text);
+}
+
+/* Fond clair de la galerie (cerisiers, dunes, neige…) : texte à l'encre, ombre claire. */
+.accueil--galerie.fond-clair {
+  --text: #16130f;
+  --muted: rgba(22, 19, 15, 0.78);
+  --text-muted: rgba(22, 19, 15, 0.78);
+  --text-faint: rgba(22, 19, 15, 0.55);
+  color: var(--text);
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.45);
+}
+
+/* ───────────── Recherche ───────────── */
+
+.accueil__centre {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(620px, calc(100% - 48px));
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.accueil__kanji {
+  font-family: var(--font-jp);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text);
+  opacity: 0.85;
+  margin-bottom: 12px;
+}
+
+.accueil__logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+.accueil__recherche {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  border-radius: calc(var(--radius, 10px) * 1.6);
+  color: var(--text-faint);
+  text-shadow: none;
+  transition:
+    border-color 180ms,
+    box-shadow 180ms;
+}
+
+.recherche--verre {
+  background: var(--glass);
+  backdrop-filter: blur(var(--blur, 24px)) saturate(150%);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.recherche--plein {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.recherche--contour {
+  background: transparent;
+  border: 1.5px solid var(--text);
+}
+
+.recherche--souligne {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--text);
+  border-radius: 0;
+}
+
+.accueil__recherche:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.accueil__recherche input {
+  flex: 1;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.accueil__recherche input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ───────────── Widgets ───────────── */
+
+.widget {
+  position: absolute;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  animation: arrive calc(700ms / var(--vitesse, 1)) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 10px));
+  }
+}
+
+.widget--edit {
+  cursor: grab;
+  outline: 1.5px dashed var(--accent);
+  outline-offset: 8px;
+  border-radius: 8px;
+}
+
+.widget--edit:active {
+  cursor: grabbing;
+}
+
+.widget--edit .widget__content {
+  pointer-events: none;
+}
+
+.widget__label {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 11px;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.w-card {
+  min-width: 220px;
+  padding: 14px 16px;
+  border-radius: calc(var(--radius, 10px) * 1.4);
+  background: var(--glass);
+  backdrop-filter: blur(var(--blur, 24px)) saturate(150%);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow);
+  text-shadow: none;
+}
+
+.w-card h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-jp);
+  font-size: 14px;
+}
+
+.w-clock {
+  text-align: center;
+}
+
+.w-clock__hello {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.w-clock__time {
+  display: block;
+  font-size: clamp(56px, 10vw, 104px);
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.w-clock__date {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.w-weather {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.w-weather__kanji {
+  font-family: var(--font-jp);
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--accent);
+}
+
+.w-weather__temp {
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.w-weather__label {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.w-weather__more {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.w-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(6, var(--tile));
+  justify-content: center;
+  gap: 10px 8px;
+  --tile: 84px;
+  --icon: 46px;
+}
+
+.w-shortcuts--petit {
+  --tile: 68px;
+  --icon: 36px;
+  grid-template-columns: repeat(8, var(--tile));
+}
+
+.w-shortcuts--grand {
+  --tile: 104px;
+  --icon: 60px;
+  grid-template-columns: repeat(5, var(--tile));
+}
+
+.shortcut-tile {
+  width: var(--tile);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px;
+  border-radius: 14px;
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    background 180ms,
+    transform 180ms;
+}
+
+.shortcut-tile:hover {
+  background: var(--glass);
+  transform: translateY(-2px);
+}
+
+.shortcut-tile__icon {
+  width: var(--icon);
+  height: var(--icon);
+  display: grid;
+  place-items: center;
+  border-radius: 30%;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.shortcut-tile__icon img {
+  width: 48%;
+  height: 48%;
+  object-fit: contain;
+}
+
+.shortcut-tile__label {
+  max-width: 100%;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-muted);
+}
+
+.w-hint {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: 13px;
+  text-align: center;
+}
+
+.w-notes textarea {
+  width: 260px;
+  height: 150px;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  line-height: 1.5;
+}
+
+.w-todo {
+  width: 260px;
+}
+
+.w-todo ul {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.w-todo li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+.w-todo li label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.w-todo li input {
+  accent-color: var(--accent);
+}
+
+.w-todo li.is-done span {
+  text-decoration: line-through;
+  color: var(--text-faint);
+}
+
+.w-todo li button {
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  font-size: 16px;
+}
+
+.w-todo form input {
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  outline: 0;
+}
+
+.w-quote {
+  max-width: 560px;
+  margin: 0;
+  text-align: center;
+}
+
+.w-quote blockquote {
+  margin: 0;
+  font-family: var(--font-jp);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.w-quote figcaption {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ───────────── Personnalisation ───────────── */
+
+.accueil__perso {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  z-index: 5;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 15px;
+  border: 1px solid var(--border-strong);
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  color: var(--text-muted);
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.accueil:hover .accueil__perso,
+.accueil.is-editing .accueil__perso {
+  opacity: 1;
+}
+
+.accueil__palette {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  z-index: 5;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-strong);
+  font-size: 12px;
+  text-shadow: none;
+}
+
+.accueil__palette label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.accueil__palette input {
+  accent-color: var(--accent);
+}
+
+.accueil__signature {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-jp);
+  font-size: 13px;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}
+
+:root[data-reduced='on'] * {
+  animation-duration: 1ms !important;
+  transition-duration: 1ms !important;
+}

@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+# Fichiers de travail du logo (gardez seulement les sources validées)
+assets/logo/*.tmp.png
+# Tor (téléchargé par npm run tor)
+resources/tor/
+# Archives du code source (régénérables, et le code est maintenant dans git)
+*.zip
