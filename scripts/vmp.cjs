@@ -17,9 +17,9 @@
  */
 const { spawnSync } = require('node:child_process')
 
-/** Python : le lanceur « py » de Windows, sinon « python ». */
+/** Python : KAZE_PYTHON s'il est donné (machines de GitHub), sinon le lanceur « py » de Windows, sinon « python ». */
 function findPython() {
-  for (const command of ['py', 'python']) {
+  for (const command of process.env.KAZE_PYTHON ? [process.env.KAZE_PYTHON] : ['py', 'python']) {
     const probe = spawnSync(command, ['-c', 'import castlabs_evs'], { encoding: 'utf8', shell: false })
     if (probe.status === 0) return { command, evs: true }
     if (probe.status !== null && !probe.error && /castlabs_evs/.test(probe.stderr)) return { command, evs: false }

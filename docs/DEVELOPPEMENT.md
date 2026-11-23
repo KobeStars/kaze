@@ -94,6 +94,24 @@ site/                     page de présentation (GitHub Pages)
 - **Extensions** : `session.extensions` d'Electron, complété par un preload qui ajoute les API Chrome absentes
   et renvoie les vrais onglets de Kaze à `chrome.tabs`.
 
+## Publier une version
+
+Les versions publiques sont construites par GitHub Actions ([`.github/workflows/publier.yml`](../.github/workflows/publier.yml)) :
+
+```bash
+npm version patch                       # 0.2.15 → 0.2.16 : commit + tag v0.2.16
+git push origin main --follow-tags      # le tag lance la construction
+git push nas main
+```
+
+Le workflow construit Kaze sur une machine Windows de GitHub, le signe VMP (compte castLabs dans les secrets
+`EVS_ACCOUNT_NAME` / `EVS_PASSWD`), envoie l'installateur à [SignPath](https://signpath.org/) (la demande se valide
+à la main sur app.signpath.io), recalcule `latest.yml` et le `.blockmap` du fichier signé
+(`scripts/apres-signature.mjs`) puis crée la release. Lancé à la main depuis l'onglet Actions, il construit
+seulement, sans rien publier. La configuration d'artefact SignPath est dans [`.signpath/`](../.signpath/artifact-configuration.xml).
+
+`npm run release` publie encore depuis le PC du mainteneur, sans signature SignPath.
+
 ## Tests automatiques
 
 `KAZE_AUTOTEST=<dossier>` lance Kaze dans une fenêtre cachée, déroule un scénario et écrit des captures et un

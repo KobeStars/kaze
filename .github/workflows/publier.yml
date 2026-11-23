@@ -1,0 +1,131 @@
+# Construit Kaze sur les machines de GitHub, le fait signer par SignPath, puis le publie.
+#
+# - Tag « v* » poussé (npm version patch, puis git push origin main --follow-tags) :
+#   construction, signature, puis release GitHub (les Kaze installés la reçoivent tout seuls).
+# - Lancement à la main (onglet Actions → « Publier Kaze » → Run workflow) : construction et
+#   signature seulement ; l'installateur se télécharge depuis la page du run, rien n'est publié.
+#
+# Secrets du dépôt (Settings → Secrets and variables → Actions → Secrets) :
+#   EVS_ACCOUNT_NAME, EVS_PASSWD   compte castLabs, pour la signature VMP (Netflix, Spotify)
+#   SIGNPATH_API_TOKEN             jeton SignPath (utilisateur « submitter »)
+# Variables du dépôt (même page → Variables) :
+#   SIGNPATH_ORGANIZATION_ID, SIGNPATH_PROJECT_SLUG, SIGNPATH_SIGNING_POLICY_SLUG
+# Sans les variables SignPath, l'installateur est construit sans signature Windows.
+name: Publier Kaze
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write # créer la release
+  actions: read # SignPath lit l'artefact du run
+
+concurrency:
+  group: publier-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    env:
+      PUBLIER: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      SIGNPATH: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($env:PUBLIER -eq 'true' -and "${{ github.ref_name }}" -ne "v$version") {
+            throw "Le tag ${{ github.ref_name }} ne correspond pas à package.json ($version)."
+          }
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Dépendances
+        run: npm ci
+
+      - name: Connexion castLabs (signature VMP)
+        shell: pwsh
+        env:
+          EVS_ACCOUNT_NAME: ${{ secrets.EVS_ACCOUNT_NAME }}
+          EVS_PASSWD: ${{ secrets.EVS_PASSWD }}
+        run: |
+          python -m pip install --quiet castlabs-evs
+          if (-not $env:EVS_ACCOUNT_NAME -or -not $env:EVS_PASSWD) {
+            if ($env:PUBLIER -eq 'true') { throw 'Secrets EVS_ACCOUNT_NAME / EVS_PASSWD absents : une version publiée doit être signée VMP.' }
+            Write-Warning 'Pas de compte castLabs : Netflix et Spotify ne marcheront pas dans cet essai.'
+            exit 0
+          }
+          python -m castlabs_evs.account -n reauth -A "$env:EVS_ACCOUNT_NAME" -P "$env:EVS_PASSWD"
+          if ($LASTEXITCODE -ne 0) { throw 'Connexion castLabs refusée.' }
+
+      - name: Construction (Tor, compilation, installateur, VMP)
+        env:
+          KAZE_PYTHON: python
+          KAZE_VMP: ${{ env.PUBLIER == 'true' && 'obligatoire' || 'facultatif' }}
+        run: npm run dist
+
+      - name: Envoi de l'installateur non signé
+        id: non-signe
+        if: env.SIGNPATH == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: installateur-non-signe
+          path: dist/Kaze-Setup-${{ steps.version.outputs.version }}.exe
+          if-no-files-found: error
+
+      - name: Signature SignPath (à approuver sur app.signpath.io)
+        if: env.SIGNPATH == 'true'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.non-signe.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 7200
+          output-artifact-directory: signe
+
+      - name: Installateur signé + latest.yml et .blockmap recalculés
+        if: env.SIGNPATH == 'true'
+        shell: pwsh
+        run: |
+          $nom = "Kaze-Setup-${{ steps.version.outputs.version }}.exe"
+          Copy-Item "signe/$nom" "dist/$nom" -Force
+          $statut = (Get-AuthenticodeSignature "dist/$nom").Status
+          if ($statut -ne 'Valid') { throw "Signature de l'installateur non valide ($statut)." }
+          node scripts/apres-signature.mjs
+
+      - name: Fichiers du run
+        uses: actions/upload-artifact@v7
+        with:
+          name: kaze-${{ steps.version.outputs.version }}
+          path: |
+            dist/Kaze-Setup-${{ steps.version.outputs.version }}.exe
+            dist/Kaze-Setup-${{ steps.version.outputs.version }}.exe.blockmap
+            dist/latest.yml
+          if-no-files-found: error
+
+      - name: Release GitHub
+        if: env.PUBLIER == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $v = "${{ steps.version.outputs.version }}"
+          gh release create "v$v" "dist/Kaze-Setup-$v.exe" "dist/Kaze-Setup-$v.exe.blockmap" dist/latest.yml --title "Kaze $v" --notes "Kaze $v"

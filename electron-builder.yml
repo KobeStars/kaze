@@ -56,6 +56,8 @@ nsis:
   installerIcon: build/icon.ico
   uninstallerIcon: build/icon.ico
   uninstallDisplayName: Kaze
+  # Page « licence et confidentialité » affichée pendant l'installation (exigée par SignPath).
+  license: build/licence.txt
   artifactName: Kaze-Setup-${version}.${ext}
   installerLanguages: [fr_FR]
   language: '1036'
