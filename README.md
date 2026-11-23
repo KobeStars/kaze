@@ -130,7 +130,7 @@ Oui, entièrement.
 <details>
 <summary><b>Le code source est-il disponible ?</b></summary>
 
-Oui, ici même, sous licence [MIT](LICENSE) : vous pouvez le lire, le modifier et le reprendre.
+Oui, ici même, sous licence [MIT](LICENSE) : vous pouvez le lire, le modifier et le reprendre. Seuls le nom « Kaze » et le logo restent réservés (voir [Licence](#licence)).
 </details>
 
 <details>
@@ -152,6 +152,14 @@ Architecture, scripts, tests automatiques et choix techniques : [docs/DEVELOPPEM
 ## Merci
 
 Kaze s’appuie sur de beaux projets : [Electron](https://www.electronjs.org/) (version [castLabs](https://github.com/castlabs/electron-releases) pour Widevine), [Tor](https://www.torproject.org/), le moteur de blocage de [Ghostery](https://github.com/ghostery/adblocker), l’éditeur [Monaco](https://microsoft.github.io/monaco-editor/) et la police [Shippori Mincho](https://github.com/fontdasu/ShipporiMincho) (licence SIL OFL 1.1).
+
+## Licence
+
+Le code de Kaze est sous [licence MIT](LICENSE).
+
+Le nom **« Kaze »**, le **logo** (le kanji 風 calligraphié et son sceau vermillon) et les icônes qui en sont tirées n'en font pas partie : ils restent la propriété de Kordix Studio, tous droits réservés. Ils se trouvent dans `assets/logo/`, `build/` et `src/renderer/src/assets/logo/`.
+
+Vous pouvez parler de Kaze et le montrer tel quel. En revanche, si vous publiez votre propre version modifiée, donnez-lui un autre nom et un autre logo, pour que personne ne la confonde avec le Kaze officiel.
 
 ---
 
