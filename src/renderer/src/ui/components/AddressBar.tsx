@@ -8,6 +8,7 @@ import { displayUrl, isHomeUrl } from '@shared/url'
 import { useFreeze } from '../hooks'
 import { kaze } from '../store'
 import { Favicon, Icon, type IconName } from './Icon'
+import { t } from '@shared/i18n'
 
 const KIND_ICON: Record<Suggestion['kind'], IconName> = {
   onglet: 'layers',
@@ -18,11 +19,11 @@ const KIND_ICON: Record<Suggestion['kind'], IconName> = {
 }
 
 const KIND_LABEL: Record<Suggestion['kind'], string> = {
-  onglet: 'Aller à l’onglet',
-  favori: 'Favori',
-  historique: 'Historique',
-  recherche: 'Rechercher',
-  url: 'Ouvrir'
+  onglet: t('Aller à l’onglet'),
+  favori: t('Favori'),
+  historique: t('Historique'),
+  recherche: t('Rechercher'),
+  url: t('Ouvrir')
 }
 
 interface Props {
@@ -111,7 +112,7 @@ export function AddressBar({ tab, engineName, inputRef }: Props): JSX.Element {
           className="address__input"
           value={text}
           spellCheck={false}
-          placeholder={`Rechercher avec ${engineName} ou saisir une adresse`}
+          placeholder={t('Rechercher avec {moteur} ou saisir une adresse', { moteur: engineName })}
           onFocus={(e) => {
             setFocused(true)
             e.currentTarget.select()
@@ -126,7 +127,7 @@ export function AddressBar({ tab, engineName, inputRef }: Props): JSX.Element {
             setText(e.target.value)
           }}
           onKeyDown={onKeyDown}
-          aria-label="Adresse ou recherche"
+          aria-label={t('Adresse ou recherche')}
         />
         {!focused && host && (
           // Affichage « joli » : le domaine en clair, le reste du chemin estompé.
@@ -139,7 +140,7 @@ export function AddressBar({ tab, engineName, inputRef }: Props): JSX.Element {
           </span>
         )}
         {tab && tab.zoom !== 1 && (
-          <button type="button" className="address__chip" title="Revenir à 100 %" onClick={() => void kaze.invoke('tab:zoom', tab.id, 'reset')}>
+          <button type="button" className="address__chip" title={t('Revenir à 100 %')} onClick={() => void kaze.invoke('tab:zoom', tab.id, 'reset')}>
             {Math.round(tab.zoom * 100)} %
           </button>
         )}
@@ -147,7 +148,7 @@ export function AddressBar({ tab, engineName, inputRef }: Props): JSX.Element {
           <button
             type="button"
             className={`address__star${tab.bookmarked ? ' is-on' : ''}`}
-            title={tab.bookmarked ? 'Retirer des favoris (Ctrl+D)' : 'Ajouter aux favoris (Ctrl+D)'}
+            title={tab.bookmarked ? t('Retirer des favoris (Ctrl+D)') : t('Ajouter aux favoris (Ctrl+D)')}
             onClick={() => void kaze.invoke('bookmarks:toggle-tab', tab.id)}
           >
             <Icon name="star" size={16} filled={tab.bookmarked} />

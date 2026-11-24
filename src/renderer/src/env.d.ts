@@ -7,6 +7,8 @@ declare global {
     kaze: KazeApi
     /** API de la page d'accueil, exposée par src/preload/interne.ts */
     kazeInterne?: KazeInterneApi
+    /** Langue de Kaze, exposée aux pages internes. */
+    kazeLang?: 'fr' | 'en'
     /** API de Kaze Studio, exposée par src/preload/interne.ts */
     kazeStudio?: KazeStudioApi
     /** API de la page de bienvenue, exposée par src/preload/interne.ts */

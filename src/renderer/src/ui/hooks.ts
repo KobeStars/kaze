@@ -4,6 +4,7 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import { acquireFreeze, kaze } from './store'
 import type { Rect } from '@shared/types'
+import { t } from '@shared/i18n'
 
 /** Fige les pages tant que `active` est vrai (fenêtres flottantes, menus…). */
 export function useFreeze(active: boolean): void {
@@ -90,8 +91,8 @@ export function useSlot(name: SlotName, ref: RefObject<HTMLElement | null>): voi
 
 /** Formate une taille de fichier. */
 export function formatBytes(bytes: number): string {
-  if (bytes <= 0) return '0 o'
-  const units = ['o', 'Ko', 'Mo', 'Go', 'To']
+  if (bytes <= 0) return t('0 o')
+  const units = ['o', t('Ko'), t('Mo'), t('Go'), t('To')]
   const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1)
   return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1).replace('.', ',')} ${units[i]}`
 }

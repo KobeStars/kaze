@@ -3,6 +3,7 @@
  */
 import { useState, type JSX, type ReactNode } from 'react'
 import { Icon } from '../Icon'
+import { t } from '@shared/i18n'
 
 export function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }): JSX.Element {
   return (
@@ -42,7 +43,7 @@ export function SectionTitle({ children, onReset }: { children: ReactNode; onRes
             setConfirm(false)
           }}
         >
-          {confirm ? 'Confirmer la réinitialisation' : 'Réinitialiser'}
+          {confirm ? t('Confirmer la réinitialisation') : t('Réinitialiser')}
         </button>
       )}
     </div>
@@ -105,19 +106,19 @@ export function DomainList({ value, onChange, placeholder }: { value: string[]; 
       <div className="domains__add">
         <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder={placeholder} />
         <button type="button" className="btn btn--s" onClick={add}>
-          Ajouter
+          {t('Ajouter')}
         </button>
       </div>
       <ul className="domains__list">
         {value.map((d) => (
           <li key={d}>
             <span>{d}</span>
-            <button type="button" className="row__action is-visible" title="Retirer" onClick={() => onChange(value.filter((x) => x !== d))}>
+            <button type="button" className="row__action is-visible" title={t('Retirer')} onClick={() => onChange(value.filter((x) => x !== d))}>
               <Icon name="close" size={12} />
             </button>
           </li>
         ))}
-        {value.length === 0 && <li className="domains__empty">Aucun site.</li>}
+        {value.length === 0 && <li className="domains__empty">{t('Aucun site.')}</li>}
       </ul>
     </div>
   )
@@ -143,7 +144,7 @@ export function ColorField({ value, onChange, onFocus, active }: { value: string
   const shown = /^#[0-9a-fA-F]{6}$/.test(draft) && draft.toLowerCase() !== value.toLowerCase() ? draft : value
   return (
     <div className={`color-field${active ? ' is-active' : ''}`} onFocus={onFocus}>
-      <input type="color" value={value} onChange={(e) => onChange(e.target.value.toUpperCase())} aria-label="Couleur" />
+      <input type="color" value={value} onChange={(e) => onChange(e.target.value.toUpperCase())} aria-label={t('Couleur')} />
       <input
         className="color-field__hex"
         value={shown}
@@ -159,7 +160,7 @@ export function ColorField({ value, onChange, onFocus, active }: { value: string
         <button
           type="button"
           className="btn-icon btn-icon--s"
-          title="Pipette : cliquez n'importe où à l'écran (un site, une image…)"
+          title={t('Pipette : cliquez n\'importe où à l\'écran (un site, une image…)')}
           onClick={() => void pickScreenColor().then((c) => c && onChange(c))}
         >
           <Icon name="pen" size={14} />

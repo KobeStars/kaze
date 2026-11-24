@@ -56,11 +56,11 @@ nsis:
   installerIcon: build/icon.ico
   uninstallerIcon: build/icon.ico
   uninstallDisplayName: Kaze
-  # Page « licence et confidentialité » affichée pendant l'installation (exigée par SignPath).
-  license: build/licence.txt
+  # Installateur en anglais ou en français selon la langue de Windows. Sa page « licence et
+  # confidentialité » vient de build/license_en.txt et build/license_fr.txt (choisie par langue).
   artifactName: Kaze-Setup-${version}.${ext}
-  installerLanguages: [fr_FR]
-  language: '1036'
+  multiLanguageInstaller: true
+  installerLanguages: [en_US, fr_FR]
 # Mises à jour automatiques : Kaze lit les versions publiées sur GitHub Releases.
 # Publier une version : npm run release (voir scripts/publier.mjs).
 publish:

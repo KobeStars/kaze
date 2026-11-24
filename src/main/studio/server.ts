@@ -17,6 +17,7 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { readFile, stat } from 'node:fs/promises'
 import { extname, isAbsolute, join, normalize, relative } from 'node:path'
 import type { StudioLog, StudioLogLevel } from '@shared/types'
+import { t } from '@shared/i18n'
 
 const TYPES: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -193,7 +194,7 @@ export class PreviewServer {
     const root = this.hooks.root()
     if (!root) {
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' })
-      res.end('<p style="font-family:sans-serif">Aucun projet ouvert dans Kaze Studio.</p>')
+      res.end(`<p style="font-family:sans-serif">${t('Aucun projet ouvert dans Kaze Studio.')}</p>`)
       return
     }
     let file = normalize(join(root, rel))

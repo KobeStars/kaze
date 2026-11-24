@@ -10,11 +10,15 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 import type { KazeBienvenueApi, KazeInterneApi, KazeStudioApi } from '@shared/api'
 import type { HomeData, StudioEvent } from '@shared/types'
+import type { Lang } from '@shared/i18n'
 
 // Le preload s'exécute dans la page : `location` existe (le tsconfig Node ne le connaît pas).
 declare const location: { protocol: string; hostname: string }
 
 const internal = location.protocol === 'kaze:'
+
+// Langue de Kaze, pour toutes les pages internes.
+if (internal) contextBridge.exposeInMainWorld('kazeLang', ipcRenderer.sendSync('app:lang') as Lang)
 
 if (internal && location.hostname === 'accueil') {
   const api: KazeInterneApi = {

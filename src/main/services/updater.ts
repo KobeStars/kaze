@@ -13,6 +13,7 @@ import { app } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import type { UpdateState } from '@shared/types'
 import type { SettingsService } from './settings'
+import { t } from '@shared/i18n'
 
 const FIRST_CHECK = 15_000
 const INTERVAL = 4 * 3_600_000
@@ -80,7 +81,7 @@ export class UpdaterService extends EventEmitter<{ changed: [UpdateState] }> {
 
 function readableError(error: Error): string {
   const message = error.message ?? String(error)
-  if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|net::ERR_/i.test(message)) return 'Pas de connexion au serveur de mises à jour.'
-  if (/404|latest\.yml/i.test(message)) return 'Aucune version publiée pour le moment.'
+  if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|net::ERR_/i.test(message)) return t('Pas de connexion au serveur de mises à jour.')
+  if (/404|latest\.yml/i.test(message)) return t('Aucune version publiée pour le moment.')
   return message.split('\n')[0]!.slice(0, 200)
 }

@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useState, type JSX } from 'react'
 import type { StudioLog } from '@shared/types'
+import { locale, t } from '@shared/i18n'
 
 export type Device = 'desktop' | 'mobile' | 'tablette' | 'perso'
 
@@ -48,7 +49,7 @@ export function Preview({ base, path, device, custom, rotated, reloadToken }: Pr
     <div className={`preview${size ? ' preview--device' : ''}`} ref={box}>
       <iframe
         key={reloadToken}
-        title="Aperçu"
+        title={t('Aperçu')}
         src={base + encodePath(path)}
         style={
           size
@@ -66,7 +67,7 @@ export function Preview({ base, path, device, custom, rotated, reloadToken }: Pr
   )
 }
 
-const TIME = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+const TIME = new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 
 export function Console({ logs, onClear, onOpen }: { logs: StudioLog[]; onClear: () => void; onOpen: (file: string, line?: number, column?: number) => void }): JSX.Element {
   const list = useRef<HTMLDivElement>(null)
@@ -80,16 +81,16 @@ export function Console({ logs, onClear, onOpen }: { logs: StudioLog[]; onClear:
   return (
     <div className="console">
       <div className="console__bar">
-        <span>Console</span>
+        <span>{t('Console')}</span>
         {errors > 0 && <span className="console__badge">{errors}</span>}
         <button type="button" className={filter === 'tout' ? 'is-active' : ''} onClick={() => setFilter('tout')}>
-          Tout
+          {t('Tout')}
         </button>
         <button type="button" className={filter === 'erreurs' ? 'is-active' : ''} onClick={() => setFilter('erreurs')}>
-          Erreurs
+          {t('Erreurs')}
         </button>
         <button type="button" className="console__clear" onClick={onClear}>
-          Effacer
+          {t('Effacer')}
         </button>
       </div>
       <div className="console__list" ref={list}>
@@ -99,7 +100,7 @@ export function Console({ logs, onClear, onOpen }: { logs: StudioLog[]; onClear:
             <span className="console__time">{TIME.format(log.time)}</span>
             <pre>{log.message}</pre>
             {log.file && (
-              <button type="button" className="console__source" title="Aller à la ligne" onClick={() => onOpen(log.file!, log.line, log.column)}>
+              <button type="button" className="console__source" title={t('Aller à la ligne')} onClick={() => onOpen(log.file!, log.line, log.column)}>
                 {log.file}
                 {log.line ? `:${log.line}` : ''}
               </button>

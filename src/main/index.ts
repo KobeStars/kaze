@@ -1,7 +1,8 @@
 /**
  * Point d'entrée du processus principal de Kaze.
  */
-import { app, BrowserWindow, components, Menu, session } from 'electron'
+import { app, BrowserWindow, components, ipcMain, Menu, session } from 'electron'
+import { lang, resolveLang, setLang } from '@shared/i18n'
 import { join } from 'node:path'
 import { BrowserController } from './browser/controller'
 import { registerIpc } from './ipc/handlers'
@@ -72,6 +73,13 @@ async function start(): Promise<void> {
   // Pas de menu Electron : Kaze gère lui-même ses raccourcis.
   Menu.setApplicationMenu(null)
   installGlobalGuards()
+  // La langue est connue avant tout le reste : menus, pages internes, en-têtes envoyés aux sites.
+  const settings = new SettingsService()
+  setLang(resolveLang(settings.get().language, app.getLocale()))
+  // Lu de façon synchrone par les preloads, avant le premier affichage.
+  ipcMain.on('app:lang', (event) => {
+    event.returnValue = lang()
+  })
   const persoDir = join(app.getPath('userData'), 'perso')
   registerAppProtocol(session.defaultSession, DEV_SERVER_URL, persoDir)
 
@@ -86,7 +94,6 @@ async function start(): Promise<void> {
   const extensions = new ExtensionsService(tabSession)
   await extensions.init()
 
-  const settings = new SettingsService()
   const studio = new StudioService(settings, tabSession, () => 'kaze://app/__perso/')
   await studio.start()
   const services = {
@@ -117,6 +124,13 @@ async function start(): Promise<void> {
   extensions.setTabsProvider(() => browser.extensionTabs())
   openUrls(pendingUrls.splice(0))
   registerIpc(mainWindow, browser, services, permissions, tabSession, perso, updater, extensions)
+  // Changement de langue : l'interface et les pages internes se rechargent dans la nouvelle langue.
+  settings.on('changed', (s) => {
+    const next = resolveLang(s.language, app.getLocale())
+    if (next === lang()) return
+    setLang(next)
+    browser.reloadInterface()
+  })
 
   // Test automatique (développement uniquement, fenêtre invisible).
   const autotest = process.env['KAZE_AUTOTEST']

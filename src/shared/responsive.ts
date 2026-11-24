@@ -2,6 +2,7 @@
  * Mode responsive : appareils proposés, partagés entre le principal et l'interface
  * (sans dépendance).
  */
+import { t } from './i18n'
 
 /** Tailles en pixels CSS, comme dans les DevTools de Chrome. */
 export const DEVICES = [
@@ -11,8 +12,8 @@ export const DEVICES = [
   { id: 'galaxy-s24', name: 'Galaxy S24', width: 360, height: 780, dpr: 3, kind: 'mobile', os: 'android' },
   { id: 'ipad-mini', name: 'iPad mini', width: 768, height: 1024, dpr: 2, kind: 'tablette', os: 'ios' },
   { id: 'ipad-air', name: 'iPad Air', width: 820, height: 1180, dpr: 2, kind: 'tablette', os: 'ios' },
-  { id: 'laptop', name: 'Portable', width: 1366, height: 768, dpr: 1, kind: 'ordinateur', os: 'desktop' },
-  { id: 'desktop', name: 'Écran Full HD', width: 1920, height: 1080, dpr: 1, kind: 'ordinateur', os: 'desktop' }
+  { id: 'laptop', name: t('Portable'), width: 1366, height: 768, dpr: 1, kind: 'ordinateur', os: 'desktop' },
+  { id: 'desktop', name: t('Écran Full HD'), width: 1920, height: 1080, dpr: 1, kind: 'ordinateur', os: 'desktop' }
 ] as const
 export type Device = (typeof DEVICES)[number]
 export type DeviceId = Device['id']

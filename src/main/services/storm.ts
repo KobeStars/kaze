@@ -7,6 +7,7 @@ import { Notification } from 'electron'
 import { hostMatches, hostnameOf } from '@shared/url'
 import { JsonStore } from '../store'
 import type { SettingsService } from './settings'
+import { t } from '@shared/i18n'
 
 interface StormData {
   until: number | null
@@ -44,7 +45,7 @@ export class StormService extends EventEmitter<{ changed: [] }> {
     if (this.timer) clearTimeout(this.timer)
     this.timer = null
     if (notify && Notification.isSupported()) {
-      new Notification({ title: 'Tempête terminée', body: 'Le vent est retombé : tous les sites sont de nouveau accessibles.' }).show()
+      new Notification({ title: t('Tempête terminée'), body: t('Le vent est retombé : tous les sites sont de nouveau accessibles.') }).show()
     }
     this.emit('changed')
   }

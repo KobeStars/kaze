@@ -11,6 +11,7 @@ import { acquireFreeze, frozenStore, kaze, settingsStore, useStore } from '../st
 import { measureSlots, useSlot } from '../hooks'
 import { Icon } from './Icon'
 import { ResponsiveStage } from './ResponsiveStage'
+import { t } from '@shared/i18n'
 
 /** Barre de chargement en trait de pinceau vermillon. */
 function BrushLoader({ loading }: { loading: boolean }): JSX.Element {
@@ -50,19 +51,19 @@ function ErrorScreen({ tab }: { tab: TabState }): JSX.Element {
   return (
     <div className="page-screen">
       <div className="page-screen__kanji" aria-hidden="true">{offline ? '無' : '霧'}</div>
-      <h2>{offline ? 'Pas de connexion' : dns ? 'Site introuvable' : 'Impossible d’ouvrir cette page'}</h2>
+      <h2>{offline ? t('Pas de connexion') : dns ? t('Site introuvable') : t('Impossible d’ouvrir cette page')}</h2>
       <p className="page-screen__text">
         {offline
-          ? 'Le vent ne passe plus : vérifiez votre connexion Internet.'
+          ? t('Le vent ne passe plus : vérifiez votre connexion Internet.')
           : dns
-            ? `Aucun serveur ne répond à l’adresse ${displayUrl(error.url)}.`
+            ? t('Aucun serveur ne répond à l’adresse {adresse}.', { adresse: displayUrl(error.url) })
             : error.code === -1000
-              ? 'La page a cessé de fonctionner.'
-              : `La page ${displayUrl(error.url)} n’a pas pu être chargée.`}
+              ? t('La page a cessé de fonctionner.')
+              : t('La page {adresse} n’a pas pu être chargée.', { adresse: displayUrl(error.url) })}
       </p>
       <code className="page-screen__code">{error.description} ({error.code})</code>
       <button type="button" className="btn btn--primary" onClick={() => void kaze.invoke('tab:go', tab.id, 'reload')}>
-        <Icon name="reload" size={16} /> Réessayer
+        <Icon name="reload" size={16} /> {t('Réessayer')}
       </button>
     </div>
   )
@@ -89,22 +90,22 @@ function StormScreen({ tab, until }: { tab: TabState; until: number | null }): J
   return (
     <div className="page-screen page-screen--storm">
       <div className="page-screen__kanji page-screen__kanji--storm" aria-hidden="true">嵐</div>
-      <h2>Tempête en cours</h2>
+      <h2>{t('Tempête en cours')}</h2>
       <p className="page-screen__text">
-        <strong>{tab.stormBlocked}</strong> est à l’abri du vent jusqu’à la fin de votre session de concentration.
+        <strong>{tab.stormBlocked}</strong> {t('est à l’abri du vent jusqu’à la fin de votre session de concentration.')}
       </p>
       <div className="storm-countdown">{countdown}</div>
       <div className="page-screen__actions">
         <button type="button" className="btn" disabled={!tab.canGoBack} onClick={() => void kaze.invoke('tab:go', tab.id, 'back')}>
-          <Icon name="back" size={16} /> Revenir en arrière
+          <Icon name="back" size={16} /> {t('Revenir en arrière')}
         </button>
         {confirm ? (
           <button type="button" className="btn btn--danger" onClick={() => void kaze.invoke('storm:stop')}>
-            Vraiment arrêter ?
+            {t('Vraiment arrêter ?')}
           </button>
         ) : (
           <button type="button" className="btn btn--ghost" onClick={() => setConfirm(true)}>
-            Arrêter la Tempête
+            {t('Arrêter la Tempête')}
           </button>
         )}
       </div>
@@ -128,7 +129,7 @@ function PageSlot({ tab, side, state, split }: { tab: TabState | undefined; side
         {tab?.stormBlocked && <StormScreen tab={tab} until={state.storm.until} />}
       </div>
       {split && (
-        <button type="button" className="page-slot__close" title="Retirer du split view" onClick={() => void kaze.invoke('split:close')}>
+        <button type="button" className="page-slot__close" title={t('Retirer du split view')} onClick={() => void kaze.invoke('split:close')}>
           <Icon name="close" size={12} />
         </button>
       )}
@@ -162,7 +163,7 @@ function SplitHandle({ container }: { container: RefObject<HTMLDivElement | null
     handle.addEventListener('pointerup', up)
   }
   return (
-    <div className="split-handle" onPointerDown={onPointerDown} onDoubleClick={() => void kaze.invoke('split:swap')} title="Glisser pour redimensionner — double-clic pour échanger">
+    <div className="split-handle" onPointerDown={onPointerDown} onDoubleClick={() => void kaze.invoke('split:swap')} title={t('Glisser pour redimensionner — double-clic pour échanger')}>
       <span />
     </div>
   )

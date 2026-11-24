@@ -14,6 +14,7 @@
  */
 import type { Appearance, FontSettings } from './settings'
 import type { Theme, ThemeColors } from './themes'
+import { t } from './i18n'
 
 export interface StyleTemplate {
   id: string
@@ -32,8 +33,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'sumie',
     kanji: '墨',
-    name: 'Sumi-e',
-    description: 'Encre noire sur papier washi, un trait de pinceau vermillon.',
+    name: t('Sumi-e'),
+    description: t('Encre noire sur papier washi, un trait de pinceau vermillon.'),
     dark: false,
     colors: { accent: '#C8321F', bg: '#F4EFE4', chrome: '#EDE6D6', surface: '#FBF8F1', text: '#16130F', muted: '#6E665A', border: '#DDD3C0', tab: '#FFFDF8', address: '#FBF8F1' },
     look: { radius: 6, blur: 12, transparency: 0.12, shadows: 'douces', density: 'normale', iconStyle: 'pinceau' },
@@ -64,8 +65,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'neon',
     kanji: '夜',
-    name: 'Néon Tokyo',
-    description: 'Nuit bleu nuit, néons magenta et cyan qui brillent.',
+    name: t('Néon Tokyo'),
+    description: t('Nuit bleu nuit, néons magenta et cyan qui brillent.'),
     dark: true,
     colors: { accent: '#FF2E88', bg: '#0B0B1A', chrome: '#0E0E22', surface: '#15152E', text: '#EDEBFF', muted: '#8A87B8', border: '#2A2850', tab: '#1B1A3A', address: '#121229' },
     look: { radius: 12, blur: 32, transparency: 0.3, shadows: 'marquees', density: 'normale', iconStyle: 'trait' },
@@ -97,8 +98,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'terminal',
     kanji: '端',
-    name: 'Terminal',
-    description: 'Phosphore vert sur noir, tout en police à chasse fixe, angles droits.',
+    name: t('Terminal'),
+    description: t('Phosphore vert sur noir, tout en police à chasse fixe, angles droits.'),
     dark: true,
     colors: { accent: '#39FF6A', bg: '#050805', chrome: '#070B07', surface: '#0C120C', text: '#C8F7C5', muted: '#5E8A5B', border: '#1B2A1B', tab: '#0F1A0F', address: '#0A100A' },
     look: { radius: 0, blur: 0, transparency: 0, shadows: 'aucune', density: 'compacte', iconStyle: 'trait' },
@@ -138,8 +139,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'verre',
     kanji: '雲',
-    name: 'Verre givré',
-    description: 'Clair et translucide, grands arrondis, flou profond.',
+    name: t('Verre givré'),
+    description: t('Clair et translucide, grands arrondis, flou profond.'),
     dark: false,
     colors: { accent: '#3B82F6', bg: '#EEF2F8', chrome: '#E6ECF5', surface: '#FFFFFF', text: '#0F172A', muted: '#64748B', border: '#D6DEEA', tab: '#FFFFFF', address: '#F7F9FC' },
     look: { radius: 16, blur: 48, transparency: 0.45, shadows: 'douces', density: 'aeree', iconStyle: 'trait' },
@@ -165,8 +166,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'brutal',
     kanji: '角',
-    name: 'Brutaliste',
-    description: 'Blanc, bordures noires épaisses, jaune vif et ombres franches.',
+    name: t('Brutaliste'),
+    description: t('Blanc, bordures noires épaisses, jaune vif et ombres franches.'),
     dark: false,
     colors: { accent: '#FFD60A', bg: '#FFFDF5', chrome: '#FFFDF5', surface: '#FFFFFF', text: '#0A0A0A', muted: '#4A4A4A', border: '#0A0A0A', tab: '#FFFFFF', address: '#FFFFFF' },
     look: { radius: 0, blur: 0, transparency: 0, shadows: 'aucune', density: 'normale', iconStyle: 'plein' },
@@ -202,8 +203,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'foret',
     kanji: '森',
-    name: 'Forêt',
-    description: 'Vert sous-bois, calme et aéré, titres en italique.',
+    name: t('Forêt'),
+    description: t('Vert sous-bois, calme et aéré, titres en italique.'),
     dark: true,
     colors: { accent: '#8FBF6A', bg: '#121A14', chrome: '#0F1611', surface: '#18221A', text: '#E7EFE3', muted: '#8FA38E', border: '#263427', tab: '#1D2A1F', address: '#162018' },
     look: { radius: 14, blur: 24, transparency: 0.25, shadows: 'douces', density: 'aeree', iconStyle: 'trait' },
@@ -229,8 +230,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'dune',
     kanji: '砂',
-    name: 'Dune',
-    description: 'Sable chaud et terre cuite, tout en courbes.',
+    name: t('Dune'),
+    description: t('Sable chaud et terre cuite, tout en courbes.'),
     dark: false,
     colors: { accent: '#C2410C', bg: '#F6EEE3', chrome: '#EFE3D2', surface: '#FCF7F0', text: '#2B1D12', muted: '#8A7360', border: '#E2D2BD', tab: '#FFF9F1', address: '#FBF4EA' },
     look: { radius: 20, blur: 20, transparency: 0.15, shadows: 'douces', density: 'normale', iconStyle: 'trait' },
@@ -251,8 +252,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'xp',
     kanji: '窓',
-    name: 'Rétro XP',
-    description: 'Hommage aux bureaux des années 2000 : barre bleue en dégradé, boutons bombés, bouton vert.',
+    name: t('Rétro XP'),
+    description: t('Hommage aux bureaux des années 2000 : barre bleue en dégradé, boutons bombés, bouton vert.'),
     dark: false,
     colors: { accent: '#316AC5', bg: '#ECE9D8', chrome: '#D6DFF7', surface: '#FFFFFF', text: '#000000', muted: '#555555', border: '#7F9DB9', tab: '#FFFFFF', address: '#FFFFFF' },
     look: { radius: 3, blur: 0, transparency: 0, shadows: 'douces', density: 'normale', iconStyle: 'plein' },
@@ -354,8 +355,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'mono',
     kanji: '白',
-    name: 'Monochrome',
-    description: 'Noir et blanc, sans couleur, dense et sobre.',
+    name: t('Monochrome'),
+    description: t('Noir et blanc, sans couleur, dense et sobre.'),
     dark: true,
     colors: { accent: '#F2F2F2', bg: '#0D0D0D', chrome: '#101010', surface: '#171717', text: '#F2F2F2', muted: '#8C8C8C', border: '#262626', tab: '#1F1F1F', address: '#141414' },
     look: { radius: 8, blur: 0, transparency: 0, shadows: 'aucune', density: 'compacte', iconStyle: 'trait' },
@@ -375,8 +376,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'classique98',
     kanji: '灰',
-    name: 'Classique 98',
-    description: 'Gris, reliefs en 3D, barre bleu marine : les fenêtres de la fin des années 90.',
+    name: t('Classique 98'),
+    description: t('Gris, reliefs en 3D, barre bleu marine : les fenêtres de la fin des années 90.'),
     dark: false,
     colors: { accent: '#000080', bg: '#C0C0C0', chrome: '#C0C0C0', surface: '#FFFFFF', text: '#000000', muted: '#404040', border: '#808080', tab: '#C0C0C0', address: '#FFFFFF' },
     look: { radius: 0, blur: 0, transparency: 0, shadows: 'aucune', density: 'compacte', iconStyle: 'plein' },
@@ -453,8 +454,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'synthwave',
     kanji: '夕',
-    name: 'Synthwave',
-    description: 'Coucher de soleil rétro : violet, rose et orange, titres en majuscules.',
+    name: t('Synthwave'),
+    description: t('Coucher de soleil rétro : violet, rose et orange, titres en majuscules.'),
     dark: true,
     colors: { accent: '#FF6AD5', bg: '#1A0B2E', chrome: '#12062A', surface: '#241040', text: '#FBE9FF', muted: '#A88BC7', border: '#3D1F66', tab: '#2E1652', address: '#1E0D38' },
     look: { radius: 10, blur: 28, transparency: 0.3, shadows: 'marquees', density: 'normale', iconStyle: 'trait' },
@@ -496,8 +497,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'carnet',
     kanji: '帳',
-    name: 'Carnet',
-    description: 'Cahier à lignes et marge rouge, onglet actif en post-it, titres manuscrits.',
+    name: t('Carnet'),
+    description: t('Cahier à lignes et marge rouge, onglet actif en post-it, titres manuscrits.'),
     dark: false,
     colors: { accent: '#2F5BEA', bg: '#FBF7EC', chrome: '#F3EBD6', surface: '#FFFDF6', text: '#1F2A44', muted: '#6B7280', border: '#E3D8BC', tab: '#FFF3A8', address: '#FFFDF6' },
     look: { radius: 4, blur: 0, transparency: 0, shadows: 'douces', density: 'normale', iconStyle: 'pinceau' },
@@ -532,8 +533,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'pastel',
     kanji: '桜',
-    name: 'Pastel',
-    description: 'Rose et lilas tout doux, pilules et ombres légères.',
+    name: t('Pastel'),
+    description: t('Rose et lilas tout doux, pilules et ombres légères.'),
     dark: false,
     colors: { accent: '#F472B6', bg: '#FFF1F7', chrome: '#FCE7F3', surface: '#FFFFFF', text: '#4A2040', muted: '#9D6B8F', border: '#F6CFE3', tab: '#FFFFFF', address: '#FFFFFF' },
     look: { radius: 18, blur: 30, transparency: 0.25, shadows: 'douces', density: 'aeree', iconStyle: 'trait' },
@@ -572,8 +573,8 @@ export const STYLE_TEMPLATES: StyleTemplate[] = [
   {
     id: 'contraste',
     kanji: '明',
-    name: 'Haut contraste',
-    description: 'Noir, blanc et jaune, gros contours : le plus lisible, animations réduites.',
+    name: t('Haut contraste'),
+    description: t('Noir, blanc et jaune, gros contours : le plus lisible, animations réduites.'),
     dark: true,
     colors: { accent: '#FFE600', bg: '#000000', chrome: '#000000', surface: '#0A0A0A', text: '#FFFFFF', muted: '#E0E0E0', border: '#FFFFFF', tab: '#000000', address: '#000000' },
     look: { radius: 4, blur: 0, transparency: 0, shadows: 'aucune', density: 'aeree', iconStyle: 'plein' },

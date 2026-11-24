@@ -8,6 +8,7 @@ import type { BrowserState, Workspace } from '@shared/types'
 import { useEscape, useFreeze } from '../hooks'
 import { kaze } from '../store'
 import { Icon } from './Icon'
+import { locale, t } from '@shared/i18n'
 
 const COLORS = ['#D7372A', '#E08A3C', '#C9A227', '#5E9C6B', '#3E8E9E', '#4A6FB5', '#7B5EA7', '#B5527F', '#8B9097']
 const ICONS = ['風', '山', '川', '火', '水', '木', '月', '星', '花', '雲', '海', '光', '空', '森', '波', '竹']
@@ -35,14 +36,14 @@ export function WorkspaceEditor({ workspace, canDelete, onClose }: { workspace: 
           <span className="ws-preview__icon">{icon}</span>
           <span className="ws-preview__name">{name.trim() || 'Nouveau Courant'}</span>
         </div>
-        <h2 className="modal__title">{workspace ? 'Modifier le Courant' : 'Nouveau Courant'}</h2>
-        <p className="modal__text">Un Courant regroupe ses propres onglets : travail, projets, loisirs…</p>
+        <h2 className="modal__title">{workspace ? t('Modifier le Courant') : t('Nouveau Courant')}</h2>
+        <p className="modal__text">{t('Un Courant regroupe ses propres onglets : travail, projets, loisirs…')}</p>
         <label className="field">
-          <span>Nom</span>
-          <input autoFocus value={name} maxLength={40} onChange={(e) => setName(e.target.value)} placeholder="Projets" />
+          <span>{t('Nom')}</span>
+          <input autoFocus value={name} maxLength={40} onChange={(e) => setName(e.target.value)} placeholder={t('Projets')} />
         </label>
         <div className="field">
-          <span>Couleur</span>
+          <span>{t('Couleur')}</span>
           <div className="swatches">
             {COLORS.map((c) => (
               <button
@@ -57,7 +58,7 @@ export function WorkspaceEditor({ workspace, canDelete, onClose }: { workspace: 
           </div>
         </div>
         <div className="field">
-          <span>Icône</span>
+          <span>{t('Icône')}</span>
           <div className="glyphs">
             {ICONS.map((g) => (
               <button key={g} type="button" className={`glyph${g === icon ? ' is-selected' : ''}`} onClick={() => setIcon(g)}>
@@ -77,14 +78,14 @@ export function WorkspaceEditor({ workspace, canDelete, onClose }: { workspace: 
                 onClose()
               }}
             >
-              <Icon name="trash" size={15} /> {confirmDelete ? 'Fermer ses onglets et supprimer' : 'Supprimer'}
+              <Icon name="trash" size={15} /> {confirmDelete ? t('Fermer ses onglets et supprimer') : t('Supprimer')}
             </button>
           )}
           <button type="button" className="btn btn--ghost" onClick={onClose}>
-            Annuler
+            {t('Annuler')}
           </button>
           <button type="submit" className="btn btn--primary">
-            {workspace ? 'Enregistrer' : 'Créer'}
+            {workspace ? t('Enregistrer') : t('Créer')}
           </button>
         </div>
       </form>
@@ -115,31 +116,31 @@ export function StormDialog({ state, settings, onClose }: { state: BrowserState;
     <div className="modal-backdrop" onMouseDown={onClose}>
       <div className="modal modal--small glass" onMouseDown={(e) => e.stopPropagation()}>
         <div className="storm-head" aria-hidden="true">嵐</div>
-        <h2 className="modal__title">Tempête</h2>
+        <h2 className="modal__title">{t('Tempête')}</h2>
         {state.storm.active ? (
           <>
             <p className="modal__text">
-              Une Tempête est en cours jusqu’à{' '}
-              {new Date(state.storm.until!).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}. Les sites
-              distrayants restent bloqués.
+              {t('Une Tempête est en cours jusqu’à {heure}. Les sites distrayants restent bloqués.', {
+                heure: new Date(state.storm.until!).toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' })
+              })}
             </p>
             <div className="modal__actions">
               <button type="button" className="btn btn--ghost" onClick={onClose}>
-                Continuer
+                {t('Continuer')}
               </button>
               <button type="button" className="btn btn--danger" onClick={() => {
                 void kaze.invoke('storm:stop')
                 onClose()
               }}>
-                Arrêter la Tempête
+                {t('Arrêter la Tempête')}
               </button>
             </div>
           </>
         ) : (
           <>
-            <p className="modal__text">Bloquez les sites qui vous dispersent le temps de vous concentrer. Même un redémarrage n’y changera rien.</p>
+            <p className="modal__text">{t('Bloquez les sites qui vous dispersent le temps de vous concentrer. Même un redémarrage n’y changera rien.')}</p>
             <div className="field">
-              <span>Durée</span>
+              <span>{t('Durée')}</span>
               <div className="segmented segmented--wide">
                 {DURATIONS.map((d) => (
                   <button key={d} type="button" className={d === minutes ? 'is-active' : ''} onClick={() => setMinutes(d)}>
@@ -149,12 +150,12 @@ export function StormDialog({ state, settings, onClose }: { state: BrowserState;
               </div>
             </div>
             <label className="field">
-              <span>Sites bloqués (un par ligne)</span>
+              <span>{t('Sites bloqués (un par ligne)')}</span>
               <textarea rows={6} value={sites} onChange={(e) => setSites(e.target.value)} spellCheck={false} />
             </label>
             <div className="modal__actions">
               <button type="button" className="btn btn--ghost" onClick={onClose}>
-                Annuler
+                {t('Annuler')}
               </button>
               <button type="button" className="btn btn--primary" onClick={start}>
                 <Icon name="storm" size={16} /> Lancer {minutes} min
@@ -168,19 +169,19 @@ export function StormDialog({ state, settings, onClose }: { state: BrowserState;
 }
 
 const VPN_COUNTRY_NAMES: Record<VpnCountry, string> = {
-  auto: 'Automatique (au hasard)',
-  fr: 'France',
-  ch: 'Suisse',
-  de: 'Allemagne',
-  nl: 'Pays-Bas',
-  gb: 'Royaume-Uni',
-  us: 'États-Unis',
-  ca: 'Canada',
-  se: 'Suède',
-  jp: 'Japon'
+  auto: t('Automatique (au hasard)'),
+  fr: t('France'),
+  ch: t('Suisse'),
+  de: t('Allemagne'),
+  nl: t('Pays-Bas'),
+  gb: t('Royaume-Uni'),
+  us: t('États-Unis'),
+  ca: t('Canada'),
+  se: t('Suède'),
+  jp: t('Japon')
 }
 
-const regionNames = new Intl.DisplayNames(['fr'], { type: 'region' })
+const regionNames = new Intl.DisplayNames([locale()], { type: 'region' })
 const countryName = (code: string): string => regionNames.of(code.toUpperCase()) ?? code.toUpperCase()
 
 /** Brume : le VPN de Kaze (réseau Tor). L'état vient du processus principal. */
@@ -194,17 +195,16 @@ export function VpnDialog({ state, settings, onClose }: { state: BrowserState; s
     <div className="modal-backdrop" onMouseDown={onClose}>
       <div className="modal modal--small glass" onMouseDown={(e) => e.stopPropagation()}>
         <div className="storm-head" aria-hidden="true">霧</div>
-        <h2 className="modal__title">Brume</h2>
+        <h2 className="modal__title">{t('Brume')}</h2>
         <p className="modal__text">
-          Vos onglets passent par le réseau Tor : les sites ne voient plus votre adresse IP ni votre pays. C’est plus lent
-          qu’une connexion directe, et certains sites (Google…) demandent parfois de prouver que vous n’êtes pas un robot.
+          {t('Vos onglets passent par le réseau Tor : les sites ne voient plus votre adresse IP ni votre pays. C’est plus lent qu’une connexion directe, et certains sites (Google…) demandent parfois de prouver que vous n’êtes pas un robot.')}
         </p>
 
         <div className={`vpn-status vpn-status--${on ? vpn.status : 'eteint'}`} role="status">
-          {!on && <span>Désactivée : connexion directe.</span>}
+          {!on && <span>{t('Désactivée : connexion directe.')}</span>}
           {on && vpn.status === 'connexion' && (
             <>
-              <span>Connexion au réseau Tor… {vpn.progress} %</span>
+              <span>{t('Connexion au réseau Tor… {n} %', { n: vpn.progress })}</span>
               <div className="download__bar">
                 <span style={{ width: `${vpn.progress}%` }} />
               </div>
@@ -212,20 +212,22 @@ export function VpnDialog({ state, settings, onClose }: { state: BrowserState; s
           )}
           {on && vpn.status === 'actif' && (
             <span>
-              Active · sortie actuelle : {vpn.country ? countryName(vpn.country) : 'pays inconnu'} ({vpn.ip ?? '…'}). Tor peut
-              en changer d’un site à l’autre{settings.vpn.country === 'auto' ? '' : ', toujours dans le pays choisi'}.
+              {t('Active · sortie actuelle : {pays} ({ip}). Tor peut en changer d’un site à l’autre', {
+                pays: vpn.country ? countryName(vpn.country) : t('pays inconnu'),
+                ip: vpn.ip ?? '…'
+              })}
+              {settings.vpn.country === 'auto' ? '' : t(', toujours dans le pays choisi')}.
             </span>
           )}
           {on && vpn.status === 'erreur' && (
             <span>
-              {vpn.error} Les pages restent bloquées tant que Brume n’est pas reconnectée ou désactivée, pour ne jamais révéler
-              votre adresse.
+              {vpn.error} {t('Les pages restent bloquées tant que Brume n’est pas reconnectée ou désactivée, pour ne jamais révéler votre adresse.')}
             </span>
           )}
         </div>
 
         <label className="field">
-          <span>Pays de sortie</span>
+          <span>{t('Pays de sortie')}</span>
           <select className="input" value={settings.vpn.country} onChange={(e) => void kaze.invoke('vpn:country', e.target.value as VpnCountry)}>
             {VPN_COUNTRIES.map((c) => (
               <option key={c} value={c}>
@@ -238,16 +240,16 @@ export function VpnDialog({ state, settings, onClose }: { state: BrowserState; s
         <div className="modal__actions">
           {on && vpn.status !== 'connexion' && (
             <button type="button" className="btn btn--ghost modal__left" onClick={() => void kaze.invoke('vpn:reconnect')}>
-              <Icon name="reload" size={16} /> {vpn.status === 'erreur' ? 'Réessayer' : 'Nouvelle adresse'}
+              <Icon name="reload" size={16} /> {vpn.status === 'erreur' ? t('Réessayer') : t('Nouvelle adresse')}
             </button>
           )}
           {on ? (
             <button type="button" className="btn btn--danger" onClick={() => void kaze.invoke('vpn:set', false)}>
-              Désactiver Brume
+              {t('Désactiver Brume')}
             </button>
           ) : (
             <button type="button" className="btn btn--primary" onClick={() => void kaze.invoke('vpn:set', true)}>
-              <Icon name="mist" size={16} /> Activer Brume
+              <Icon name="mist" size={16} /> {t('Activer Brume')}
             </button>
           )}
         </div>

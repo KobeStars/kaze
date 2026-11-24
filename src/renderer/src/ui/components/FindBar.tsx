@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState, type JSX } from 'react'
 import { kaze } from '../store'
 import { Icon } from './Icon'
+import { t } from '@shared/i18n'
 
 export function FindBar({ tabId, focusToken, onClose }: { tabId: number; focusToken: number; onClose: () => void }): JSX.Element {
   const [text, setText] = useState('')
@@ -47,22 +48,22 @@ export function FindBar({ tabId, focusToken, onClose }: { tabId: number; focusTo
       <input
         ref={input}
         value={text}
-        placeholder="Rechercher dans la page"
+        placeholder={t('Rechercher dans la page')}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') step(!e.shiftKey)
           if (e.key === 'Escape') close()
         }}
-        aria-label="Rechercher dans la page"
+        aria-label={t('Rechercher dans la page')}
       />
-      <span className="findbar__count">{result ? (result.total ? `${result.active} / ${result.total}` : 'Aucun résultat') : ''}</span>
-      <button type="button" className="btn-icon btn-icon--s" title="Précédent (Maj+Entrée)" onClick={() => step(false)}>
+      <span className="findbar__count">{result ? (result.total ? `${result.active} / ${result.total}` : t('Aucun résultat')) : ''}</span>
+      <button type="button" className="btn-icon btn-icon--s" title={t('Précédent (Maj+Entrée)')} onClick={() => step(false)}>
         <Icon name="back" size={14} />
       </button>
-      <button type="button" className="btn-icon btn-icon--s" title="Suivant (Entrée)" onClick={() => step(true)}>
+      <button type="button" className="btn-icon btn-icon--s" title={t('Suivant (Entrée)')} onClick={() => step(true)}>
         <Icon name="forward" size={14} />
       </button>
-      <button type="button" className="btn-icon btn-icon--s" title="Fermer (Échap)" onClick={close}>
+      <button type="button" className="btn-icon btn-icon--s" title={t('Fermer (Échap)')} onClick={close}>
         <Icon name="close" size={14} />
       </button>
     </div>

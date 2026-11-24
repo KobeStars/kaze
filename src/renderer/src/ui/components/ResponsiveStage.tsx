@@ -12,6 +12,7 @@ import type { BrowserState } from '@shared/types'
 import { useSlot } from '../hooks'
 import { kaze, settingsStore, updateSettings, useStore } from '../store'
 import { Icon } from './Icon'
+import { t } from '@shared/i18n'
 
 type Devices = NonNullable<BrowserState['responsive']>['devices']
 
@@ -60,15 +61,15 @@ export function ResponsiveStage({ tabId, devices }: { tabId: number; devices: De
     <div className="resp">
       <div className="resp__bar">
         <Icon name="devices" size={16} />
-        <strong>Mode responsive</strong>
-        <span className="resp__hint">Défilement, clics et saisie synchronisés · échelle {Math.round(scale * 100)} %</span>
+        <strong>{t('Mode responsive')}</strong>
+        <span className="resp__hint">{t('Défilement, clics et saisie synchronisés · échelle {n} %', { n: Math.round(scale * 100) })}</span>
         {devices.length < MAX_RESPONSIVE_DEVICES && unused && (
           <button type="button" className="btn btn--s" onClick={() => save([...devices, { id: unused.id, rotated: false }])}>
-            <Icon name="plus" size={14} /> Appareil
+            <Icon name="plus" size={14} /> {t('Appareil')}
           </button>
         )}
         <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('responsive:toggle', tabId)}>
-          <Icon name="close" size={14} /> Quitter
+          <Icon name="close" size={14} /> {t('Quitter')}
         </button>
       </div>
       <div className="resp__stage" ref={stage} style={{ gap: GAP, padding: PADDING }}>
@@ -82,7 +83,7 @@ export function ResponsiveStage({ tabId, devices }: { tabId: number; devices: De
                 <select
                   className="resp-frame__select"
                   value={d.id}
-                  aria-label="Appareil"
+                  aria-label={t('Appareil')}
                   onChange={(e) => replace(i, { id: e.target.value as DeviceId })}
                 >
                   {DEVICES.map((option) => (
@@ -95,12 +96,12 @@ export function ResponsiveStage({ tabId, devices }: { tabId: number; devices: De
                   {size.width} × {size.height}
                 </span>
                 {device.kind !== 'ordinateur' && (
-                  <button type="button" className="btn-icon btn-icon--s" title="Pivoter" onClick={() => replace(i, { rotated: !d.rotated })}>
+                  <button type="button" className="btn-icon btn-icon--s" title={t('Pivoter')} onClick={() => replace(i, { rotated: !d.rotated })}>
                     <Icon name="swap" size={14} />
                   </button>
                 )}
                 {devices.length > 1 && (
-                  <button type="button" className="btn-icon btn-icon--s" title="Retirer cet appareil" onClick={() => save(devices.filter((_, j) => j !== i))}>
+                  <button type="button" className="btn-icon btn-icon--s" title={t('Retirer cet appareil')} onClick={() => save(devices.filter((_, j) => j !== i))}>
                     <Icon name="close" size={13} />
                   </button>
                 )}

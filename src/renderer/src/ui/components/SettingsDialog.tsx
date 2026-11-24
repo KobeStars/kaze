@@ -16,6 +16,7 @@ import { DomainList, Row, Segmented, Toggle } from './settings/controls'
 import { TemplatesSection } from './settings/Templates'
 import { ExtensionsSection } from './settings/Extensions'
 import { UpdatesSettings } from './Updates'
+import { locale, t } from '@shared/i18n'
 
 type Section =
   | 'general'
@@ -39,25 +40,25 @@ type Section =
   | 'apropos'
 
 const SECTIONS: { id: Section; label: string; icon: IconName; group?: string }[] = [
-  { id: 'general', label: 'Général', icon: 'home' },
-  { id: 'templates', label: 'Templates', icon: 'layers', group: 'Apparence' },
-  { id: 'themes', label: 'Thèmes', icon: 'palette', group: 'Apparence' },
-  { id: 'polices', label: 'Polices', icon: 'pen', group: 'Apparence' },
-  { id: 'interface', label: 'Interface', icon: 'sidebar', group: 'Apparence' },
-  { id: 'animations', label: 'Animations', icon: 'wind', group: 'Apparence' },
-  { id: 'accueil', label: 'Page d’accueil', icon: 'globe', group: 'Apparence' },
-  { id: 'avance', label: 'Avancé', icon: 'devtools', group: 'Apparence' },
-  { id: 'partage', label: 'Partage', icon: 'external', group: 'Apparence' },
-  { id: 'studio', label: 'Kaze Studio', icon: 'devtools', group: 'Navigateur' },
-  { id: 'extensions', label: 'Extensions', icon: 'puzzle', group: 'Navigateur' },
-  { id: 'recherche', label: 'Recherche', icon: 'search', group: 'Navigateur' },
-  { id: 'bouclier', label: 'Bouclier de vent', icon: 'shield' },
-  { id: 'brise', label: 'Brise', icon: 'wind' },
-  { id: 'tempete', label: 'Tempête', icon: 'storm' },
-  { id: 'telechargements', label: 'Téléchargements', icon: 'download' },
-  { id: 'raccourcis', label: 'Raccourcis', icon: 'keyboard' },
-  { id: 'confidentialite', label: 'Confidentialité', icon: 'trash' },
-  { id: 'apropos', label: 'À propos', icon: 'info' }
+  { id: 'general', label: t('Général'), icon: 'home' },
+  { id: 'templates', label: t('Templates'), icon: 'layers', group: t('Apparence') },
+  { id: 'themes', label: t('Thèmes'), icon: 'palette', group: t('Apparence') },
+  { id: 'polices', label: t('Polices'), icon: 'pen', group: t('Apparence') },
+  { id: 'interface', label: t('Interface'), icon: 'sidebar', group: t('Apparence') },
+  { id: 'animations', label: t('Animations'), icon: 'wind', group: t('Apparence') },
+  { id: 'accueil', label: t('Page d’accueil'), icon: 'globe', group: t('Apparence') },
+  { id: 'avance', label: t('Avancé'), icon: 'devtools', group: t('Apparence') },
+  { id: 'partage', label: t('Partage'), icon: 'external', group: t('Apparence') },
+  { id: 'studio', label: t('Kaze Studio'), icon: 'devtools', group: t('Navigateur') },
+  { id: 'extensions', label: t('Extensions'), icon: 'puzzle', group: t('Navigateur') },
+  { id: 'recherche', label: t('Recherche'), icon: 'search', group: t('Navigateur') },
+  { id: 'bouclier', label: t('Bouclier de vent'), icon: 'shield' },
+  { id: 'brise', label: t('Brise'), icon: 'wind' },
+  { id: 'tempete', label: t('Tempête'), icon: 'storm' },
+  { id: 'telechargements', label: t('Téléchargements'), icon: 'download' },
+  { id: 'raccourcis', label: t('Raccourcis'), icon: 'keyboard' },
+  { id: 'confidentialite', label: t('Confidentialité'), icon: 'trash' },
+  { id: 'apropos', label: t('À propos'), icon: 'info' }
 ]
 
 /** Enregistreur de raccourci : cliquer, puis taper la combinaison. */
@@ -96,9 +97,9 @@ function ShortcutRecorder({ action, value, conflict }: { action: ShortcutAction;
       onClick={() => setRecording(true)}
       onBlur={() => setRecording(false)}
       onKeyDown={onKeyDown}
-      title={conflict ? 'Cette combinaison est utilisée deux fois' : 'Cliquer puis taper une combinaison (Retour arrière pour effacer)'}
+      title={conflict ? t('Cette combinaison est utilisée deux fois') : t('Cliquer puis taper une combinaison (Retour arrière pour effacer)')}
     >
-      {recording ? 'Tapez une combinaison…' : value || '—'}
+      {recording ? t('Tapez une combinaison…') : value || '—'}
     </button>
   )
 }
@@ -128,11 +129,11 @@ export function SettingsDialog({
 
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
-      <div className="settings glass" onMouseDown={(e) => e.stopPropagation()} role="dialog" aria-label="Paramètres">
+      <div className="settings glass" onMouseDown={(e) => e.stopPropagation()} role="dialog" aria-label={t('Paramètres')}>
         <nav className="settings__nav">
           <div className="settings__brand">
             <KazeMark size={22} />
-            <span>Paramètres</span>
+            <span>{t('Paramètres')}</span>
           </div>
           {SECTIONS.map((s, i) => (
             <div key={s.id} className="settings__navitem">
@@ -146,38 +147,49 @@ export function SettingsDialog({
         </nav>
 
         <div className="settings__body">
-          <button type="button" className="btn-icon settings__close" title="Fermer (Échap)" onClick={onClose}>
+          <button type="button" className="btn-icon settings__close" title={t('Fermer (Échap)')} onClick={onClose}>
             <Icon name="close" size={16} />
           </button>
 
           {section === 'general' && (
             <>
-              <h2>Général</h2>
-              <Row label="Votre prénom" hint="Pour vous saluer sur la page d’accueil.">
-                <input className="input" value={settings.userName} maxLength={40} onChange={(e) => set({ userName: e.target.value })} placeholder="Facultatif" />
+              <h2>{t('Général')}</h2>
+              <Row label={t('Langue')} hint={t('Kaze se recharge aussitôt dans la langue choisie.')}>
+                <Segmented
+                  value={settings.language}
+                  options={[
+                    { id: 'auto', label: t('Comme Windows') },
+                    { id: 'fr', label: 'Français' },
+                    { id: 'en', label: 'English' }
+                  ]}
+                  onChange={(v) => set({ language: v })}
+                />
               </Row>
-              <Row label="Au démarrage">
+              <Row label={t('Votre prénom')} hint={t('Pour vous saluer sur la page d’accueil.')}>
+                <input className="input" value={settings.userName} maxLength={40} onChange={(e) => set({ userName: e.target.value })} placeholder={t('Facultatif')} />
+              </Row>
+              <Row label={t('Au démarrage')}>
                 <Segmented
                   value={settings.startup}
                   options={[
-                    { id: 'restaurer', label: 'Rouvrir mes onglets' },
-                    { id: 'accueil', label: 'Page d’accueil' }
+                    { id: 'restaurer', label: t('Rouvrir mes onglets') },
+                    { id: 'accueil', label: t('Page d’accueil') }
                   ]}
                   onChange={(v) => set({ startup: v })}
                 />
               </Row>
-              <Row label="Page d’accueil" hint="Ouverte par le bouton Accueil et au démarrage.">
+              <Row label={t('Page d’accueil')} hint={t('Ouverte par le bouton Accueil et au démarrage.')}>
                 <Segmented
                   value={settings.homepage.mode}
                   options={[
-                    { id: 'kaze', label: 'Accueil Kaze' },
-                    { id: 'url', label: 'Une adresse' }
+                    { id: 'kaze', label: t('Accueil Kaze') },
+                    { id: 'url', label: t('Une adresse') }
                   ]}
                   onChange={(v) => set({ homepage: { ...settings.homepage, mode: v } })}
                 />
               </Row>
               {settings.homepage.mode === 'url' && (
-                <Row label="Adresse de la page d’accueil">
+                <Row label={t('Adresse de la page d’accueil')}>
                   <input className="input" value={settings.homepage.url} onChange={(e) => set({ homepage: { mode: 'url', url: e.target.value } })} placeholder="https://…" />
                 </Row>
               )}
@@ -204,8 +216,8 @@ export function SettingsDialog({
 
           {section === 'recherche' && (
             <>
-              <h2>Recherche</h2>
-              <Row label="Moteur de recherche" hint="Utilisé par la barre d’adresse, Souffle et la page d’accueil.">
+              <h2>{t('Recherche')}</h2>
+              <Row label={t('Moteur de recherche')} hint={t('Utilisé par la barre d’adresse, Souffle et la page d’accueil.')}>
                 <Segmented
                   value={settings.searchEngine}
                   options={(Object.keys(SEARCH_ENGINES) as SearchEngineId[]).map((id) => ({ id, label: SEARCH_ENGINES[id].name }))}
@@ -217,17 +229,19 @@ export function SettingsDialog({
 
           {section === 'bouclier' && (
             <>
-              <h2>Bouclier de vent</h2>
+              <h2>{t('Bouclier de vent')}</h2>
               <p className="settings__intro">
-                Bloque les publicités et les traqueurs grâce aux listes EasyList et EasyPrivacy. {state.shield.totalBlocked.toLocaleString('fr-FR')} éléments
-                bloqués depuis l’installation{state.shield.ready ? '' : ' — listes en cours de téléchargement'}.
+                {t('Bloque les publicités et les traqueurs grâce aux listes EasyList et EasyPrivacy. {n} éléments bloqués depuis l’installation', {
+                  n: state.shield.totalBlocked.toLocaleString(locale())
+                })}
+                {state.shield.ready ? '' : t(' — listes en cours de téléchargement')}.
               </p>
-              <Row label="Activer le Bouclier">
-                <Toggle label="Activer le Bouclier" checked={settings.shield.enabled} onChange={(v) => set({ shield: { ...settings.shield, enabled: v } })} />
+              <Row label={t('Activer le Bouclier')}>
+                <Toggle label={t('Activer le Bouclier')} checked={settings.shield.enabled} onChange={(v) => set({ shield: { ...settings.shield, enabled: v } })} />
               </Row>
               <div className="setting setting--block">
-                <span className="setting__label">Sites autorisés</span>
-                <span className="setting__hint">Le Bouclier ne bloque rien sur ces sites (utile si un site refuse de fonctionner).</span>
+                <span className="setting__label">{t('Sites autorisés')}</span>
+                <span className="setting__hint">{t('Le Bouclier ne bloque rien sur ces sites (utile si un site refuse de fonctionner).')}</span>
                 <DomainList value={settings.shield.allowlist} onChange={(v) => set({ shield: { ...settings.shield, allowlist: v } })} placeholder="exemple.fr" />
               </div>
             </>
@@ -235,15 +249,16 @@ export function SettingsDialog({
 
           {section === 'brise' && (
             <>
-              <h2>Brise</h2>
+              <h2>{t('Brise')}</h2>
               <p className="settings__intro">
-                Met en veille les onglets inactifs pour libérer la mémoire. Ils se rechargent dès que vous y revenez. {state.breeze.sleeping} onglet(s) en veille
-                actuellement.
+                {t('Met en veille les onglets inactifs pour libérer la mémoire. Ils se rechargent dès que vous y revenez. {n} onglet(s) en veille actuellement.', {
+                  n: state.breeze.sleeping
+                })}
               </p>
-              <Row label="Activer Brise">
-                <Toggle label="Activer Brise" checked={settings.breeze.enabled} onChange={(v) => set({ breeze: { ...settings.breeze, enabled: v } })} />
+              <Row label={t('Activer Brise')}>
+                <Toggle label={t('Activer Brise')} checked={settings.breeze.enabled} onChange={(v) => set({ breeze: { ...settings.breeze, enabled: v } })} />
               </Row>
-              <Row label="Délai avant la mise en veille" hint={`${settings.breeze.minutes} min sans être affiché (les onglets qui jouent du son ne dorment jamais)`}>
+              <Row label={t('Délai avant la mise en veille')} hint={t('{n} min sans être affiché (les onglets qui jouent du son ne dorment jamais)', { n: settings.breeze.minutes })}>
                 <input type="range" min={5} max={120} step={5} value={settings.breeze.minutes} onChange={(e) => set({ breeze: { ...settings.breeze, minutes: Number(e.target.value) } })} />
               </Row>
             </>
@@ -251,13 +266,13 @@ export function SettingsDialog({
 
           {section === 'tempete' && (
             <>
-              <h2>Tempête</h2>
-              <p className="settings__intro">Mode focus : pendant une Tempête, les sites ci-dessous sont bloqués. Lancez-la depuis la barre d’outils ou Souffle.</p>
-              <Row label="Durée par défaut" hint={`${settings.storm.defaultMinutes} min`}>
+              <h2>{t('Tempête')}</h2>
+              <p className="settings__intro">{t('Mode focus : pendant une Tempête, les sites ci-dessous sont bloqués. Lancez-la depuis la barre d’outils ou Souffle.')}</p>
+              <Row label={t('Durée par défaut')} hint={`${settings.storm.defaultMinutes} min`}>
                 <input type="range" min={5} max={180} step={5} value={settings.storm.defaultMinutes} onChange={(e) => set({ storm: { ...settings.storm, defaultMinutes: Number(e.target.value) } })} />
               </Row>
               <div className="setting setting--block">
-                <span className="setting__label">Sites distrayants</span>
+                <span className="setting__label">{t('Sites distrayants')}</span>
                 <DomainList value={settings.storm.sites} onChange={(v) => set({ storm: { ...settings.storm, sites: v } })} placeholder="youtube.com" />
               </div>
             </>
@@ -265,16 +280,16 @@ export function SettingsDialog({
 
           {section === 'telechargements' && (
             <>
-              <h2>Téléchargements</h2>
-              <Row label="Dossier" hint={settings.downloadDir || 'Dossier Téléchargements de Windows'}>
+              <h2>{t('Téléchargements')}</h2>
+              <Row label={t('Dossier')} hint={settings.downloadDir || t('Dossier Téléchargements de Windows')}>
                 <button type="button" className="btn btn--s" onClick={() => void kaze.invoke('settings:choose-download-dir')}>
-                  <Icon name="folder" size={14} /> Choisir…
+                  <Icon name="folder" size={14} /> {t('Choisir…')}
                 </button>
               </Row>
               {settings.downloadDir && (
-                <Row label="Revenir au dossier par défaut">
+                <Row label={t('Revenir au dossier par défaut')}>
                   <button type="button" className="btn btn--s btn--ghost" onClick={() => set({ downloadDir: '' })}>
-                    Réinitialiser
+                    {t('Réinitialiser')}
                   </button>
                 </Row>
               )}
@@ -283,8 +298,8 @@ export function SettingsDialog({
 
           {section === 'raccourcis' && (
             <>
-              <h2>Raccourcis clavier</h2>
-              <p className="settings__intro">Cliquez sur une combinaison puis tapez la nouvelle. Ctrl+1 à Ctrl+9 vont directement à un onglet.</p>
+              <h2>{t('Raccourcis clavier')}</h2>
+              <p className="settings__intro">{t('Cliquez sur une combinaison puis tapez la nouvelle. Ctrl+1 à Ctrl+9 vont directement à un onglet.')}</p>
               <div className="shortcuts">
                 {(Object.keys(SHORTCUT_ACTIONS) as ShortcutAction[]).map((action) => {
                   const combo = settings.shortcuts[action] ?? ''
@@ -297,27 +312,27 @@ export function SettingsDialog({
                 })}
               </div>
               <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('settings:reset-shortcuts')}>
-                Rétablir les raccourcis par défaut
+                {t('Rétablir les raccourcis par défaut')}
               </button>
             </>
           )}
 
           {section === 'confidentialite' && (
             <>
-              <h2>Confidentialité</h2>
-              <Row label="Historique" hint="Effacer les pages visitées.">
+              <h2>{t('Confidentialité')}</h2>
+              <Row label={t('Historique')} hint={t('Effacer les pages visitées.')}>
                 <div className="button-row">
-                  <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('history:clear', 'heure').then(() => setCleared('Dernière heure effacée.'))}>
-                    Dernière heure
+                  <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('history:clear', 'heure').then(() => setCleared(t('Dernière heure effacée.')))}>
+                    {t('Dernière heure')}
                   </button>
-                  <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('history:clear', 'tout').then(() => setCleared('Historique effacé.'))}>
-                    Tout
+                  <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('history:clear', 'tout').then(() => setCleared(t('Historique effacé.')))}>
+                    {t('Tout')}
                   </button>
                 </div>
               </Row>
-              <Row label="Données de navigation" hint="Cookies, cache, stockage des sites et autorisations. Vous serez déconnecté des sites.">
-                <button type="button" className="btn btn--s btn--danger" onClick={() => void kaze.invoke('data:clear-browsing').then(() => setCleared('Données de navigation effacées.'))}>
-                  Effacer
+              <Row label={t('Données de navigation')} hint={t('Cookies, cache, stockage des sites et autorisations. Vous serez déconnecté des sites.')}>
+                <button type="button" className="btn btn--s btn--danger" onClick={() => void kaze.invoke('data:clear-browsing').then(() => setCleared(t('Données de navigation effacées.')))}>
+                  {t('Effacer')}
                 </button>
               </Row>
               {cleared && <p className="settings__done"><Icon name="check" size={15} /> {cleared}</p>}
@@ -328,25 +343,25 @@ export function SettingsDialog({
             <div className="about">
               <KazeMark size={72} seal />
               <h2>Kaze</h2>
-              <p className="about__slogan">Navigue comme le vent</p>
-              <p className="about__sub">Léger. Rapide. Libre. — Le web, sans résistance.</p>
+              <p className="about__slogan">{t('Navigue comme le vent')}</p>
+              <p className="about__sub">{t('Léger. Rapide. Libre. — Le web, sans résistance.')}</p>
               {info && (
                 <dl className="about__versions">
-                  <dt>Version</dt>
+                  <dt>{t('Version')}</dt>
                   <dd>{info.version}</dd>
-                  <dt>Electron</dt>
+                  <dt>{'Electron'}</dt>
                   <dd>{info.electron}</dd>
-                  <dt>Chromium</dt>
+                  <dt>{'Chromium'}</dt>
                   <dd>{info.chrome}</dd>
-                  <dt>Node.js</dt>
+                  <dt>{'Node.js'}</dt>
                   <dd>{info.node}</dd>
                 </dl>
               )}
               <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('app:open-external', 'dossier-donnees')}>
-                <Icon name="folder" size={14} /> Ouvrir le dossier des données
+                <Icon name="folder" size={14} /> {t('Ouvrir le dossier des données')}
               </button>
               <UpdatesSettings />
-              <p className="about__credit">Conçu par Kordix Studio</p>
+              <p className="about__credit">{t('Conçu par Kordix Studio')}</p>
             </div>
           )}
         </div>

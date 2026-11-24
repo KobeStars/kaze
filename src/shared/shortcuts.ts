@@ -3,37 +3,38 @@
  * Les combinaisons sont des chaînes normalisées : modificateurs dans l'ordre Ctrl, Alt, Shift,
  * puis la touche (« Ctrl+Shift+T », « F5 », « Alt+Left »). Ctrl+1 à Ctrl+9 sont fixes.
  */
+import { t } from './i18n'
 
 export const SHORTCUT_ACTIONS = {
-  'tab.new': 'Nouvel onglet',
-  'tab.close': "Fermer l'onglet",
-  'tab.reopen': 'Rouvrir le dernier onglet fermé',
-  'tab.next': 'Onglet suivant',
-  'tab.previous': 'Onglet précédent',
-  'address.focus': "Aller à la barre d'adresse",
-  'souffle.open': 'Souffle (palette de commandes)',
-  'page.reload': 'Recharger',
-  'page.reloadAlt': 'Recharger (autre touche)',
-  'page.hardReload': 'Recharger sans le cache',
-  'page.back': 'Page précédente',
-  'page.forward': 'Page suivante',
-  'page.home': "Page d'accueil",
-  'page.find': 'Rechercher dans la page',
-  'page.devtools': 'Outils de développement',
-  'bookmark.toggle': 'Ajouter / retirer des favoris',
-  'history.open': 'Historique',
-  'bookmarks.open': 'Favoris',
-  'downloads.open': 'Téléchargements',
-  'zoom.in': 'Zoom avant',
-  'zoom.out': 'Zoom arrière',
-  'zoom.reset': 'Zoom 100 %',
-  'sidebar.toggle': 'Replier la barre latérale',
-  'split.toggle': 'Split view',
-  'responsive.toggle': 'Mode responsive',
-  'settings.open': 'Paramètres',
-  'studio.open': 'Kaze Studio',
-  'window.fullscreen': 'Plein écran'
-} as const
+  'tab.new': t('Nouvel onglet'),
+  'tab.close': t("Fermer l'onglet"),
+  'tab.reopen': t('Rouvrir le dernier onglet fermé'),
+  'tab.next': t('Onglet suivant'),
+  'tab.previous': t('Onglet précédent'),
+  'address.focus': t("Aller à la barre d'adresse"),
+  'souffle.open': t('Souffle (palette de commandes)'),
+  'page.reload': t('Recharger'),
+  'page.reloadAlt': t('Recharger (autre touche)'),
+  'page.hardReload': t('Recharger sans le cache'),
+  'page.back': t('Page précédente'),
+  'page.forward': t('Page suivante'),
+  'page.home': t("Page d'accueil"),
+  'page.find': t('Rechercher dans la page'),
+  'page.devtools': t('Outils de développement'),
+  'bookmark.toggle': t('Ajouter / retirer des favoris'),
+  'history.open': t('Historique'),
+  'bookmarks.open': t('Favoris'),
+  'downloads.open': t('Téléchargements'),
+  'zoom.in': t('Zoom avant'),
+  'zoom.out': t('Zoom arrière'),
+  'zoom.reset': t('Zoom 100 %'),
+  'sidebar.toggle': t('Replier la barre latérale'),
+  'split.toggle': t('Split view'),
+  'responsive.toggle': t('Mode responsive'),
+  'settings.open': t('Paramètres'),
+  'studio.open': t('Kaze Studio'),
+  'window.fullscreen': t('Plein écran')
+}
 
 export type ShortcutAction = keyof typeof SHORTCUT_ACTIONS
 

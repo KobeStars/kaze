@@ -2,6 +2,7 @@
  * Forme des API exposées par les preloads (window.kaze et window.kazeInterne).
  * Les deux preloads implémentent ces interfaces ; l'interface React les consomme.
  */
+import type { Lang } from './i18n'
 import type { InvokeArgs, InvokeChannel, InvokeResults, SendArgs, SendChannel, EventChannel, EventPayloads } from './ipc'
 import type { StudioArgs, StudioChannel, StudioResults } from './ipc'
 import type { DailyImage, HomeData, StudioEvent, TodoItem, WeatherData, WelcomeData } from './types'
@@ -11,6 +12,8 @@ export type Unsubscribe = () => void
 
 /** API de l'interface du navigateur (kaze://app). */
 export interface KazeApi {
+  /** Langue de l'interface, lue au chargement (l'interface se recharge si elle change). */
+  readonly lang: Lang
   /** Appelle un canal du contrat IPC ; les arguments sont revalidés côté principal. */
   invoke<C extends InvokeChannel>(channel: C, ...args: InvokeArgs<C>): Promise<InvokeResults[C]>
   send<C extends SendChannel>(channel: C, ...args: SendArgs<C>): void

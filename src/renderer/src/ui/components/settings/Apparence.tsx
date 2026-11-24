@@ -4,12 +4,13 @@
  */
 import { useEffect, useRef, useState, type JSX, type MouseEvent as ReactMouseEvent } from 'react'
 import type { Appearance, FontSettings, ToolbarButtonId } from '@shared/settings'
-import { PRESET_THEMES, isDark, type Theme, type ThemeColors } from '@shared/themes'
+import { PRESET_THEMES, isDark, themeName, type Theme, type ThemeColors } from '@shared/themes'
 import type { BrowserState } from '@shared/types'
 import { applyPalette } from '../../../commun/apparence'
 import { kaze, setAppearance } from '../../store'
 import { Icon, type IconName } from '../Icon'
 import { Block, ColorField, Row, SectionTitle, Segmented, Slider, Toggle, eyeDropper } from './controls'
+import { locale, t } from '@shared/i18n'
 
 type Props = { appearance: Appearance; state: BrowserState }
 
@@ -18,22 +19,22 @@ const reset = (section: 'theme' | 'polices' | 'interface' | 'animations'): void 
 // ───────────── Thèmes ─────────────
 
 const COLOR_LABELS: Record<keyof ThemeColors, string> = {
-  accent: 'Accent',
-  bg: 'Fond des pages',
-  chrome: 'Barre latérale et titre',
-  surface: 'Panneaux',
-  text: 'Texte',
-  muted: 'Texte secondaire',
-  border: 'Bordures',
-  tab: 'Onglet actif',
-  address: "Barre d'adresse"
+  accent: t('Accent'),
+  bg: t('Fond des pages'),
+  chrome: t('Barre latérale et titre'),
+  surface: t('Panneaux'),
+  text: t('Texte'),
+  muted: t('Texte secondaire'),
+  border: t('Bordures'),
+  tab: t('Onglet actif'),
+  address: t('Barre d\'adresse')
 }
 
 function ThemeCard({ theme, active, onClick, onDelete }: { theme: Theme; active: boolean; onClick: () => void; onDelete?: () => void }): JSX.Element {
   const c = theme.colors
   return (
     <div className={`theme-card${active ? ' is-active' : ''}`}>
-      <button type="button" className="theme-card__preview" onClick={onClick} style={{ background: c.bg, borderColor: c.border }} title={theme.name}>
+      <button type="button" className="theme-card__preview" onClick={onClick} style={{ background: c.bg, borderColor: c.border }} title={themeName(theme)}>
         <span className="theme-card__side" style={{ background: c.chrome }}>
           <span style={{ background: c.tab }} />
           <span style={{ background: c.surface }} />
@@ -46,9 +47,9 @@ function ThemeCard({ theme, active, onClick, onDelete }: { theme: Theme; active:
         </span>
       </button>
       <span className="theme-card__name">
-        {theme.name}
+        {themeName(theme)}
         {onDelete && (
-          <button type="button" className="row__action is-visible" title="Supprimer ce thème" onClick={onDelete}>
+          <button type="button" className="row__action is-visible" title={t('Supprimer ce thème')} onClick={onDelete}>
             <Icon name="trash" size={12} />
           </button>
         )}
@@ -59,7 +60,7 @@ function ThemeCard({ theme, active, onClick, onDelete }: { theme: Theme; active:
 
 /** Créateur de thème, avec aperçu en direct sur toute l'interface. */
 function ThemeCreator({ base, state, transparency, onClose }: { base: Theme; state: BrowserState; transparency: number; onClose: (saved: Theme | null) => void }): JSX.Element {
-  const [name, setName] = useState(base.id.startsWith('perso-') ? base.name : `${base.name} perso`)
+  const [name, setName] = useState(base.id.startsWith('perso-') ? base.name : t('{name} perso', { name: themeName(base) }))
   const [colors, setColors] = useState<ThemeColors>({ ...base.colors })
   const [target, setTarget] = useState<keyof ThemeColors>('accent')
   const [image, setImage] = useState<string | null>(null)
@@ -103,8 +104,8 @@ function ThemeCreator({ base, state, transparency, onClose }: { base: Theme; sta
   return (
     <div className="creator">
       <div className="creator__head">
-        <input className="input" value={name} maxLength={40} onChange={(e) => setName(e.target.value)} aria-label="Nom du thème" />
-        <span className="setting__hint">{isDark(colors.bg) ? 'Thème sombre' : 'Thème clair'} (déduit du fond)</span>
+        <input className="input" value={name} maxLength={40} onChange={(e) => setName(e.target.value)} aria-label={t('Nom du thème')} />
+        <span className="setting__hint">{isDark(colors.bg) ? t('Thème sombre (déduit du fond)') : t('Thème clair (déduit du fond)')}</span>
       </div>
       <div className="creator__grid">
         {(Object.keys(COLOR_LABELS) as (keyof ThemeColors)[]).map((key) => (
@@ -116,28 +117,28 @@ function ThemeCreator({ base, state, transparency, onClose }: { base: Theme; sta
       </div>
       <div className="creator__image">
         <label className="btn btn--s">
-          <Icon name="palette" size={14} /> Couleurs d'une image…
+          <Icon name="palette" size={14} /> {t('Couleurs d\'une image…')}
           <input type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && loadImage(e.target.files[0])} />
         </label>
         <span className="setting__hint">
           {image
-            ? `Cliquez sur l'image pour donner sa couleur à « ${COLOR_LABELS[target]} ».`
+            ? t('Cliquez sur l’image pour donner sa couleur à « {nom} ».', { nom: COLOR_LABELS[target] })
             : eyeDropper
-              ? 'Ou utilisez la pipette de chaque couleur pour prendre une couleur n’importe où à l’écran (un site, une photo…).'
+              ? t('Ou utilisez la pipette de chaque couleur pour prendre une couleur n’importe où à l’écran (un site, une photo…).')
               : ''}
         </span>
         {image && <canvas ref={canvas} className="creator__canvas" onClick={pickFromImage} />}
       </div>
       <div className="modal__actions">
         <button type="button" className="btn btn--ghost" onClick={() => onClose(null)}>
-          Annuler
+          {t('Annuler')}
         </button>
         <button
           type="button"
           className="btn btn--primary"
-          onClick={() => onClose({ id: base.id.startsWith('perso-') ? base.id : `perso-${Date.now().toString(36)}`, name: name.trim() || 'Mon thème', dark: isDark(colors.bg), colors })}
+          onClick={() => onClose({ id: base.id.startsWith('perso-') ? base.id : `perso-${Date.now().toString(36)}`, name: name.trim() || t('Mon thème'), dark: isDark(colors.bg), colors })}
         >
-          Enregistrer et appliquer
+          {t('Enregistrer et appliquer')}
         </button>
       </div>
     </div>
@@ -153,7 +154,7 @@ export function ThemesSection({ appearance: a, state }: Props): JSX.Element {
   if (editing) {
     return (
       <>
-        <SectionTitle>Créateur de thème</SectionTitle>
+        <SectionTitle>{t('Créateur de thème')}</SectionTitle>
         <ThemeCreator
           base={editing}
           state={state}
@@ -171,14 +172,14 @@ export function ThemesSection({ appearance: a, state }: Props): JSX.Element {
 
   return (
     <>
-      <SectionTitle onReset={() => reset('theme')}>Thèmes</SectionTitle>
-      <Row label="Choix du thème" hint={a.themeMode === 'heure' ? `Clair de ${a.dayStart} h à ${a.nightStart} h` : undefined}>
+      <SectionTitle onReset={() => reset('theme')}>{t('Thèmes')}</SectionTitle>
+      <Row label={t('Choix du thème')} hint={a.themeMode === 'heure' ? t('Clair de {debut} h à {fin} h', { debut: a.dayStart, fin: a.nightStart }) : undefined}>
         <Segmented
           value={a.themeMode}
           options={[
-            { id: 'manuel', label: 'Fixe' },
-            { id: 'heure', label: 'Selon l’heure' },
-            { id: 'windows', label: 'Comme Windows' }
+            { id: 'manuel', label: t('Fixe') },
+            { id: 'heure', label: t('Selon l’heure') },
+            { id: 'windows', label: t('Comme Windows') }
           ]}
           onChange={(v) => setAppearance({ themeMode: v })}
         />
@@ -202,7 +203,7 @@ export function ThemesSection({ appearance: a, state }: Props): JSX.Element {
         </div>
       ) : (
         <>
-          <Row label="Thème clair">
+          <Row label={t('Thème clair')}>
             <select className="input" value={a.lightThemeId} onChange={(e) => setAppearance({ lightThemeId: e.target.value })}>
               {options.map((o) => (
                 <option key={o.id} value={o.id}>
@@ -211,7 +212,7 @@ export function ThemesSection({ appearance: a, state }: Props): JSX.Element {
               ))}
             </select>
           </Row>
-          <Row label="Thème sombre">
+          <Row label={t('Thème sombre')}>
             <select className="input" value={a.darkThemeId} onChange={(e) => setAppearance({ darkThemeId: e.target.value })}>
               {options.map((o) => (
                 <option key={o.id} value={o.id}>
@@ -222,10 +223,10 @@ export function ThemesSection({ appearance: a, state }: Props): JSX.Element {
           </Row>
           {a.themeMode === 'heure' && (
             <>
-              <Row label="Le jour commence à">
+              <Row label={t('Le jour commence à')}>
                 <Slider value={a.dayStart} min={0} max={23} onChange={(v) => setAppearance({ dayStart: v })} format={(v) => `${v} h`} />
               </Row>
-              <Row label="La nuit commence à">
+              <Row label={t('La nuit commence à')}>
                 <Slider value={a.nightStart} min={0} max={23} onChange={(v) => setAppearance({ nightStart: v })} format={(v) => `${v} h`} />
               </Row>
             </>
@@ -233,13 +234,13 @@ export function ThemesSection({ appearance: a, state }: Props): JSX.Element {
         </>
       )}
 
-      <Row label="Créer un thème" hint={`À partir de « ${current.name} » : accent, fond, texte, barre latérale, onglets, barre d’adresse, bordures.`}>
+      <Row label={t('Créer un thème')} hint={t('À partir de « {name} » : accent, fond, texte, barre latérale, onglets, barre d’adresse, bordures.', { name: themeName(current) })}>
         <button type="button" className="btn btn--s" onClick={() => setEditing(current)}>
-          <Icon name="palette" size={14} /> {current.id.startsWith('perso-') ? 'Modifier ce thème' : 'Créer un thème'}
+          <Icon name="palette" size={14} /> {current.id.startsWith('perso-') ? t('Modifier ce thème') : t('Créer un thème')}
         </button>
       </Row>
-      <Row label="Couleur d’accent par Courant" hint="Chaque espace de travail prend sa propre couleur comme accent.">
-        <Toggle label="Couleur d’accent par Courant" checked={a.accentPerWorkspace} onChange={(v) => setAppearance({ accentPerWorkspace: v })} />
+      <Row label={t('Couleur d’accent par Courant')} hint={t('Chaque espace de travail prend sa propre couleur comme accent.')}>
+        <Toggle label={t('Couleur d’accent par Courant')} checked={a.accentPerWorkspace} onChange={(v) => setAppearance({ accentPerWorkspace: v })} />
       </Row>
     </>
   )
@@ -282,25 +283,25 @@ function FontEditor({
 }): JSX.Element {
   const set = (patch: Partial<FontSettings & { ligatures: boolean }>): void => onChange({ ...value, ...patch })
   const sample =
-    kind === 'code' ? 'const vent = () => "風" !== null // => != <= >= ===' : kind === 'titres' ? 'Navigue comme le vent' : 'Léger. Rapide. Libre. — Le web, sans résistance.'
+    kind === 'code' ? 'const vent = () => "風" !== null // => != <= >= ===' : kind === 'titres' ? t('Navigue comme le vent') : t('Léger. Rapide. Libre. — Le web, sans résistance.')
   return (
     <div className="font-editor">
       <div className="font-editor__head">
         <span className="setting__label">{label}</span>
         <select className="input" value={value.family} onChange={(e) => set({ family: e.target.value })}>
-          <optgroup label="Intégrées à Kaze">
+          <optgroup label={t('Intégrées à Kaze')}>
             {BUILTIN_FONTS.map((f) => (
               <option key={f}>{f}</option>
             ))}
           </optgroup>
           {custom.length > 0 && (
-            <optgroup label="Importées">
+            <optgroup label={t('Importées')}>
               {custom.map((f) => (
                 <option key={f}>{f}</option>
               ))}
             </optgroup>
           )}
-          <optgroup label="Windows">
+          <optgroup label={t('Windows')}>
             {SYSTEM_FONTS.map((f) => (
               <option key={f}>{f}</option>
             ))}
@@ -322,25 +323,25 @@ function FontEditor({
       </p>
       <div className="font-editor__grid">
         <label>
-          Taille
+          {t('Taille')}
           <Slider value={value.size} min={9} max={26} onChange={(v) => set({ size: v })} format={(v) => `${v} px`} />
         </label>
         <label>
-          Graisse
+          {t('Graisse')}
           <Slider value={value.weight} min={100} max={900} step={100} onChange={(v) => set({ weight: v })} />
         </label>
         <label>
-          Interlignage
+          {t('Interlignage')}
           <Slider value={value.lineHeight} min={1} max={2.4} step={0.05} onChange={(v) => set({ lineHeight: v })} format={(v) => v.toFixed(2)} />
         </label>
         <label>
-          Espacement
+          {t('Espacement')}
           <Slider value={value.letterSpacing} min={-0.08} max={0.4} step={0.01} onChange={(v) => set({ letterSpacing: v })} format={(v) => `${v.toFixed(2)} em`} />
         </label>
         {kind === 'code' && (
           <label className="font-editor__toggle">
             Ligatures (=&gt;, !==…)
-            <Toggle label="Ligatures" checked={value.ligatures !== false} onChange={(v) => set({ ligatures: v })} />
+            <Toggle label={t('Ligatures')} checked={value.ligatures !== false} onChange={(v) => set({ ligatures: v })} />
           </label>
         )}
       </div>
@@ -356,41 +357,41 @@ export function FontsSection({ appearance: a }: Props): JSX.Element {
 
   const addGoogle = (): void => {
     if (!google.trim()) return
-    setStatus('Téléchargement…')
+    setStatus(t('Téléchargement…'))
     kaze
       .invoke('perso:google-font', google.trim())
       .then((family) => {
-        setStatus(`« ${family} » est installée et disponible hors ligne.`)
+        setStatus(t('« {police} » est installée et disponible hors ligne.', { police: family }))
         setGoogle('')
       })
-      .catch(() => setStatus('Police introuvable sur Google Fonts (vérifiez le nom exact, ex. « Noto Sans JP »).'))
+      .catch(() => setStatus(t('Police introuvable sur Google Fonts (vérifiez le nom exact, ex. « Noto Sans JP »).')))
   }
 
   return (
     <>
-      <SectionTitle onReset={() => reset('polices')}>Polices</SectionTitle>
-      <FontEditor label="Interface" kind="ui" value={fonts.ui} custom={custom} onChange={(v) => setAppearance({ fonts: { ...fonts, ui: v } })} />
-      <FontEditor label="Titres" kind="titres" value={fonts.titles} custom={custom} onChange={(v) => setAppearance({ fonts: { ...fonts, titles: v } })} />
+      <SectionTitle onReset={() => reset('polices')}>{t('Polices')}</SectionTitle>
+      <FontEditor label={t('Interface')} kind="ui" value={fonts.ui} custom={custom} onChange={(v) => setAppearance({ fonts: { ...fonts, ui: v } })} />
+      <FontEditor label={t('Titres')} kind="titres" value={fonts.titles} custom={custom} onChange={(v) => setAppearance({ fonts: { ...fonts, titles: v } })} />
       <FontEditor
-        label="Éditeur de code (Kaze Studio)"
+        label={t('Éditeur de code (Kaze Studio)')}
         kind="code"
         value={fonts.code}
         custom={custom}
         onChange={(v) => setAppearance({ fonts: { ...fonts, code: { ...v, ligatures: v.ligatures !== false } } })}
       />
 
-      <Block label="Ajouter des polices" hint="Fichiers .ttf, .otf, .woff2, ou n’importe quelle police de Google Fonts (téléchargée sur votre PC).">
+      <Block label={t('Ajouter des polices')} hint={t('Fichiers .ttf, .otf, .woff2, ou n’importe quelle police de Google Fonts (téléchargée sur votre PC).')}>
         <div className="button-row">
           <button
             type="button"
             className="btn btn--s"
-            onClick={() => void kaze.invoke('perso:import', 'police').then((r) => r?.family && setStatus(`« ${r.family} » importée.`))}
+            onClick={() => void kaze.invoke('perso:import', 'police').then((r) => r?.family && setStatus(t('« {police} » importée.', { police: r.family })))}
           >
-            <Icon name="folder" size={14} /> Importer un fichier…
+            <Icon name="folder" size={14} /> {t('Importer un fichier…')}
           </button>
-          <input className="input input--s" value={google} placeholder="Nom sur Google Fonts" onChange={(e) => setGoogle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addGoogle()} />
+          <input className="input input--s" value={google} placeholder={t('Nom sur Google Fonts')} onChange={(e) => setGoogle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addGoogle()} />
           <button type="button" className="btn btn--s" onClick={addGoogle} disabled={!google.trim()}>
-            <Icon name="download" size={14} /> Google Fonts
+            <Icon name="download" size={14} /> {'Google Fonts'}
           </button>
         </div>
         {status && <p className="setting__hint">{status}</p>}
@@ -401,7 +402,7 @@ export function FontsSection({ appearance: a }: Props): JSX.Element {
                 <span style={{ fontFamily: `'${f.family}'` }}>
                   {f.family} <small className="setting__hint">({f.source === 'google' ? 'Google Fonts' : 'fichier'})</small>
                 </span>
-                <button type="button" className="row__action is-visible" title="Supprimer" onClick={() => void kaze.invoke('perso:remove-font', f.family)}>
+                <button type="button" className="row__action is-visible" title={t('Supprimer')} onClick={() => void kaze.invoke('perso:remove-font', f.family)}>
                   <Icon name="trash" size={12} />
                 </button>
               </li>
@@ -416,22 +417,22 @@ export function FontsSection({ appearance: a }: Props): JSX.Element {
 // ───────────── Interface ─────────────
 
 const BUTTON_LABELS: Record<ToolbarButtonId, { label: string; icon: IconName }> = {
-  back: { label: 'Précédent', icon: 'back' },
-  forward: { label: 'Suivant', icon: 'forward' },
-  reload: { label: 'Recharger', icon: 'reload' },
-  home: { label: 'Accueil', icon: 'home' },
-  shield: { label: 'Bouclier de vent', icon: 'shield' },
-  vpn: { label: 'Brume (VPN)', icon: 'mist' },
-  split: { label: 'Split view', icon: 'split' },
-  storm: { label: 'Tempête', icon: 'storm' },
-  breeze: { label: 'Brise (mise en veille)', icon: 'wind' },
-  downloads: { label: 'Téléchargements', icon: 'download' },
-  history: { label: 'Historique', icon: 'history' },
-  bookmarks: { label: 'Favoris', icon: 'bookmark' },
-  studio: { label: 'Kaze Studio', icon: 'devtools' },
-  responsive: { label: 'Mode responsive', icon: 'devices' },
-  extensions: { label: 'Extensions', icon: 'puzzle' },
-  souffle: { label: 'Souffle', icon: 'souffle' }
+  back: { label: t('Précédent'), icon: 'back' },
+  forward: { label: t('Suivant'), icon: 'forward' },
+  reload: { label: t('Recharger'), icon: 'reload' },
+  home: { label: t('Accueil'), icon: 'home' },
+  shield: { label: t('Bouclier de vent'), icon: 'shield' },
+  vpn: { label: t('Brume (VPN)'), icon: 'mist' },
+  split: { label: t('Split view'), icon: 'split' },
+  storm: { label: t('Tempête'), icon: 'storm' },
+  breeze: { label: t('Brise (mise en veille)'), icon: 'wind' },
+  downloads: { label: t('Téléchargements'), icon: 'download' },
+  history: { label: t('Historique'), icon: 'history' },
+  bookmarks: { label: t('Favoris'), icon: 'bookmark' },
+  studio: { label: t('Kaze Studio'), icon: 'devtools' },
+  responsive: { label: t('Mode responsive'), icon: 'devices' },
+  extensions: { label: t('Extensions'), icon: 'puzzle' },
+  souffle: { label: t('Souffle'), icon: 'souffle' }
 }
 
 function ToolbarEditor({ value }: { value: Appearance['toolbar'] }): JSX.Element {
@@ -479,85 +480,85 @@ export function InterfaceSection({ appearance: a, sidebar }: Props & { sidebar: 
   const vertical = a.tabPosition === 'gauche' || a.tabPosition === 'droite'
   return (
     <>
-      <SectionTitle onReset={() => reset('interface')}>Interface</SectionTitle>
-      <Row label="Position des onglets">
+      <SectionTitle onReset={() => reset('interface')}>{t('Interface')}</SectionTitle>
+      <Row label={t('Position des onglets')}>
         <Segmented
           value={a.tabPosition}
           options={[
-            { id: 'gauche', label: 'À gauche' },
-            { id: 'droite', label: 'À droite' },
-            { id: 'haut', label: 'En haut' },
-            { id: 'bas', label: 'En bas' }
+            { id: 'gauche', label: t('À gauche') },
+            { id: 'droite', label: t('À droite') },
+            { id: 'haut', label: t('En haut') },
+            { id: 'bas', label: t('En bas') }
           ]}
           onChange={(v) => setAppearance({ tabPosition: v })}
         />
       </Row>
       {vertical && (
         <>
-          <Row label="Barre latérale repliée" hint="Ctrl+B">
-            <Toggle label="Barre latérale repliée" checked={sidebar.collapsed} onChange={(v) => sidebar.set({ sidebarCollapsed: v })} />
+          <Row label={t('Barre latérale repliée')} hint="Ctrl+B">
+            <Toggle label={t('Barre latérale repliée')} checked={sidebar.collapsed} onChange={(v) => sidebar.set({ sidebarCollapsed: v })} />
           </Row>
-          <Row label="Largeur de la barre latérale">
+          <Row label={t('Largeur de la barre latérale')}>
             <Slider value={sidebar.width} min={180} max={420} step={4} onChange={(v) => sidebar.set({ sidebarWidth: v })} format={(v) => `${v} px`} />
           </Row>
         </>
       )}
-      <Row label="Densité">
+      <Row label={t('Densité')}>
         <Segmented
           value={a.density}
           options={[
-            { id: 'compacte', label: 'Compacte' },
-            { id: 'normale', label: 'Normale' },
-            { id: 'aeree', label: 'Aérée' }
+            { id: 'compacte', label: t('Compacte') },
+            { id: 'normale', label: t('Normale') },
+            { id: 'aeree', label: t('Aérée') }
           ]}
           onChange={(v) => setAppearance({ density: v })}
         />
       </Row>
-      <Row label="Barre d’adresse">
+      <Row label={t('Barre d’adresse')}>
         <Segmented
           value={a.addressBar}
           options={[
-            { id: 'centree', label: 'Centrée' },
-            { id: 'classique', label: 'Classique' }
+            { id: 'centree', label: t('Centrée') },
+            { id: 'classique', label: t('Classique') }
           ]}
           onChange={(v) => setAppearance({ addressBar: v })}
         />
       </Row>
-      <Row label="Arrondi des coins">
+      <Row label={t('Arrondi des coins')}>
         <Slider value={a.radius} min={0} max={22} onChange={(v) => setAppearance({ radius: v })} format={(v) => `${v} px`} />
       </Row>
-      <Row label="Intensité du flou">
+      <Row label={t('Intensité du flou')}>
         <Slider value={a.blur} min={0} max={48} onChange={(v) => setAppearance({ blur: v })} format={(v) => `${v} px`} />
       </Row>
-      <Row label="Transparence des panneaux">
+      <Row label={t('Transparence des panneaux')}>
         <Slider value={a.transparency} min={0} max={0.6} step={0.02} onChange={(v) => setAppearance({ transparency: v })} format={(v) => `${Math.round(v * 100)} %`} />
       </Row>
-      <Row label="Ombres">
+      <Row label={t('Ombres')}>
         <Segmented
           value={a.shadows}
           options={[
-            { id: 'aucune', label: 'Aucune' },
-            { id: 'douces', label: 'Douces' },
-            { id: 'marquees', label: 'Marquées' }
+            { id: 'aucune', label: t('Aucune') },
+            { id: 'douces', label: t('Douces') },
+            { id: 'marquees', label: t('Marquées') }
           ]}
           onChange={(v) => setAppearance({ shadows: v })}
         />
       </Row>
-      <Row label="Taille des icônes">
+      <Row label={t('Taille des icônes')}>
         <Slider value={a.iconSize} min={14} max={24} onChange={(v) => setAppearance({ iconSize: v })} format={(v) => `${v} px`} />
       </Row>
-      <Row label="Style des icônes">
+      <Row label={t('Style des icônes')}>
         <Segmented
           value={a.iconStyle}
           options={[
-            { id: 'trait', label: 'Trait' },
-            { id: 'plein', label: 'Plein' },
-            { id: 'pinceau', label: 'Pinceau' }
+            { id: 'trait', label: t('Trait') },
+            { id: 'plein', label: t('Plein') },
+            { id: 'pinceau', label: t('Pinceau') }
           ]}
           onChange={(v) => setAppearance({ iconStyle: v })}
         />
       </Row>
-      <Block label="Barre d’outils" hint="Glissez pour réorganiser, cochez pour afficher.">
+      <Block label={t('Barre d’outils')} hint={t('Glissez pour réorganiser, cochez pour afficher.')}>
         <ToolbarEditor value={a.toolbar} />
       </Block>
     </>
@@ -571,24 +572,24 @@ export function AnimationsSection({ appearance: a }: Props): JSX.Element {
   const set = (patch: Partial<Appearance['animations']>): void => setAppearance({ animations: { ...anim, ...patch } })
   return (
     <>
-      <SectionTitle onReset={() => reset('animations')}>Animations</SectionTitle>
-      <Row label="Traits d’encre" hint="À l’ouverture d’un onglet.">
-        <Toggle label="Traits d’encre" checked={anim.ink} onChange={(v) => set({ ink: v })} />
+      <SectionTitle onReset={() => reset('animations')}>{t('Animations')}</SectionTitle>
+      <Row label={t('Traits d’encre')} hint={t('À l’ouverture d’un onglet.')}>
+        <Toggle label={t('Traits d’encre')} checked={anim.ink} onChange={(v) => set({ ink: v })} />
       </Row>
-      <Row label="Feuilles" hint="Feuille qui passe sur un nouvel onglet, feuilles qui volent sur l’accueil.">
-        <Toggle label="Feuilles" checked={anim.leaves} onChange={(v) => set({ leaves: v })} />
+      <Row label={t('Feuilles')} hint={t('Feuille qui passe sur un nouvel onglet, feuilles qui volent sur l’accueil.')}>
+        <Toggle label={t('Feuilles')} checked={anim.leaves} onChange={(v) => set({ leaves: v })} />
       </Row>
-      <Row label="Écran de démarrage" hint="Le kanji 風 tracé au pinceau à l’ouverture de Kaze.">
-        <Toggle label="Écran de démarrage" checked={anim.splash} onChange={(v) => set({ splash: v })} />
+      <Row label={t('Écran de démarrage')} hint={t('Le kanji 風 tracé au pinceau à l’ouverture de Kaze.')}>
+        <Toggle label={t('Écran de démarrage')} checked={anim.splash} onChange={(v) => set({ splash: v })} />
       </Row>
-      <Row label="Barre de chargement au pinceau">
-        <Toggle label="Barre de chargement" checked={anim.loader} onChange={(v) => set({ loader: v })} />
+      <Row label={t('Barre de chargement au pinceau')}>
+        <Toggle label={t('Barre de chargement')} checked={anim.loader} onChange={(v) => set({ loader: v })} />
       </Row>
-      <Row label="Vitesse des animations">
-        <Slider value={anim.speed} min={0.25} max={3} step={0.25} onChange={(v) => set({ speed: v })} format={(v) => `× ${v.toString().replace('.', ',')}`} />
+      <Row label={t('Vitesse des animations')}>
+        <Slider value={anim.speed} min={0.25} max={3} step={0.25} onChange={(v) => set({ speed: v })} format={(v) => `× ${v.toLocaleString(locale())}`} />
       </Row>
-      <Row label="Animations réduites" hint="Coupe presque tous les mouvements (confort visuel).">
-        <Toggle label="Animations réduites" checked={anim.reduced} onChange={(v) => set({ reduced: v })} />
+      <Row label={t('Animations réduites')} hint={t('Coupe presque tous les mouvements (confort visuel).')}>
+        <Toggle label={t('Animations réduites')} checked={anim.reduced} onChange={(v) => set({ reduced: v })} />
       </Row>
     </>
   )

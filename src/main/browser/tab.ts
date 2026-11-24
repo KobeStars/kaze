@@ -9,6 +9,7 @@ import { WebContentsView, type ContextMenuParams, type Input, type Session, type
 import { HOME_URL, isAllowedTabUrl } from '@shared/url'
 import type { FindResult, PageError, TabState } from '@shared/types'
 import { whenIdentityReady } from '../services/chrome-identity'
+import { t } from '@shared/i18n'
 
 /** Pages internes de Kaze (fond aux couleurs du thème plutôt que blanc). */
 const isInternal = (url: string): boolean => url.startsWith('kaze:')
@@ -322,7 +323,7 @@ export class Tab {
 
     contents.on('render-process-gone', (_event, details) => {
       if (details.reason === 'clean-exit') return
-      this.state.error = { code: -1000, description: 'La page a cessé de fonctionner', url: this.state.url }
+      this.state.error = { code: -1000, description: t('La page a cessé de fonctionner'), url: this.state.url }
       this.state.loading = false
       changed()
     })

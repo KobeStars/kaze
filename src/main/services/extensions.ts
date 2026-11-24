@@ -18,6 +18,7 @@ import { app, BrowserWindow, dialog, ipcMain, net, type Rectangle, type Session 
 import { unzipSync } from 'fflate'
 import type { ExtensionEntry } from '@shared/types'
 import { JsonStore } from '../store'
+import { t } from '@shared/i18n'
 
 /** Un onglet au format chrome.tabs.Tab (l'essentiel). */
 export interface ExtensionTab {
@@ -77,7 +78,7 @@ export class ExtensionsService extends EventEmitter<{ changed: [ExtensionEntry[]
 
     // chrome.tabs.query / get de la couche de compatibilité : pages d'extension…
     ipcMain.handle('kaze-ext:tabs', (event) => {
-      if (!event.senderFrame?.url.startsWith('chrome-extension://')) throw new Error('Réservé aux extensions')
+      if (!event.senderFrame?.url.startsWith('chrome-extension://')) throw new Error(t('Réservé aux extensions'))
       return this.tabs()
     })
     // … et moteurs d'arrière-plan (service workers), chacun avec son propre canal IPC.
@@ -110,12 +111,12 @@ export class ExtensionsService extends EventEmitter<{ changed: [ExtensionEntry[]
   /** Installe (ou met à jour) une extension du Chrome Web Store, d'après son lien ou son identifiant. */
   async installFromStore(input: string): Promise<ExtensionEntry> {
     const storeId = STORE_ID.exec(input)?.[1]
-    if (!storeId) throw new Error('Lien ou identifiant du Chrome Web Store non reconnu.')
+    if (!storeId) throw new Error(t('Lien ou identifiant du Chrome Web Store non reconnu.'))
     const url = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${process.versions.chrome}&acceptformat=crx2,crx3&x=id%3D${storeId}%26installsource%3Dondemand%26uc`
     const response = await net.fetch(url)
     if (!response.ok || response.status === 204) throw new Error(`Extension introuvable sur le Chrome Web Store (${response.status}).`)
     const crx = new Uint8Array(await response.arrayBuffer())
-    if (crx.byteLength > MAX_CRX) throw new Error('Extension trop volumineuse.')
+    if (crx.byteLength > MAX_CRX) throw new Error(t('Extension trop volumineuse.'))
     const files = unzipSync(crxToZip(crx))
 
     const target = join(this.dir, storeId)
@@ -127,11 +128,11 @@ export class ExtensionsService extends EventEmitter<{ changed: [ExtensionEntry[]
       // Chrome réserve les noms qui commencent par « _ » à la racine (sauf _locales) : _metadata est refusé au chargement.
       if (/^_(?!locales\/)/.test(name)) continue
       const path = normalize(join(target, name))
-      if (!path.startsWith(target + sep)) throw new Error('Archive d’extension invalide.')
+      if (!path.startsWith(target + sep)) throw new Error(t('Archive d’extension invalide.'))
       await mkdir(dirname(path), { recursive: true })
       await writeFile(path, data)
     }
-    if (!existsSync(join(target, 'manifest.json'))) throw new Error('Archive d’extension invalide (pas de manifest.json).')
+    if (!existsSync(join(target, 'manifest.json'))) throw new Error(t('Archive d’extension invalide (pas de manifest.json).'))
 
     const item: StoredExtension = { storeId, path: target, enabled: previous?.enabled ?? true }
     this.save([...this.store.get().items.filter((i) => i.path !== target), item])
@@ -142,10 +143,10 @@ export class ExtensionsService extends EventEmitter<{ changed: [ExtensionEntry[]
 
   /** Ajoute une extension décompressée depuis un dossier (mode développeur). */
   async installFromFolder(parent: BrowserWindow): Promise<ExtensionEntry | null> {
-    const result = await dialog.showOpenDialog(parent, { title: 'Dossier de l’extension (avec manifest.json)', properties: ['openDirectory'] })
+    const result = await dialog.showOpenDialog(parent, { title: t('Dossier de l’extension (avec manifest.json)'), properties: ['openDirectory'] })
     const path = result.filePaths[0]
     if (result.canceled || !path) return null
-    if (!existsSync(join(path, 'manifest.json'))) throw new Error('Ce dossier ne contient pas de manifest.json.')
+    if (!existsSync(join(path, 'manifest.json'))) throw new Error(t('Ce dossier ne contient pas de manifest.json.'))
     const item: StoredExtension = { storeId: null, path, enabled: true }
     if (this.loaded.has(path)) this.unload(path)
     this.save([...this.store.get().items.filter((i) => i.path !== path), item])
@@ -215,7 +216,7 @@ export class ExtensionsService extends EventEmitter<{ changed: [ExtensionEntry[]
 
   private find(path: string): StoredExtension {
     const item = this.store.get().items.find((i) => i.path === path)
-    if (!item) throw new Error('Extension inconnue.')
+    if (!item) throw new Error(t('Extension inconnue.'))
     return item
   }
 
@@ -257,7 +258,7 @@ export class ExtensionsService extends EventEmitter<{ changed: [ExtensionEntry[]
         hasPopup: typeof action?.default_popup === 'string'
       }
     } catch {
-      return { ...base, name: 'Extension illisible', description: '', version: '', icon: null, hasPopup: false, error: base.error ?? 'manifest.json illisible' }
+      return { ...base, name: t('Extension illisible'), description: '', version: '', icon: null, hasPopup: false, error: base.error ?? t('manifest.json illisible') }
     }
   }
 }
@@ -267,7 +268,7 @@ function crxToZip(crx: Uint8Array): Uint8Array {
   const view = new DataView(crx.buffer, crx.byteOffset, crx.byteLength)
   const magic = String.fromCharCode(...crx.subarray(0, 4))
   if (magic === 'PK\u0003\u0004') return crx
-  if (magic !== 'Cr24') throw new Error('Paquet .crx invalide.')
+  if (magic !== 'Cr24') throw new Error(t('Paquet .crx invalide.'))
   const version = view.getUint32(4, true)
   const start = version === 3 ? 12 + view.getUint32(8, true) : 16 + view.getUint32(8, true) + view.getUint32(12, true)
   return crx.subarray(start)

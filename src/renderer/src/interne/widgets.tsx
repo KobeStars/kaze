@@ -5,11 +5,13 @@ import { useEffect, useRef, useState, type JSX } from 'react'
 import type { Appearance } from '@shared/settings'
 import type { Bookmark, TodoItem, WeatherData } from '@shared/types'
 import { displayUrl } from '@shared/url'
+import { locale, t } from '@shared/i18n'
 
 const api = window.kazeInterne
 
-const TIME = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' })
-const DATE = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+// Horloge toujours sur 24 h : elle est dessinée pour « 18:31 », pas pour « 06:31 PM ».
+const TIME = new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+const DATE = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
 
 function useNow(): Date {
   const [now, setNow] = useState(new Date())
@@ -26,7 +28,7 @@ function useNow(): Date {
 export function Clock({ userName }: { userName: string }): JSX.Element {
   const now = useNow()
   const h = now.getHours()
-  const word = h >= 5 && h < 18 ? 'Bonjour' : 'Bonsoir'
+  const word = h >= 5 && h < 18 ? t('Bonjour') : t('Bonsoir')
   const date = DATE.format(now)
   return (
     <div className="w-clock">
@@ -62,7 +64,7 @@ export function Weather({ city }: { city: string }): JSX.Element {
       clearInterval(timer)
     }
   }, [city])
-  if (data === undefined) return <div className="w-card w-weather">Météo…</div>
+  if (data === undefined) return <div className="w-card w-weather">{t('Météo…')}</div>
   if (data === null) return <div className="w-card w-weather">Météo indisponible pour « {city} ».</div>
   return (
     <div className="w-card w-weather">
@@ -84,10 +86,10 @@ export function Weather({ city }: { city: string }): JSX.Element {
 
 export function Shortcuts({ shortcuts, size }: { shortcuts: Bookmark[]; size: Appearance['home']['shortcutsSize'] }): JSX.Element {
   if (shortcuts.length === 0) {
-    return <p className="w-hint">Ajoutez vos sites préférés aux favoris avec Ctrl+D : ils apparaîtront ici.</p>
+    return <p className="w-hint">{t('Ajoutez vos sites préférés aux favoris avec Ctrl+D : ils apparaîtront ici.')}</p>
   }
   return (
-    <nav className={`w-shortcuts w-shortcuts--${size}`} aria-label="Favoris">
+    <nav className={`w-shortcuts w-shortcuts--${size}`} aria-label={t('Favoris')}>
       {shortcuts.map((b) => (
         <ShortcutTile key={b.id} bookmark={b} />
       ))}
@@ -117,10 +119,10 @@ export function Notes({ initial }: { initial: string }): JSX.Element {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   return (
     <div className="w-card w-notes">
-      <h3>Notes</h3>
+      <h3>{t('Notes')}</h3>
       <textarea
         value={text}
-        placeholder="Une idée, une adresse, un rappel…"
+        placeholder={t('Une idée, une adresse, un rappel…')}
         spellCheck
         onChange={(e) => {
           const value = e.target.value
@@ -142,15 +144,15 @@ export function Todo({ initial }: { initial: TodoItem[] }): JSX.Element {
   }
   return (
     <div className="w-card w-todo">
-      <h3>À faire</h3>
+      <h3>{t('À faire')}</h3>
       <ul>
-        {todos.map((t) => (
-          <li key={t.id} className={t.done ? 'is-done' : ''}>
+        {todos.map((todo) => (
+          <li key={todo.id} className={todo.done ? 'is-done' : ''}>
             <label>
-              <input type="checkbox" checked={t.done} onChange={() => save(todos.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)))} />
-              <span>{t.text}</span>
+              <input type="checkbox" checked={todo.done} onChange={() => save(todos.map((x) => (x.id === todo.id ? { ...x, done: !x.done } : x)))} />
+              <span>{todo.text}</span>
             </label>
-            <button type="button" title="Supprimer" onClick={() => save(todos.filter((x) => x.id !== t.id))}>
+            <button type="button" title={t('Supprimer')} onClick={() => save(todos.filter((x) => x.id !== todo.id))}>
               ×
             </button>
           </li>
@@ -164,7 +166,7 @@ export function Todo({ initial }: { initial: TodoItem[] }): JSX.Element {
           setDraft('')
         }}
       >
-        <input value={draft} placeholder="Ajouter une tâche…" onChange={(e) => setDraft(e.target.value)} />
+        <input value={draft} placeholder={t('Ajouter une tâche…')} onChange={(e) => setDraft(e.target.value)} />
       </form>
     </div>
   )
@@ -172,33 +174,33 @@ export function Todo({ initial }: { initial: TodoItem[] }): JSX.Element {
 
 /** Proverbes et pensées japonaises, un par jour. */
 const CITATIONS: [string, string][] = [
-  ['Tombe sept fois, relève-toi huit.', 'Proverbe japonais'],
-  ['Même un singe tombe de l’arbre.', 'Proverbe japonais'],
-  ['Le bambou qui plie est plus fort que le chêne qui résiste.', 'Proverbe japonais'],
-  ['Une grenouille dans un puits ne connaît pas le grand océan.', 'Proverbe japonais'],
-  ['La vision sans action est un rêve ; l’action sans vision est un cauchemar.', 'Proverbe japonais'],
-  ['Le temps passe comme une flèche.', 'Proverbe japonais'],
-  ['Si tu cours après deux lièvres, tu n’en attraperas aucun.', 'Proverbe japonais'],
-  ['Le bavard ne sait pas ; celui qui sait ne bavarde pas.', 'Proverbe japonais'],
-  ['Une seule rencontre, une seule fois. (Ichi-go ichi-e)', 'Maxime de la cérémonie du thé'],
-  ['Commence là où tu es.', 'Pensée zen'],
-  ['Le vent ne peut pas renverser une montagne.', 'Proverbe japonais'],
-  ['Il faut dix ans pour faire pousser un arbre, cent ans pour former une personne.', 'Proverbe japonais'],
-  ['Le clou qui dépasse appelle le marteau.', 'Proverbe japonais'],
-  ['La patience est la clé du paradis.', 'Proverbe japonais'],
-  ['Même la poussière, accumulée, devient montagne.', 'Proverbe japonais'],
-  ['Après la pluie, le sol se raffermit.', 'Proverbe japonais'],
-  ['Ce n’est pas le vent qui bouge, ni le drapeau : c’est votre esprit.', 'Kōan zen'],
-  ['Le parcours de mille lieues commence par un pas.', 'Proverbe (repris au Japon)'],
-  ['La goutte d’eau creuse la pierre.', 'Proverbe japonais'],
-  ['Un esprit de débutant contient de nombreuses possibilités.', 'Shunryū Suzuki'],
-  ['Quand l’élève est prêt, le maître apparaît.', 'Pensée bouddhiste'],
-  ['Mieux vaut un voisin proche qu’un parent lointain.', 'Proverbe japonais'],
-  ['La beauté est dans l’imperfection. (Wabi-sabi)', 'Esthétique japonaise'],
-  ['L’eau claire ne garde pas de poisson.', 'Proverbe japonais'],
-  ['Quand le vent se lève, il faut tenter de vivre.', 'Paul Valéry (Le vent se lève)'],
-  ['Le chemin est le but.', 'Pensée zen'],
-  ['Une parole aimable peut réchauffer trois mois d’hiver.', 'Proverbe japonais']
+  [t('Tombe sept fois, relève-toi huit.'), t('Proverbe japonais')],
+  [t('Même un singe tombe de l’arbre.'), t('Proverbe japonais')],
+  [t('Le bambou qui plie est plus fort que le chêne qui résiste.'), t('Proverbe japonais')],
+  [t('Une grenouille dans un puits ne connaît pas le grand océan.'), t('Proverbe japonais')],
+  [t('La vision sans action est un rêve ; l’action sans vision est un cauchemar.'), t('Proverbe japonais')],
+  [t('Le temps passe comme une flèche.'), t('Proverbe japonais')],
+  [t('Si tu cours après deux lièvres, tu n’en attraperas aucun.'), t('Proverbe japonais')],
+  [t('Le bavard ne sait pas ; celui qui sait ne bavarde pas.'), t('Proverbe japonais')],
+  [t('Une seule rencontre, une seule fois. (Ichi-go ichi-e)'), t('Maxime de la cérémonie du thé')],
+  [t('Commence là où tu es.'), t('Pensée zen')],
+  [t('Le vent ne peut pas renverser une montagne.'), t('Proverbe japonais')],
+  [t('Il faut dix ans pour faire pousser un arbre, cent ans pour former une personne.'), t('Proverbe japonais')],
+  [t('Le clou qui dépasse appelle le marteau.'), t('Proverbe japonais')],
+  [t('La patience est la clé du paradis.'), t('Proverbe japonais')],
+  [t('Même la poussière, accumulée, devient montagne.'), t('Proverbe japonais')],
+  [t('Après la pluie, le sol se raffermit.'), t('Proverbe japonais')],
+  [t('Ce n’est pas le vent qui bouge, ni le drapeau : c’est votre esprit.'), t('Kōan zen')],
+  [t('Le parcours de mille lieues commence par un pas.'), t('Proverbe (repris au Japon)')],
+  [t('La goutte d’eau creuse la pierre.'), t('Proverbe japonais')],
+  [t('Un esprit de débutant contient de nombreuses possibilités.'), t('Shunryū Suzuki')],
+  [t('Quand l’élève est prêt, le maître apparaît.'), t('Pensée bouddhiste')],
+  [t('Mieux vaut un voisin proche qu’un parent lointain.'), t('Proverbe japonais')],
+  [t('La beauté est dans l’imperfection. (Wabi-sabi)'), t('Esthétique japonaise')],
+  [t('L’eau claire ne garde pas de poisson.'), t('Proverbe japonais')],
+  [t('Quand le vent se lève, il faut tenter de vivre.'), t('Paul Valéry (Le vent se lève)')],
+  [t('Le chemin est le but.'), t('Pensée zen')],
+  [t('Une parole aimable peut réchauffer trois mois d’hiver.'), t('Proverbe japonais')]
 ]
 
 export function Quote(): JSX.Element {
@@ -207,7 +209,7 @@ export function Quote(): JSX.Element {
   const [text, author] = CITATIONS[day % CITATIONS.length]!
   return (
     <figure className="w-quote">
-      <blockquote>« {text} »</blockquote>
+      <blockquote>{t('« {citation} »', { citation: text })}</blockquote>
       <figcaption>{author}</figcaption>
     </figure>
   )

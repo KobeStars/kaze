@@ -7,10 +7,11 @@ import type { BrowserState, TabState, Workspace } from '@shared/types'
 import { displayUrl, isHomeUrl, isStudioUrl } from '@shared/url'
 import { kaze } from '../store'
 import { Favicon, Icon, KazeMark } from './Icon'
+import { t } from '@shared/i18n'
 
 function tabTitle(tab: TabState): string {
-  if (isHomeUrl(tab.url)) return 'Nouvel onglet'
-  if (isStudioUrl(tab.url)) return 'Kaze Studio'
+  if (isHomeUrl(tab.url)) return t('Nouvel onglet')
+  if (isStudioUrl(tab.url)) return t('Kaze Studio')
   return tab.title || displayUrl(tab.url) || 'Sans titre'
 }
 
@@ -81,14 +82,14 @@ function TabItem({ tab, active, inSplit, compact, index, onDragStart, onDropAt }
         ) : (
           <Favicon src={tab.favicon} title={title} />
         )}
-        {tab.asleep && !compact && <span className="tab__sleep" title="En veille (Brise)"><Icon name="moon" size={10} /></span>}
+        {tab.asleep && !compact && <span className="tab__sleep" title={t('En veille (Brise)')}><Icon name="moon" size={10} /></span>}
       </span>
       {!compact && <span className="tab__title">{title}</span>}
       {!compact && (tab.audible || tab.muted) && (
         <button
           type="button"
           className="tab__audio"
-          title={tab.muted ? 'Rétablir le son' : 'Couper le son'}
+          title={tab.muted ? t('Rétablir le son') : t('Couper le son')}
           onClick={(e) => {
             e.stopPropagation()
             void kaze.invoke('tab:mute', tab.id)
@@ -101,7 +102,7 @@ function TabItem({ tab, active, inSplit, compact, index, onDragStart, onDropAt }
         <button
           type="button"
           className="tab__close"
-          title="Fermer (Ctrl+W)"
+          title={t('Fermer (Ctrl+W)')}
           onClick={(e) => {
             e.stopPropagation()
             void kaze.invoke('tab:close', tab.id)
@@ -158,7 +159,7 @@ export function Sidebar({ state, collapsed, width, onEditWorkspace, onOpenSettin
             type="button"
             className="workspace-chip"
             style={{ ['--ws' as string]: workspace.color }}
-            title="Modifier ce Courant"
+            title={t('Modifier ce Courant')}
             onClick={() => onEditWorkspace(workspace)}
           >
             <span className="workspace-chip__icon">{workspace.icon}</span>
@@ -167,12 +168,12 @@ export function Sidebar({ state, collapsed, width, onEditWorkspace, onOpenSettin
         )}
       </div>
 
-      <button type="button" className="sidebar__new" title="Nouvel onglet (Ctrl+T)" onClick={() => void kaze.invoke('tab:create', {})}>
+      <button type="button" className="sidebar__new" title={t('Nouvel onglet (Ctrl+T)')} onClick={() => void kaze.invoke('tab:create', {})}>
         <Icon name="plus" size={16} />
         {!collapsed && (
           <>
-            <span>Nouvel onglet</span>
-            <kbd>Ctrl T</kbd>
+            <span>{t('Nouvel onglet')}</span>
+            <kbd>{'Ctrl T'}</kbd>
           </>
         )}
       </button>
@@ -193,7 +194,7 @@ export function Sidebar({ state, collapsed, width, onEditWorkspace, onOpenSettin
       </ul>
 
       <div className="sidebar__foot">
-        <div className="workspaces" role="tablist" aria-label="Courants">
+        <div className="workspaces" role="tablist" aria-label={t('Courants')}>
           {state.workspaces.map((w) => (
             <button
               key={w.id}
@@ -208,22 +209,22 @@ export function Sidebar({ state, collapsed, width, onEditWorkspace, onOpenSettin
               {w.icon}
             </button>
           ))}
-          <button type="button" className="workspace-dot workspace-dot--add" title="Nouveau Courant" onClick={() => onEditWorkspace(null)}>
+          <button type="button" className="workspace-dot workspace-dot--add" title={t('Nouveau Courant')} onClick={() => onEditWorkspace(null)}>
             <Icon name="plus" size={13} />
           </button>
         </div>
         {!collapsed && (
           <div className="sidebar__tools">
-            <button type="button" className="btn-icon" title="Historique (Ctrl+H)" onClick={() => onDrawer('historique')}>
+            <button type="button" className="btn-icon" title={t('Historique (Ctrl+H)')} onClick={() => onDrawer('historique')}>
               <Icon name="history" size={17} />
             </button>
-            <button type="button" className="btn-icon" title="Favoris (Ctrl+Maj+O)" onClick={() => onDrawer('favoris')}>
+            <button type="button" className="btn-icon" title={t('Favoris (Ctrl+Maj+O)')} onClick={() => onDrawer('favoris')}>
               <Icon name="bookmark" size={17} />
             </button>
-            <button type="button" className="btn-icon" title="Kaze Studio (Ctrl+Maj+E)" onClick={() => void kaze.invoke('studio:open')}>
+            <button type="button" className="btn-icon" title={t('Kaze Studio (Ctrl+Maj+E)')} onClick={() => void kaze.invoke('studio:open')}>
               <Icon name="devtools" size={17} />
             </button>
-            <button type="button" className="btn-icon" title="Paramètres (Ctrl+,)" onClick={onOpenSettings}>
+            <button type="button" className="btn-icon" title={t('Paramètres (Ctrl+,)')} onClick={onOpenSettings}>
               <Icon name="settings" size={17} />
             </button>
           </div>
@@ -259,7 +260,7 @@ export function TabStrip({ state }: { state: BrowserState }): JSX.Element {
           />
         ))}
       </ul>
-      <button type="button" className="btn-icon tabstrip__new" title="Nouvel onglet (Ctrl+T)" onClick={() => void kaze.invoke('tab:create', {})}>
+      <button type="button" className="btn-icon tabstrip__new" title={t('Nouvel onglet (Ctrl+T)')} onClick={() => void kaze.invoke('tab:create', {})}>
         <Icon name="plus" size={16} />
       </button>
     </div>

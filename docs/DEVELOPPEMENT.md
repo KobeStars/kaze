@@ -15,7 +15,8 @@ npm run dist         # installateur Windows : dist/Kaze-Setup-<version>.exe
 
 Autres scripts :
 
-- `npm run typecheck` : vérifie les types (processus principal, preloads, interface).
+- `npm run typecheck` : vérifie les traductions puis les types (processus principal, preloads, interface).
+- `npm run i18n` : vérifie que chaque texte de l'interface a sa traduction anglaise.
 - `npm run tor` : télécharge le Tor Expert Bundle officiel (version et SHA-256 figées dans `scripts/tor.mjs`) dans `resources/tor`. `npm run dist` le lance tout seul.
 - `npm run logo` : détoure `assets/logo/kaze-logo.(png|jpg|webp)` et génère toutes les icônes.
 - `npm run polices` : extrait de Shippori Mincho uniquement les kanji utilisés (≈ 500 Ko au lieu de 11 Mo).
@@ -94,6 +95,23 @@ site/                     page de présentation (GitHub Pages)
 - **Extensions** : `session.extensions` d'Electron, complété par un preload qui ajoute les API Chrome absentes
   et renvoie les vrais onglets de Kaze à `chrome.tabs`.
 
+## Traduction
+
+Kaze est en français et en anglais (Paramètres → Général → Langue ; « Comme Windows » par défaut).
+Le français est la langue source : chaque texte s'écrit en français dans le code, entouré de `t('…')`
+(`src/shared/i18n.ts`), et sert de clé dans le dictionnaire anglais `src/shared/i18n-en.ts`.
+
+- Variables : `t('{n} onglets', { n })`, avec les mêmes `{n}` dans la traduction.
+- Listes définies au chargement d'un module : dans les pages, `t()` marche directement (la langue est
+  réglée avant tout autre module, voir `src/renderer/src/commun/langue.ts`) ; dans le processus principal,
+  marquer le texte avec `N_('…')` et le traduire à l'usage avec `t(texte)`.
+- Changer de langue recharge l'interface et les pages internes.
+- `npm run i18n` signale les textes sans traduction, les variables qui ne correspondent pas et les
+  entrées inutiles. `KAZE_AUTOTEST_LANGUE=1` (profil réglé en anglais) relève tous les textes affichés
+  et signale ceux qui ont l'air français.
+- L'installateur suit la langue de Windows ; sa page de licence est dans `build/license_en.txt` et
+  `build/license_fr.txt`.
+
 ## Publier une version
 
 Les versions publiques sont construites par GitHub Actions ([`.github/workflows/publier.yml`](../.github/workflows/publier.yml)) :
@@ -117,7 +135,7 @@ seulement, sans rien publier. La configuration d'artefact SignPath est dans [`.s
 
 `KAZE_AUTOTEST=<dossier>` lance Kaze dans une fenêtre cachée, déroule un scénario et écrit des captures et un
 `rapport.txt` dans ce dossier (version de développement uniquement). Scénarios : ajouter `KAZE_AUTOTEST_VPN=1`,
-`_DRM`, `_RESPONSIVE`, `_OUVRIR`, `_TEMPLATES`, `_FONDS`, `_EXT` ou `_VITRINE` ; `KAZE_AUTOTEST_VISIBLE=1` affiche la fenêtre.
+`_DRM`, `_RESPONSIVE`, `_OUVRIR`, `_TEMPLATES`, `_FONDS`, `_EXT`, `_LANGUE` ou `_VITRINE` ; `KAZE_AUTOTEST_VISIBLE=1` affiche la fenêtre.
 
 ## Limites connues
 

@@ -4,6 +4,7 @@
  */
 import { BrowserWindow, dialog, type Session } from 'electron'
 import { JsonStore } from '../store'
+import { N_, t } from '@shared/i18n'
 
 type Decisions = Record<string, 'allow' | 'deny'>
 
@@ -13,14 +14,14 @@ const ALWAYS_ALLOWED = new Set(['fullscreen', 'clipboard-sanitized-write', 'poin
 
 /** Permissions pour lesquelles on pose la question, avec leur libellé. */
 const ASKABLE: Record<string, string> = {
-  media: 'utiliser votre caméra ou votre micro',
-  geolocation: 'connaître votre position',
-  notifications: 'vous envoyer des notifications',
-  'clipboard-read': 'lire votre presse-papiers',
-  midi: 'accéder à vos appareils MIDI',
-  midiSysex: 'accéder à vos appareils MIDI',
-  'display-capture': 'capturer votre écran',
-  'idle-detection': 'savoir si vous êtes actif'
+  media: N_('utiliser votre caméra ou votre micro'),
+  geolocation: N_('connaître votre position'),
+  notifications: N_('vous envoyer des notifications'),
+  'clipboard-read': N_('lire votre presse-papiers'),
+  midi: N_('accéder à vos appareils MIDI'),
+  midiSysex: N_('accéder à vos appareils MIDI'),
+  'display-capture': N_('capturer votre écran'),
+  'idle-detection': N_('savoir si vous êtes actif')
 }
 
 export class PermissionsService {
@@ -51,11 +52,11 @@ export class PermissionsService {
         const options = {
           type: 'question' as const,
           title: 'Kaze',
-          message: `${new URL(origin).host} veut ${label}.`,
-          buttons: ['Autoriser', 'Bloquer'],
+          message: t('{site} veut {action}.', { site: new URL(origin).host, action: t(label) }),
+          buttons: [t('Autoriser'), t('Bloquer')],
           defaultId: 1,
           cancelId: 1,
-          checkboxLabel: 'Retenir mon choix pour ce site',
+          checkboxLabel: t('Retenir mon choix pour ce site'),
           checkboxChecked: true
         }
         question = (parent ? dialog.showMessageBox(parent, options) : dialog.showMessageBox(options)).then(

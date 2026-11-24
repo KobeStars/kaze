@@ -7,25 +7,26 @@ import type { UpdateState } from '@shared/types'
 import { kaze, settingsStore, updateSettings, updateStore, useStore } from '../store'
 import { Icon } from './Icon'
 import { Row, Toggle } from './settings/controls'
+import { locale, t } from '@shared/i18n'
 
-const TIME = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
+const TIME = new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
 
 function describe(u: UpdateState): string {
   switch (u.status) {
     case 'desactive':
-      return 'Version de développement : les mises à jour ne s’appliquent qu’à Kaze installé.'
+      return t('Version de développement : les mises à jour ne s’appliquent qu’à Kaze installé.')
     case 'attente':
-      return 'Première vérification dans quelques secondes.'
+      return t('Première vérification dans quelques secondes.')
     case 'recherche':
-      return 'Recherche d’une nouvelle version…'
+      return t('Recherche d’une nouvelle version…')
     case 'a-jour':
-      return `Kaze est à jour${u.checkedAt ? ` (vérifié le ${TIME.format(u.checkedAt)})` : ''}.`
+      return u.checkedAt ? t('Kaze est à jour (vérifié le {date}).', { date: TIME.format(u.checkedAt) }) : t('Kaze est à jour.')
     case 'telechargement':
-      return `Téléchargement de la version ${u.available ?? ''} : ${u.progress} %`
+      return t('Téléchargement de la version {version} : {n} %', { version: u.available ?? '', n: u.progress })
     case 'pret':
-      return `La version ${u.available ?? ''} est prête : elle s’installera au prochain démarrage.`
+      return t('La version {version} est prête : elle s’installera au prochain démarrage.', { version: u.available ?? '' })
     case 'erreur':
-      return `Vérification impossible : ${u.error ?? 'erreur inconnue'}`
+      return t('Vérification impossible : {erreur}', { erreur: u.error ?? t('erreur inconnue') })
   }
 }
 
@@ -37,10 +38,10 @@ export function UpdateReady(): JSX.Element | null {
     <button
       type="button"
       className="update-ready"
-      title={`Kaze ${update.available} est prêt — cliquer pour redémarrer et l’installer (vos onglets seront rouverts)`}
+      title={t('Kaze {version} est prêt — cliquer pour redémarrer et l’installer (vos onglets seront rouverts)', { version: update.available ?? '' })}
       onClick={() => void kaze.invoke('update:install')}
     >
-      <Icon name="download" size={14} /> Mettre à jour
+      <Icon name="download" size={14} /> {t('Mettre à jour')}
     </button>
   )
 }
@@ -53,17 +54,17 @@ export function UpdatesSettings(): JSX.Element {
   const busy = update.status === 'recherche' || update.status === 'telechargement'
   return (
     <div className="updates">
-      <Row label="Mises à jour automatiques" hint="Kaze vérifie toutes les 4 heures, télécharge en arrière-plan et installe au redémarrage.">
-        <Toggle label="Mises à jour automatiques" checked={settings.autoUpdate} onChange={(v) => updateSettings({ autoUpdate: v })} />
+      <Row label={t('Mises à jour automatiques')} hint={t('Kaze vérifie toutes les 4 heures, télécharge en arrière-plan et installe au redémarrage.')}>
+        <Toggle label={t('Mises à jour automatiques')} checked={settings.autoUpdate} onChange={(v) => updateSettings({ autoUpdate: v })} />
       </Row>
-      <Row label={`Version installée : ${update.current}`} hint={describe(update)}>
+      <Row label={t('Version installée : {version}', { version: update.current })} hint={describe(update)}>
         {update.status === 'pret' ? (
           <button type="button" className="btn btn--s btn--primary" onClick={() => void kaze.invoke('update:install')}>
-            Redémarrer et mettre à jour
+            {t('Redémarrer et mettre à jour')}
           </button>
         ) : (
           <button type="button" className="btn btn--s" disabled={busy || update.status === 'desactive'} onClick={() => void kaze.invoke('update:check')}>
-            <Icon name="reload" size={14} /> Rechercher
+            <Icon name="reload" size={14} /> {t('Rechercher')}
           </button>
         )}
       </Row>

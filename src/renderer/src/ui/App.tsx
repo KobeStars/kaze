@@ -23,6 +23,7 @@ import { Toolbar, type DrawerTab } from './components/Toolbar'
 import { FrozenLayer, Viewport } from './components/Viewport'
 import { UpdateReady } from './components/Updates'
 import { WindowControls } from './components/WindowControls'
+import { t } from '@shared/i18n'
 
 const DENSITY = { compacte: 0.86, normale: 1, aeree: 1.16 } as const
 const SHADOWS = {
@@ -198,7 +199,7 @@ export function App(): JSX.Element {
     <button
       type="button"
       className="btn-icon"
-      title={settings.sidebarCollapsed ? 'Déplier la barre latérale (Ctrl+B)' : 'Replier la barre latérale (Ctrl+B)'}
+      title={settings.sidebarCollapsed ? t('Déplier la barre latérale (Ctrl+B)') : t('Replier la barre latérale (Ctrl+B)')}
       onClick={() => updateSettings({ sidebarCollapsed: !settings.sidebarCollapsed })}
     >
       <Icon name="sidebar" />
@@ -226,7 +227,7 @@ export function App(): JSX.Element {
       </svg>
 
       <header className="titlebar">
-        <div className="titlebar__brand" title="Kaze — Navigue comme le vent">
+        <div className="titlebar__brand" title={t('Kaze — Navigue comme le vent')}>
           <KazeMark size={18} />
         </div>
         {position === 'haut' ? (

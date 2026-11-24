@@ -44,6 +44,7 @@ import type { ExtensionTab } from '../services/extensions'
 import type { VpnService } from '../services/vpn'
 import { pageContextMenu, tabContextMenu } from './menus'
 import { Tab, type TabHost } from './tab'
+import { t } from '@shared/i18n'
 
 export interface Services {
   settings: SettingsService
@@ -97,7 +98,9 @@ interface ClosedTab {
   workspaceId: string
 }
 
-export const DEFAULT_WORKSPACE: Workspace = { id: 'principal', name: 'Principal', color: '#D7372A', icon: '風' }
+/** Courant créé au premier lancement. Tant qu'il garde son nom d'origine, ce nom suit la langue. */
+const DEFAULT_WORKSPACE_NAMES = ['Principal', 'Main']
+const defaultWorkspace = (): Workspace => ({ id: 'principal', name: t('Principal'), color: '#D7372A', icon: '風' })
 
 const DEFAULT_PANEL_APPS: PanelApp[] = [
   { id: 'discord', name: 'Discord', url: 'https://discord.com/app', favicon: null },
@@ -107,7 +110,9 @@ const DEFAULT_PANEL_APPS: PanelApp[] = [
 
 function repairSession(raw: unknown): SessionData {
   const data = (typeof raw === 'object' && raw !== null ? raw : {}) as Partial<SessionData>
-  const workspaces = Array.isArray(data.workspaces) && data.workspaces.length > 0 ? data.workspaces : [DEFAULT_WORKSPACE]
+  const workspaces = (Array.isArray(data.workspaces) && data.workspaces.length > 0 ? data.workspaces : [defaultWorkspace()]).map((w) =>
+    w.id === 'principal' && DEFAULT_WORKSPACE_NAMES.includes(w.name) ? { ...w, name: t('Principal') } : w
+  )
   const activeWorkspaceId = workspaces.some((w) => w.id === data.activeWorkspaceId) ? data.activeWorkspaceId! : workspaces[0]!.id
   return {
     workspaces,
@@ -1094,6 +1099,13 @@ export class BrowserController implements TabHost {
       widgets: this.services.home.widgets(),
       persoBase: PERSO_BASE
     }
+  }
+
+  /** Recharge l'interface et les pages internes (après un changement de langue). */
+  reloadInterface(): void {
+    this.workspaces = this.workspaces.map((w) => (w.id === 'principal' && DEFAULT_WORKSPACE_NAMES.includes(w.name) ? { ...w, name: t('Principal') } : w))
+    this.win.webContents.reload()
+    for (const tab of this.tabs.values()) if (tab.state.url.startsWith('kaze:')) tab.go('reload')
   }
 
   private pushHomeData(): void {

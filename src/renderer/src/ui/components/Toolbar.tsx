@@ -8,6 +8,7 @@ import type { BrowserState } from '@shared/types'
 import { downloadsStore, extensionsStore, kaze, useStore } from '../store'
 import { AddressBar } from './AddressBar'
 import { Icon } from './Icon'
+import { t } from '@shared/i18n'
 
 export type DrawerTab = 'historique' | 'favoris' | 'telechargements'
 
@@ -45,29 +46,29 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
     switch (button) {
       case 'back':
         return (
-          <button key={button} type="button" className="btn-icon" title="Précédent (Alt+←)" disabled={!tab?.canGoBack} onClick={() => go('back')}>
+          <button key={button} type="button" className="btn-icon" title={t('Précédent (Alt+←)')} disabled={!tab?.canGoBack} onClick={() => go('back')}>
             <Icon name="back" />
           </button>
         )
       case 'forward':
         return (
-          <button key={button} type="button" className="btn-icon" title="Suivant (Alt+→)" disabled={!tab?.canGoForward} onClick={() => go('forward')}>
+          <button key={button} type="button" className="btn-icon" title={t('Suivant (Alt+→)')} disabled={!tab?.canGoForward} onClick={() => go('forward')}>
             <Icon name="forward" />
           </button>
         )
       case 'reload':
         return tab?.loading ? (
-          <button key={button} type="button" className="btn-icon" title="Arrêter" onClick={() => go('stop')}>
+          <button key={button} type="button" className="btn-icon" title={t('Arrêter')} onClick={() => go('stop')}>
             <Icon name="stop" />
           </button>
         ) : (
-          <button key={button} type="button" className="btn-icon" title="Recharger (F5)" onClick={() => go('reload')}>
+          <button key={button} type="button" className="btn-icon" title={t('Recharger (F5)')} onClick={() => go('reload')}>
             <Icon name="reload" />
           </button>
         )
       case 'home':
         return (
-          <button key={button} type="button" className="btn-icon" title="Accueil (Alt+Début)" onClick={() => go('home')}>
+          <button key={button} type="button" className="btn-icon" title={t('Accueil (Alt+Début)')} onClick={() => go('home')}>
             <Icon name="home" />
           </button>
         )
@@ -80,10 +81,10 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
             disabled={!canShield}
             title={
               !state.shield.enabled
-                ? 'Bouclier de vent désactivé (Paramètres)'
+                ? t('Bouclier de vent désactivé (Paramètres)')
                 : state.shield.siteAllowed
-                  ? 'Bouclier désactivé sur ce site — cliquer pour le réactiver'
-                  : `Bouclier de vent : ${tab?.blockedCount ?? 0} élément(s) bloqué(s) sur cette page, ${formatCount(state.shield.totalBlocked)} au total. Cliquer pour le désactiver sur ce site.`
+                  ? t('Bouclier désactivé sur ce site — cliquer pour le réactiver')
+                  : t('Bouclier de vent : {n} élément(s) bloqué(s) sur cette page, {total} au total. Cliquer pour le désactiver sur ce site.', { n: tab?.blockedCount ?? 0, total: formatCount(state.shield.totalBlocked) })
             }
             onClick={() => id !== undefined && void kaze.invoke('shield:toggle-site', id)}
           >
@@ -97,10 +98,10 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
           vpn.status === 'actif'
             ? `Brume active : vous naviguez via Tor${vpn.ip ? ` (sortie actuelle ${vpn.ip})` : ''}`
             : vpn.status === 'connexion'
-              ? `Brume : connexion au réseau Tor… ${vpn.progress} %`
+              ? t('Brume : connexion au réseau Tor… {n} %', { n: vpn.progress })
               : vpn.status === 'erreur'
-                ? 'Brume : Tor est coupé, les pages sont bloquées par sécurité'
-                : 'Brume : VPN (réseau Tor)'
+                ? t('Brume : Tor est coupé, les pages sont bloquées par sécurité')
+                : t('Brume : VPN (réseau Tor)')
         return (
           <button key={button} type="button" className={`btn-icon vpn-btn is-${vpn.status}`} title={title} onClick={onVpn}>
             <Icon name="mist" />
@@ -113,7 +114,7 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
             key={button}
             type="button"
             className={`btn-icon${state.split ? ' is-active' : ''}`}
-            title={state.split ? 'Quitter le split view (Ctrl+Maj+S)' : 'Split view (Ctrl+Maj+S)'}
+            title={state.split ? t('Quitter le split view (Ctrl+Maj+S)') : t('Split view (Ctrl+Maj+S)')}
             onClick={() => (state.split ? void kaze.invoke('split:close') : openSplit(state))}
           >
             <Icon name="split" />
@@ -121,32 +122,32 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
         )
       case 'storm':
         return (
-          <button key={button} type="button" className={`btn-icon${state.storm.active ? ' is-storm' : ''}`} title={state.storm.active ? 'Tempête en cours' : 'Tempête : mode focus'} onClick={onStorm}>
+          <button key={button} type="button" className={`btn-icon${state.storm.active ? ' is-storm' : ''}`} title={state.storm.active ? t('Tempête en cours') : t('Tempête : mode focus')} onClick={onStorm}>
             <Icon name="storm" />
           </button>
         )
       case 'breeze':
         return (
-          <button key={button} type="button" className="btn-icon" title={`Brise : mettre en veille les onglets inactifs (${state.breeze.sleeping} en veille)`} onClick={() => sleepInactive(state)}>
+          <button key={button} type="button" className="btn-icon" title={t('Brise : mettre en veille les onglets inactifs ({n} en veille)', { n: state.breeze.sleeping })} onClick={() => sleepInactive(state)}>
             <Icon name="wind" />
           </button>
         )
       case 'downloads':
         return (
-          <button key={button} type="button" className={`btn-icon${activeDownloads ? ' is-active' : ''}`} title="Téléchargements (Ctrl+J)" onClick={() => onDrawer('telechargements')}>
+          <button key={button} type="button" className={`btn-icon${activeDownloads ? ' is-active' : ''}`} title={t('Téléchargements (Ctrl+J)')} onClick={() => onDrawer('telechargements')}>
             <Icon name="download" />
             {activeDownloads > 0 && <span className="badge badge--accent">{activeDownloads}</span>}
           </button>
         )
       case 'history':
         return (
-          <button key={button} type="button" className="btn-icon" title="Historique (Ctrl+H)" onClick={() => onDrawer('historique')}>
+          <button key={button} type="button" className="btn-icon" title={t('Historique (Ctrl+H)')} onClick={() => onDrawer('historique')}>
             <Icon name="history" />
           </button>
         )
       case 'bookmarks':
         return (
-          <button key={button} type="button" className="btn-icon" title="Favoris (Ctrl+Maj+O)" onClick={() => onDrawer('favoris')}>
+          <button key={button} type="button" className="btn-icon" title={t('Favoris (Ctrl+Maj+O)')} onClick={() => onDrawer('favoris')}>
             <Icon name="bookmark" />
           </button>
         )
@@ -156,7 +157,7 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
             key={button}
             type="button"
             className="btn-icon"
-            title={canShield ? 'Kaze Studio (Ctrl+Maj+E) — clic droit : ouvrir cette page dans Studio' : 'Kaze Studio (Ctrl+Maj+E)'}
+            title={canShield ? t('Kaze Studio (Ctrl+Maj+E) — clic droit : ouvrir cette page dans Studio') : t('Kaze Studio (Ctrl+Maj+E)')}
             onClick={() => void kaze.invoke('studio:open')}
             onContextMenu={(e) => {
               e.preventDefault()
@@ -175,7 +176,7 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
                 key={ext.path}
                 type="button"
                 className="btn-icon ext-button"
-                title={ext.hasPopup ? ext.name : `${ext.name} (agit dans les pages, pas de fenêtre)`}
+                title={ext.hasPopup ? ext.name : t('{nom} (agit dans les pages, pas de fenêtre)', { nom: ext.name })}
                 onClick={(e) => {
                   if (!ext.hasPopup) return
                   const r = e.currentTarget.getBoundingClientRect()
@@ -196,7 +197,7 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
             className={`btn-icon${active ? ' is-active' : ''}`}
             // Pages web et fichiers .html locaux (file://), comme le raccourci et Souffle.
             disabled={!active && !(tab && /^(https?|file):/.test(tab.url))}
-            title={active ? 'Quitter le mode responsive (Ctrl+Maj+M)' : 'Mode responsive : mobile, tablette et ordinateur côte à côte (Ctrl+Maj+M)'}
+            title={active ? t('Quitter le mode responsive (Ctrl+Maj+M)') : t('Mode responsive : mobile, tablette et ordinateur côte à côte (Ctrl+Maj+M)')}
             onClick={() => id !== undefined && void kaze.invoke('responsive:toggle', id)}
           >
             <Icon name="devices" />
@@ -205,7 +206,7 @@ export function Toolbar({ state, engineName, buttons, addressRef, onDrawer, onSt
       }
       case 'souffle':
         return (
-          <button key={button} type="button" className="btn-icon" title="Souffle (Ctrl+K)" onClick={onSouffle}>
+          <button key={button} type="button" className="btn-icon" title={t('Souffle (Ctrl+K)')} onClick={onSouffle}>
             <Icon name="souffle" />
           </button>
         )

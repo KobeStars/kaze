@@ -5,6 +5,7 @@
  */
 import { useEffect, useState, type JSX } from 'react'
 import { setSlotsSuspended } from '../hooks'
+import { t } from '@shared/i18n'
 
 const logo = import.meta.glob<string>('../../assets/logo/logo-complet.*', { eager: true, import: 'default', query: '?url' })
 const kanji = import.meta.glob<string>('../../assets/logo/kanji-encre-sceau.png', { eager: true, import: 'default', query: '?url' })
@@ -58,8 +59,8 @@ export function Splash({ onDone }: { onDone: () => void }): JSX.Element {
           </svg>
         )}
       </div>
-      <p className="splash__slogan">« Navigue comme le vent »</p>
-      <p className="splash__sub">Léger. Rapide. Libre. — Le web, sans résistance</p>
+      <p className="splash__slogan">{t('« Navigue comme le vent »')}</p>
+      <p className="splash__sub">{t('Léger. Rapide. Libre. — Le web, sans résistance')}</p>
     </div>
   )
 }

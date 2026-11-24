@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { TOOLBAR_BUTTON_IDS, VPN_COUNTRIES, WIDGET_IDS } from './constants'
 import { DEVICE_IDS, MAX_RESPONSIVE_DEVICES } from './responsive'
 import { DEFAULT_SHORTCUTS } from './shortcuts'
+import { LANGUAGES, t } from './i18n'
 
 export const SEARCH_ENGINE_IDS = ['google', 'duckduckgo', 'brave'] as const
 export type SearchEngineId = (typeof SEARCH_ENGINE_IDS)[number]
@@ -17,7 +18,7 @@ const hostSchema = z
   .toLowerCase()
   .min(1)
   .max(253)
-  .regex(/^[a-z0-9.-]+$/, 'Nom de domaine invalide')
+  .regex(/^[a-z0-9.-]+$/, { error: () => t('Nom de domaine invalide') })
 
 const color = z.string().regex(/^#[0-9a-fA-F]{6}$/)
 /** Nom de fichier rangé dans le dossier « perso » (aucun chemin). */
@@ -189,6 +190,8 @@ export type StudioSettings = z.infer<typeof studioSettingsSchema>
 // ───────────── Paramètres complets ─────────────
 
 export const settingsSchema = z.object({
+  /** Langue de l'interface : « auto » suit Windows. */
+  language: z.enum(LANGUAGES),
   searchEngine: z.enum(SEARCH_ENGINE_IDS),
   homepage: z.object({
     mode: z.enum(['kaze', 'url']),
@@ -333,6 +336,7 @@ export const DEFAULT_STUDIO: StudioSettings = {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  language: 'auto',
   searchEngine: 'google',
   homepage: { mode: 'kaze', url: '' },
   startup: 'restaurer',

@@ -8,6 +8,7 @@ import { applyCursor, applyFont, applyPalette, loadCustomFonts } from '../commun
 import { WALLPAPERS, wallpaperUrl } from '@shared/wallpapers'
 import { startLandscape, type LandscapeOptions } from './paysage'
 import { Clock, Notes, Quote, Shortcuts, Todo, Weather } from './widgets'
+import { t } from '@shared/i18n'
 
 const api = window.kazeInterne
 
@@ -18,12 +19,12 @@ const logoFor = (theme: HomeData['theme']): string | undefined => logos[`../asse
 type Widgets = Appearance['home']['widgets']
 
 const WIDGET_NAMES: Record<WidgetId, string> = {
-  horloge: 'Horloge',
-  meteo: 'Météo',
-  raccourcis: 'Raccourcis',
-  notes: 'Notes',
-  citation: 'Citation',
-  todo: 'To-do'
+  horloge: t('Horloge'),
+  meteo: t('Météo'),
+  raccourcis: t('Raccourcis'),
+  notes: t('Notes'),
+  citation: t('Citation'),
+  todo: t('To-do')
 }
 
 /** Fond de la page : paysage animé, image, vidéo, couleur, dégradé ou image du jour. */
@@ -218,8 +219,8 @@ export function Accueil(): JSX.Element {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Rechercher avec ${data.engineName} ou saisir une adresse`}
-            aria-label="Recherche"
+            placeholder={t('Rechercher avec {moteur} ou saisir une adresse', { moteur: data.engineName })}
+            aria-label={t('Recherche')}
             spellCheck={false}
           />
         </form>
@@ -248,7 +249,7 @@ export function Accueil(): JSX.Element {
 
       {editing && (
         <div className="accueil__palette">
-          <span>Glissez les widgets. Afficher :</span>
+          <span>{t('Glissez les widgets. Afficher :')}</span>
           {widgets.map((w) => (
             <label key={w.id}>
               <input
@@ -274,9 +275,9 @@ export function Accueil(): JSX.Element {
           if (editing) setLayout(null)
         }}
       >
-        {editing ? 'Terminé' : 'Personnaliser'}
+        {editing ? t('Terminé') : t('Personnaliser')}
       </button>
-      {!widgets.some((w) => w.visible && w.id === 'citation') && <p className="accueil__signature">« Navigue comme le vent »</p>}
+      {!widgets.some((w) => w.visible && w.id === 'citation') && <p className="accueil__signature">{t('« Navigue comme le vent »')}</p>}
     </main>
   )
 }

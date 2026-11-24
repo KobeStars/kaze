@@ -11,6 +11,7 @@ import { Explorer } from './Explorer'
 import { applyEditorTheme, formatCode, languageOf, monaco, setCustomSnippets } from './monaco'
 import { Console, Preview, type Device } from './Preview'
 import { BUILTIN_SNIPPETS } from './snippets'
+import { t } from '@shared/i18n'
 
 const api = window.kazeStudio!
 
@@ -37,16 +38,16 @@ function Welcome({ state, onError }: { state: StudioState; onError: (m: string) 
         <div className="welcome__brand">
           <span className="welcome__kanji">風</span>
           <div>
-            <h1>Kaze Studio</h1>
-            <p>Code, aperçu en direct et console, dans votre navigateur.</p>
+            <h1>{t('Kaze Studio')}</h1>
+            <p>{t('Code, aperçu en direct et console, dans votre navigateur.')}</p>
           </div>
         </div>
         <div className="welcome__actions">
           <button type="button" className="btn btn--primary" onClick={() => run(api.invoke('studio:open-folder'))}>
-            <Icon name="folder" size={16} /> Ouvrir un dossier
+            <Icon name="folder" size={16} /> {t('Ouvrir un dossier')}
           </button>
           <button type="button" className="btn" onClick={() => run(api.invoke('studio:open-file'))}>
-            <Icon name="pen" size={16} /> Ouvrir un fichier
+            <Icon name="pen" size={16} /> {t('Ouvrir un fichier')}
           </button>
         </div>
         <form
@@ -56,15 +57,15 @@ function Welcome({ state, onError }: { state: StudioState; onError: (m: string) 
             if (name.trim()) run(api.invoke('studio:new-project', name.trim()))
           }}
         >
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nom du nouveau projet" maxLength={80} />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('Nom du nouveau projet')} maxLength={80} />
           <button type="submit" className="btn" disabled={!name.trim()}>
-            <Icon name="plus" size={16} /> Créer
+            <Icon name="plus" size={16} /> {t('Créer')}
           </button>
         </form>
-        <p className="welcome__hint">Les nouveaux projets sont rangés dans Documents\Kaze Studio. Astuce : clic droit sur une page web → « Ouvrir dans Kaze Studio ».</p>
+        <p className="welcome__hint">{t('Les nouveaux projets sont rangés dans Documents\\Kaze Studio. Astuce : clic droit sur une page web → « Ouvrir dans Kaze Studio ».')}</p>
         {state.settings.recent.length > 0 && (
           <div className="welcome__recent">
-            <h2>Récents</h2>
+            <h2>{t('Récents')}</h2>
             {state.settings.recent.map((path) => (
               <button key={path} type="button" onClick={() => run(api.invoke('studio:open-recent', path))} title={path}>
                 <strong>{path.split(/[\\/]/).pop()}</strong>
@@ -103,7 +104,7 @@ function SnippetsPanel({ custom, language, onInsert, onSave, onDelete }: {
                 {s.name}
               </button>
               {custom.some((c) => c.id === s.id) && (
-                <button type="button" className="snippets__delete" title="Supprimer" onClick={() => onDelete(s.id)}>
+                <button type="button" className="snippets__delete" title={t('Supprimer')} onClick={() => onDelete(s.id)}>
                   <Icon name="close" size={12} />
                 </button>
               )}
@@ -121,10 +122,10 @@ function SnippetsPanel({ custom, language, onInsert, onSave, onDelete }: {
           }
         }}
       >
-        <span>Nouveau snippet depuis la sélection ({language || 'aucun fichier'})</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nom du snippet" maxLength={60} />
+        <span>{t('Nouveau snippet depuis la sélection ({langage})', { langage: language || t('aucun fichier') })}</span>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('Nom du snippet')} maxLength={60} />
       </form>
-      <p className="snippets__hint">Les snippets apparaissent aussi dans l’autocomplétion (préfixe 風).</p>
+      <p className="snippets__hint">{t('Les snippets apparaissent aussi dans l’autocomplétion (préfixe 風).')}</p>
     </div>
   )
 }
@@ -240,7 +241,7 @@ export function Studio(): JSX.Element {
   const close = useCallback((path: string, force = false) => {
     const file = files.current.get(path)
     if (!file) return
-    if (!force && isDirty(file) && !window.confirm(`« ${path} » n’est pas enregistré. Fermer quand même ?`)) return
+    if (!force && isDirty(file) && !window.confirm(t('« {fichier} » n’est pas enregistré. Fermer quand même ?', { fichier: path }))) return
     if (isDirty(file)) void api.invoke('studio:overlay', path, null).catch(() => undefined)
     files.current.delete(path)
     setPaths((list) => {
@@ -401,7 +402,7 @@ export function Studio(): JSX.Element {
 
   const insertSnippet = (snippet: Snippet): void => {
     const ed = editor.current
-    if (!ed || !ed.getModel()) return showError('Ouvrez d’abord un fichier.')
+    if (!ed || !ed.getModel()) return showError(t('Ouvrez d’abord un fichier.'))
     const controller = ed.getContribution('snippetController2') as { insert(template: string): void } | null
     controller?.insert(snippet.body)
     ed.focus()
@@ -412,7 +413,7 @@ export function Studio(): JSX.Element {
     const model = ed?.getModel()
     const selection = ed?.getSelection()
     const body = model && selection ? model.getValueInRange(selection) : ''
-    if (!body.trim()) return showError('Sélectionnez du code dans l’éditeur pour en faire un snippet.')
+    if (!body.trim()) return showError(t('Sélectionnez du code dans l’éditeur pour en faire un snippet.'))
     const lang = model!.getLanguageId()
     const language = lang === 'html' || lang === 'css' || lang === 'json' ? lang : 'javascript'
     setSettings({ snippets: [...settings.snippets, { id: Date.now().toString(36), name, language, body }] })
@@ -427,40 +428,40 @@ export function Studio(): JSX.Element {
         <span className="studio__project" title={state.root}>
           {state.name}
         </span>
-        <button type="button" className="tool" title="Ouvrir un dossier" onClick={() => void api.invoke('studio:open-folder').catch((e) => showError(errorText(e)))}>
+        <button type="button" className="tool" title={t('Ouvrir un dossier')} onClick={() => void api.invoke('studio:open-folder').catch((e) => showError(errorText(e)))}>
           <Icon name="folder" size={15} />
         </button>
-        <button type="button" className="tool" title="Ouvrir un fichier" onClick={() => void api.invoke('studio:open-file').then((r) => r && setTimeout(() => void openFile(r.file), 150))}>
+        <button type="button" className="tool" title={t('Ouvrir un fichier')} onClick={() => void api.invoke('studio:open-file').then((r) => r && setTimeout(() => void openFile(r.file), 150))}>
           <Icon name="pen" size={15} />
         </button>
-        <button type="button" className="tool" title="Exporter le projet en .zip" onClick={() => void api.invoke('studio:export-zip').catch((e) => showError(errorText(e)))}>
+        <button type="button" className="tool" title={t('Exporter le projet en .zip')} onClick={() => void api.invoke('studio:export-zip').catch((e) => showError(errorText(e)))}>
           <Icon name="download" size={15} />
         </button>
         <span className="studio__spacer" />
-        <div className="seg" title="Mise à jour de l’aperçu">
+        <div className="seg" title={t('Mise à jour de l’aperçu')}>
           <button type="button" className={settings.previewMode === 'direct' ? 'is-active' : ''} onClick={() => setSettings({ previewMode: 'direct' })}>
-            En direct
+            {t('En direct')}
           </button>
           <button type="button" className={settings.previewMode === 'sauvegarde' ? 'is-active' : ''} onClick={() => setSettings({ previewMode: 'sauvegarde' })}>
-            À la sauvegarde
+            {t('À la sauvegarde')}
           </button>
         </div>
         {settings.previewMode === 'direct' && (
-          <label className="studio__delay" title="Délai avant la mise à jour de l’aperçu">
+          <label className="studio__delay" title={t('Délai avant la mise à jour de l’aperçu')}>
             <input type="range" min={100} max={3000} step={50} value={settings.delay} onChange={(e) => setSettings({ delay: Number(e.target.value) })} />
             {settings.delay} ms
           </label>
         )}
-        <div className="seg" title="Disposition">
-          <button type="button" className={layout === 'droite' ? 'is-active' : ''} onClick={() => setSettings({ layout: 'droite' })} title="Aperçu à droite">
+        <div className="seg" title={t('Disposition')}>
+          <button type="button" className={layout === 'droite' ? 'is-active' : ''} onClick={() => setSettings({ layout: 'droite' })} title={t('Aperçu à droite')}>
             <Icon name="split" size={15} />
           </button>
-          <button type="button" className={layout === 'bas' ? 'is-active' : ''} onClick={() => setSettings({ layout: 'bas' })} title="Aperçu en bas">
+          <button type="button" className={layout === 'bas' ? 'is-active' : ''} onClick={() => setSettings({ layout: 'bas' })} title={t('Aperçu en bas')}>
             <span className="rot90">
               <Icon name="split" size={15} />
             </span>
           </button>
-          <button type="button" className={layout === 'fenetre' ? 'is-active' : ''} onClick={() => setSettings({ layout: 'fenetre' })} title="Aperçu dans une fenêtre séparée">
+          <button type="button" className={layout === 'fenetre' ? 'is-active' : ''} onClick={() => setSettings({ layout: 'fenetre' })} title={t('Aperçu dans une fenêtre séparée')}>
             <Icon name="external" size={15} />
           </button>
         </div>
@@ -470,10 +471,10 @@ export function Studio(): JSX.Element {
         <aside className="studio__side">
           <div className="seg seg--full">
             <button type="button" className={side === 'fichiers' ? 'is-active' : ''} onClick={() => setSide('fichiers')}>
-              Fichiers
+              {t('Fichiers')}
             </button>
             <button type="button" className={side === 'snippets' ? 'is-active' : ''} onClick={() => setSide('snippets')}>
-              Snippets
+              {t('Snippets')}
             </button>
           </div>
           {side === 'fichiers' ? (
@@ -529,7 +530,7 @@ export function Studio(): JSX.Element {
                     <button
                       type="button"
                       className={`filetab__close${dirty ? ' is-dirty' : ''}`}
-                      title={dirty ? 'Non enregistré — Ctrl+S pour enregistrer' : 'Fermer (Ctrl+W)'}
+                      title={dirty ? t('Non enregistré — Ctrl+S pour enregistrer') : t('Fermer (Ctrl+W)')}
                       onClick={(e) => {
                         e.stopPropagation()
                         close(p)
@@ -542,13 +543,13 @@ export function Studio(): JSX.Element {
                 )
               })}
               {activeFile && (
-                <button type="button" className="tool filetabs__format" title="Formater le fichier (Prettier)" onClick={() => void editor.current?.getAction('editor.action.formatDocument')?.run()}>
-                  Formater
+                <button type="button" className="tool filetabs__format" title={t('Formater le fichier (Prettier)')} onClick={() => void editor.current?.getAction('editor.action.formatDocument')?.run()}>
+                  {t('Formater')}
                 </button>
               )}
             </div>
             <div className="studio__monaco" ref={editorHost} />
-            {!activeFile && <div className="studio__empty">Choisissez un fichier à gauche. Ctrl+S enregistre, Ctrl+W ferme le fichier, F1 ouvre toutes les commandes de l’éditeur.</div>}
+            {!activeFile && <div className="studio__empty">{t('Choisissez un fichier à gauche. Ctrl+S enregistre, Ctrl+W ferme le fichier, F1 ouvre toutes les commandes de l’éditeur.')}</div>}
           </section>
 
           {layout !== 'fenetre' && <div className="splitter" onPointerDown={startResize} />}
@@ -560,9 +561,9 @@ export function Studio(): JSX.Element {
                 value={previewPath}
                 onChange={(e) => setPreviewPath(e.target.value.replace(/^\/+/, ''))}
                 spellCheck={false}
-                title="Fichier affiché dans l’aperçu"
+                title={t('Fichier affiché dans l’aperçu')}
               />
-              <button type="button" className="tool" title="Recharger l’aperçu" onClick={() => setReloadToken((n) => n + 1)}>
+              <button type="button" className="tool" title={t('Recharger l’aperçu')} onClick={() => setReloadToken((n) => n + 1)}>
                 <Icon name="reload" size={14} />
               </button>
               {layout !== 'fenetre' && (
@@ -570,7 +571,7 @@ export function Studio(): JSX.Element {
                   <div className="seg">
                     {(['desktop', 'tablette', 'mobile', 'perso'] as Device[]).map((d) => (
                       <button key={d} type="button" className={device === d ? 'is-active' : ''} onClick={() => setDevice(d)}>
-                        {{ desktop: 'Bureau', tablette: 'Tablette', mobile: 'Mobile', perso: 'Perso' }[d]}
+                        {{ desktop: t('Bureau'), tablette: t('Tablette'), mobile: t('Mobile'), perso: t('Perso') }[d]}
                       </button>
                     ))}
                   </div>
@@ -581,20 +582,20 @@ export function Studio(): JSX.Element {
                     </span>
                   )}
                   {device !== 'desktop' && (
-                    <button type="button" className={`tool${rotated ? ' is-active' : ''}`} title="Rotation" onClick={() => setRotated(!rotated)}>
+                    <button type="button" className={`tool${rotated ? ' is-active' : ''}`} title={t('Rotation')} onClick={() => setRotated(!rotated)}>
                       <Icon name="swap" size={14} />
                     </button>
                   )}
                 </>
               )}
-              <button type="button" className="tool" title="Ouvrir l’aperçu dans une fenêtre séparée" onClick={() => void api.invoke('studio:preview-window', previewPath)}>
+              <button type="button" className="tool" title={t('Ouvrir l’aperçu dans une fenêtre séparée')} onClick={() => void api.invoke('studio:preview-window', previewPath)}>
                 <Icon name="external" size={14} />
               </button>
             </div>
             {layout !== 'fenetre' ? (
               state.previewBase && <Preview base={state.previewBase} path={previewPath} device={device} custom={custom} rotated={rotated} reloadToken={reloadToken} />
             ) : (
-              <div className="preview preview--window">L’aperçu est affiché dans une fenêtre séparée.</div>
+              <div className="preview preview--window">{t('L’aperçu est affiché dans une fenêtre séparée.')}</div>
             )}
             <Console logs={logs} onClear={() => setLogs([])} onOpen={(file, line, column) => void openFile(file, line, column)} />
           </section>

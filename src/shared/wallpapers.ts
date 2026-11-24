@@ -6,6 +6,7 @@
  * Les éléments répétés (étoiles, pétales, fenêtres…) sont placés par un générateur
  * pseudo-aléatoire à graine fixe : un fond est identique à chaque affichage.
  */
+import { t } from './i18n'
 
 export interface Wallpaper {
   id: string
@@ -82,7 +83,7 @@ function peaks(seed: number, base: number, amp: number, count: number): string {
 export const WALLPAPERS: Wallpaper[] = [
   {
     id: 'fuji',
-    name: 'Fuji à l’aube',
+    name: t('Fuji à l’aube'),
     kanji: '富',
     dark: true,
     svg: () =>
@@ -98,7 +99,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'vague',
-    name: 'Grande vague',
+    name: t('Grande vague'),
     kanji: '波',
     dark: true,
     svg: () => {
@@ -127,7 +128,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'etoiles',
-    name: 'Nuit étoilée',
+    name: t('Nuit étoilée'),
     kanji: '星',
     dark: true,
     svg: () =>
@@ -138,7 +139,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'aurore',
-    name: 'Aurore boréale',
+    name: t('Aurore boréale'),
     kanji: '極',
     dark: true,
     svg: () =>
@@ -153,7 +154,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'cerisiers',
-    name: 'Cerisiers',
+    name: t('Cerisiers'),
     kanji: '桜',
     dark: false,
     svg: () => {
@@ -185,7 +186,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'torii',
-    name: 'Torii au couchant',
+    name: t('Torii au couchant'),
     kanji: '鳥',
     dark: true,
     svg: () => {
@@ -208,7 +209,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'brume',
-    name: 'Forêt de brume',
+    name: t('Forêt de brume'),
     kanji: '霧',
     dark: false,
     svg: () => {
@@ -234,7 +235,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'zen',
-    name: 'Jardin zen',
+    name: t('Jardin zen'),
     kanji: '禅',
     dark: false,
     svg: () => {
@@ -250,7 +251,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'dunes',
-    name: 'Dunes',
+    name: t('Dunes'),
     kanji: '砂',
     dark: false,
     svg: () =>
@@ -266,7 +267,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'ville',
-    name: 'Ville la nuit',
+    name: t('Ville la nuit'),
     kanji: '街',
     dark: true,
     svg: () => {
@@ -296,7 +297,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'synthwave',
-    name: 'Synthwave',
+    name: t('Synthwave'),
     kanji: '夕',
     dark: true,
     svg: () => {
@@ -319,7 +320,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'ocean',
-    name: 'Océan profond',
+    name: t('Océan profond'),
     kanji: '海',
     dark: true,
     svg: () => {
@@ -336,7 +337,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'lune',
-    name: 'Lune sur la mer',
+    name: t('Lune sur la mer'),
     kanji: '月',
     dark: true,
     svg: () => {
@@ -355,7 +356,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'neige',
-    name: 'Montagnes enneigées',
+    name: t('Montagnes enneigées'),
     kanji: '雪',
     dark: false,
     svg: () => {
@@ -370,7 +371,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'koi',
-    name: 'Étang aux koïs',
+    name: t('Étang aux koïs'),
     kanji: '鯉',
     dark: true,
     svg: () => {
@@ -392,7 +393,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'bambou',
-    name: 'Bambouseraie',
+    name: t('Bambouseraie'),
     kanji: '竹',
     dark: false,
     svg: () => {
@@ -414,7 +415,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'maille',
-    name: 'Dégradé coloré',
+    name: t('Dégradé coloré'),
     kanji: '彩',
     dark: true,
     svg: () =>
@@ -426,7 +427,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'topo',
-    name: 'Courbes de niveau',
+    name: t('Courbes de niveau'),
     kanji: '線',
     dark: true,
     svg: () => {
@@ -455,7 +456,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'enso',
-    name: 'Washi et encre',
+    name: t('Washi et encre'),
     kanji: '墨',
     dark: false,
     svg: () => {
@@ -478,7 +479,7 @@ export const WALLPAPERS: Wallpaper[] = [
   },
   {
     id: 'galaxie',
-    name: 'Galaxie',
+    name: t('Galaxie'),
     kanji: '宙',
     dark: true,
     svg: () =>

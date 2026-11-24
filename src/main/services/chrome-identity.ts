@@ -14,6 +14,7 @@
  * DevTools (Emulation.setUserAgentOverride), attaché à chaque page des onglets, panneaux et
  * popups. Google peut faire évoluer sa détection : ce n'est pas une garantie absolue.
  */
+import { lang } from '@shared/i18n'
 import { app, type OnBeforeSendHeadersListenerDetails, type Session, type WebContents } from 'electron'
 import { CHROME_PAGE_SCRIPT } from './chrome-page-script'
 
@@ -26,8 +27,6 @@ export const CHROME_UA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 /** Client Hints identiques à ceux d'un Chrome stable sous Windows 11 64 bits. */
 const OVERRIDE = {
   userAgent: CHROME_UA,
-  // Même en-tête Accept-Language qu'un Chrome réglé en français.
-  acceptLanguage: 'fr-FR,fr,en-US,en',
   platform: 'Win32',
   userAgentMetadata: {
     brands: [
@@ -51,6 +50,11 @@ const OVERRIDE = {
   }
 }
 
+/** Même en-tête Accept-Language qu'un Chrome réglé dans la langue de Kaze. */
+function acceptLanguage(): string {
+  return lang() === 'en' ? 'en-US,en' : 'fr-FR,fr,en-US,en'
+}
+
 /**
  * Attache le protocole DevTools à la page et lui applique l'identité Chrome : agent et
  * Client Hints, plus le complément de page (window.chrome…) exécuté avant les scripts du site.
@@ -63,7 +67,7 @@ async function applyIdentity(contents: WebContents): Promise<void> {
     if (!contents.debugger.isAttached()) contents.debugger.attach('1.3')
     const send = (method: string, params?: object): Promise<unknown> => contents.debugger.sendCommand(method, params)
     await Promise.all([
-      send('Emulation.setUserAgentOverride', OVERRIDE),
+      send('Emulation.setUserAgentOverride', { ...OVERRIDE, acceptLanguage: acceptLanguage() }),
       send('Page.enable'),
       send('Page.addScriptToEvaluateOnNewDocument', { source: CHROME_PAGE_SCRIPT, runImmediately: true })
     ])

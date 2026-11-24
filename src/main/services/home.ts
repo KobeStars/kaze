@@ -7,20 +7,21 @@ import { EventEmitter } from 'node:events'
 import { net } from 'electron'
 import type { DailyImage, HomeWidgetsData, TodoItem, WeatherData } from '@shared/types'
 import { JsonStore } from '../store'
+import { lang, locale, N_, t } from '@shared/i18n'
 
 /** Codes météo WMO → libellé français. */
 const WEATHER_LABELS: [number[], string][] = [
-  [[0], 'Ciel dégagé'],
-  [[1], 'Plutôt dégagé'],
-  [[2], 'Partiellement nuageux'],
-  [[3], 'Couvert'],
-  [[45, 48], 'Brouillard'],
-  [[51, 53, 55, 56, 57], 'Bruine'],
-  [[61, 63, 65, 66, 67], 'Pluie'],
-  [[71, 73, 75, 77], 'Neige'],
-  [[80, 81, 82], 'Averses'],
-  [[85, 86], 'Averses de neige'],
-  [[95, 96, 99], 'Orage']
+  [[0], N_('Ciel dégagé')],
+  [[1], N_('Plutôt dégagé')],
+  [[2], N_('Partiellement nuageux')],
+  [[3], N_('Couvert')],
+  [[45, 48], N_('Brouillard')],
+  [[51, 53, 55, 56, 57], N_('Bruine')],
+  [[61, 63, 65, 66, 67], N_('Pluie')],
+  [[71, 73, 75, 77], N_('Neige')],
+  [[80, 81, 82], N_('Averses')],
+  [[85, 86], N_('Averses de neige')],
+  [[95, 96, 99], N_('Orage')]
 ]
 
 function repair(raw: unknown): HomeWidgetsData {
@@ -57,7 +58,7 @@ export class HomeService extends EventEmitter<{ changed: [] }> {
     }
     try {
       const geo = (await (
-        await net.fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=fr`)
+        await net.fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=${lang()}`)
       ).json()) as { results?: { latitude: number; longitude: number; name: string }[] }
       const place = geo.results?.[0]
       if (!place) throw new Error('Ville introuvable')
@@ -75,7 +76,7 @@ export class HomeService extends EventEmitter<{ changed: [] }> {
         city: place.name,
         temperature: Math.round(forecast.current.temperature_2m),
         code,
-        label: WEATHER_LABELS.find(([codes]) => codes.includes(code))?.[1] ?? 'Météo',
+        label: t(WEATHER_LABELS.find(([codes]) => codes.includes(code))?.[1] ?? N_('Météo')),
         wind: Math.round(forecast.current.wind_speed_10m),
         min: Math.round(forecast.daily.temperature_2m_min[0] ?? 0),
         max: Math.round(forecast.daily.temperature_2m_max[0] ?? 0)
@@ -95,7 +96,7 @@ export class HomeService extends EventEmitter<{ changed: [] }> {
     if (this.imageCache?.day === day) return this.imageCache.data
     try {
       const json = (await (
-        await net.fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=fr-FR')
+        await net.fetch(`https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=${locale()}`)
       ).json()) as { images?: { url: string; title?: string; copyright?: string }[] }
       const image = json.images?.[0]
       const data = image ? { url: `https://www.bing.com${image.url}`, title: image.title ?? '', credit: image.copyright ?? '' } : null

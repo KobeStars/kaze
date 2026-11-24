@@ -35,6 +35,7 @@ import type {
   WindowState
 } from './types'
 import type { Settings } from './settings'
+import { t } from './i18n'
 
 const tabId = z.number().int().nonnegative()
 const id = z.string().min(1).max(64)
@@ -55,7 +56,7 @@ const fileName = z
   .trim()
   .min(1)
   .max(200)
-  .refine((n) => !/[\/:*?"<>|]/.test(n) && n !== '.' && n !== '..', 'Nom de fichier invalide')
+  .refine((n) => !/[\/:*?"<>|]/.test(n) && n !== '.' && n !== '..', { error: () => t('Nom de fichier invalide') })
 const extPath = z.string().min(3).max(1024)
 
 const workspaceFields = z.object({

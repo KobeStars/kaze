@@ -7,6 +7,7 @@ import { Menu, clipboard, type ContextMenuParams, type MenuItemConstructorOption
 import { isAllowedTabUrl, isHomeUrl, searchUrl, SEARCH_ENGINES } from '@shared/url'
 import type { BrowserController } from './controller'
 import type { Tab } from './tab'
+import { t } from '@shared/i18n'
 
 /** Raccourcit un texte pour l'afficher dans un menu. */
 function ellipsis(text: string, max = 28): string {
@@ -31,9 +32,9 @@ export function pageContextMenu(
     for (const suggestion of params.dictionarySuggestions.slice(0, 5)) {
       items.push({ label: suggestion, click: () => contents.replaceMisspelling(suggestion) })
     }
-    if (params.dictionarySuggestions.length === 0) items.push({ label: 'Aucune suggestion', enabled: false })
+    if (params.dictionarySuggestions.length === 0) items.push({ label: t('Aucune suggestion'), enabled: false })
     items.push({
-      label: 'Ajouter au dictionnaire',
+      label: t('Ajouter au dictionnaire'),
       click: () => contents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
     })
     separator()
@@ -42,12 +43,12 @@ export function pageContextMenu(
   // Liens
   if (params.linkURL && isAllowedTabUrl(params.linkURL) && !params.linkURL.startsWith('kaze:')) {
     items.push(
-      { label: 'Ouvrir le lien dans un nouvel onglet', click: () => browser.createTab({ url: params.linkURL, afterId: tab.id, activate: false }) },
+      { label: t('Ouvrir le lien dans un nouvel onglet'), click: () => browser.createTab({ url: params.linkURL, afterId: tab.id, activate: false }) },
       {
-        label: 'Ouvrir le lien en split view',
+        label: t('Ouvrir le lien en split view'),
         click: () => browser.openSplit(browser.createTab({ url: params.linkURL, afterId: tab.id, activate: false }))
       },
-      { label: "Copier l'adresse du lien", click: () => clipboard.writeText(params.linkURL) }
+      { label: t('Copier l\'adresse du lien'), click: () => clipboard.writeText(params.linkURL) }
     )
     separator()
   }
@@ -55,10 +56,10 @@ export function pageContextMenu(
   // Images
   if (params.mediaType === 'image' && params.srcURL && contents) {
     items.push(
-      { label: "Ouvrir l'image dans un nouvel onglet", click: () => browser.createTab({ url: params.srcURL, afterId: tab.id, activate: false }) },
-      { label: "Enregistrer l'image", click: () => contents.downloadURL(params.srcURL) },
-      { label: "Copier l'image", click: () => contents.copyImageAt(params.x, params.y) },
-      { label: "Copier l'adresse de l'image", click: () => clipboard.writeText(params.srcURL) }
+      { label: t('Ouvrir l\'image dans un nouvel onglet'), click: () => browser.createTab({ url: params.srcURL, afterId: tab.id, activate: false }) },
+      { label: t('Enregistrer l\'image'), click: () => contents.downloadURL(params.srcURL) },
+      { label: t('Copier l\'image'), click: () => contents.copyImageAt(params.x, params.y) },
+      { label: t('Copier l\'adresse de l\'image'), click: () => clipboard.writeText(params.srcURL) }
     )
     separator()
   }
@@ -67,22 +68,22 @@ export function pageContextMenu(
   if (params.isEditable && contents) {
     const flags = params.editFlags
     items.push(
-      { label: 'Annuler', role: 'undo', enabled: flags.canUndo },
-      { label: 'Rétablir', role: 'redo', enabled: flags.canRedo },
+      { label: t('Annuler'), role: 'undo', enabled: flags.canUndo },
+      { label: t('Rétablir'), role: 'redo', enabled: flags.canRedo },
       { type: 'separator' },
-      { label: 'Couper', role: 'cut', enabled: flags.canCut },
-      { label: 'Copier', role: 'copy', enabled: flags.canCopy },
-      { label: 'Coller', role: 'paste', enabled: flags.canPaste },
-      { label: 'Coller sans mise en forme', role: 'pasteAndMatchStyle', enabled: flags.canPaste },
-      { label: 'Tout sélectionner', role: 'selectAll', enabled: flags.canSelectAll }
+      { label: t('Couper'), role: 'cut', enabled: flags.canCut },
+      { label: t('Copier'), role: 'copy', enabled: flags.canCopy },
+      { label: t('Coller'), role: 'paste', enabled: flags.canPaste },
+      { label: t('Coller sans mise en forme'), role: 'pasteAndMatchStyle', enabled: flags.canPaste },
+      { label: t('Tout sélectionner'), role: 'selectAll', enabled: flags.canSelectAll }
     )
     separator()
   } else if (params.selectionText.trim()) {
     const selection = params.selectionText.trim()
     items.push(
-      { label: 'Copier', role: 'copy' },
+      { label: t('Copier'), role: 'copy' },
       {
-        label: `Rechercher « ${ellipsis(selection)} » avec ${SEARCH_ENGINES[engine].name}`,
+        label: t('Rechercher « {texte} » avec {moteur}', { texte: ellipsis(selection), moteur: SEARCH_ENGINES[engine].name }),
         click: () => browser.createTab({ url: searchUrl(selection, engine), afterId: tab.id })
       }
     )
@@ -92,18 +93,18 @@ export function pageContextMenu(
   // Navigation (page principale uniquement)
   if (!params.linkURL && !params.isEditable && params.mediaType === 'none' && !params.selectionText.trim() && contents === tab.contents) {
     items.push(
-      { label: 'Précédent', enabled: tab.state.canGoBack, click: () => tab.go('back') },
-      { label: 'Suivant', enabled: tab.state.canGoForward, click: () => tab.go('forward') },
-      { label: 'Recharger', click: () => tab.go('reload') },
+      { label: t('Précédent'), enabled: tab.state.canGoBack, click: () => tab.go('back') },
+      { label: t('Suivant'), enabled: tab.state.canGoForward, click: () => tab.go('forward') },
+      { label: t('Recharger'), click: () => tab.go('reload') },
       { type: 'separator' },
       {
-        label: tab.state.bookmarked ? 'Retirer des favoris' : 'Ajouter aux favoris',
+        label: tab.state.bookmarked ? t('Retirer des favoris') : t('Ajouter aux favoris'),
         enabled: !isHomeUrl(tab.state.url),
         click: () => browser.toggleBookmark(tab.id)
       },
-      { label: 'Imprimer…', click: () => contents?.print() },
+      { label: t('Imprimer…'), click: () => contents?.print() },
       {
-        label: 'Ouvrir dans Kaze Studio',
+        label: t('Ouvrir dans Kaze Studio'),
         enabled: /^https?:/.test(tab.state.url),
         click: () => void browser.openPageInStudio(tab.id)
       }
@@ -112,7 +113,7 @@ export function pageContextMenu(
   }
 
   if (contents) {
-    items.push({ label: 'Inspecter', click: () => contents.inspectElement(params.x, params.y) })
+    items.push({ label: t('Inspecter'), click: () => contents.inspectElement(params.x, params.y) })
   }
   return Menu.buildFromTemplate(items)
 }
@@ -122,22 +123,22 @@ export function tabContextMenu(browser: BrowserController, tab: Tab): Menu {
   const otherWorkspaces = state.workspaces.filter((w) => w.id !== tab.state.workspaceId)
   const active = state.activeTabId
   const items: MenuItemConstructorOptions[] = [
-    { label: 'Nouvel onglet à droite', click: () => browser.createTab({ afterId: tab.id }) },
-    { label: 'Recharger', click: () => tab.go('reload') },
-    { label: 'Dupliquer', click: () => browser.duplicate(tab.id) },
+    { label: t('Nouvel onglet à droite'), click: () => browser.createTab({ afterId: tab.id }) },
+    { label: t('Recharger'), click: () => tab.go('reload') },
+    { label: t('Dupliquer'), click: () => browser.duplicate(tab.id) },
     {
-      label: tab.state.muted ? 'Rétablir le son' : 'Couper le son',
+      label: tab.state.muted ? t('Rétablir le son') : t('Couper le son'),
       enabled: !tab.state.asleep,
       click: () => tab.toggleMute()
     },
     { type: 'separator' },
     {
-      label: 'Afficher en split view',
+      label: t('Afficher en split view'),
       enabled: active !== null && active !== tab.id && !state.split,
       click: () => browser.openSplit(tab.id)
     },
     {
-      label: 'Déplacer vers le Courant',
+      label: t('Déplacer vers le Courant'),
       enabled: otherWorkspaces.length > 0,
       submenu: otherWorkspaces.map((w) => ({
         label: `${w.icon}  ${w.name}`,
@@ -145,18 +146,18 @@ export function tabContextMenu(browser: BrowserController, tab: Tab): Menu {
       }))
     },
     {
-      label: 'Mettre en veille (Brise)',
+      label: t('Mettre en veille (Brise)'),
       enabled: !tab.state.asleep && tab.id !== active,
       click: () => browser.sleepTab(tab.id)
     },
     {
-      label: tab.state.bookmarked ? 'Retirer des favoris' : 'Ajouter aux favoris',
+      label: tab.state.bookmarked ? t('Retirer des favoris') : t('Ajouter aux favoris'),
       enabled: !isHomeUrl(tab.state.url),
       click: () => browser.toggleBookmark(tab.id)
     },
     { type: 'separator' },
-    { label: 'Fermer les autres onglets', click: () => browser.closeOthers(tab.id) },
-    { label: "Fermer l'onglet", click: () => browser.closeTab(tab.id) }
+    { label: t('Fermer les autres onglets'), click: () => browser.closeOthers(tab.id) },
+    { label: t('Fermer l\'onglet'), click: () => browser.closeTab(tab.id) }
   ]
   return Menu.buildFromTemplate(items)
 }

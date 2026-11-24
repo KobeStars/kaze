@@ -11,14 +11,15 @@ import { appearanceSchema, type Appearance, type CustomFont } from '@shared/sett
 import { themeSchema } from '@shared/settings'
 import { newId } from '../store'
 import type { SettingsService } from './settings'
+import { N_, t } from '@shared/i18n'
 
 type Kind = 'police' | 'image' | 'video' | 'curseur'
 
 const FILTERS: Record<Kind, { name: string; extensions: string[]; dir: string }> = {
-  police: { name: 'Polices', extensions: ['ttf', 'otf', 'woff2', 'woff'], dir: 'polices' },
-  image: { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif'], dir: 'images' },
-  video: { name: 'Vidéos', extensions: ['mp4', 'webm'], dir: 'videos' },
-  curseur: { name: 'Curseurs', extensions: ['png', 'cur', 'svg'], dir: 'curseurs' }
+  police: { name: N_('Polices'), extensions: ['ttf', 'otf', 'woff2', 'woff'], dir: 'polices' },
+  image: { name: N_('Images'), extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif'], dir: 'images' },
+  video: { name: N_('Vidéos'), extensions: ['mp4', 'webm'], dir: 'videos' },
+  curseur: { name: N_('Curseurs'), extensions: ['png', 'cur', 'svg'], dir: 'curseurs' }
 }
 
 /** Graisse devinée d'après le nom du fichier (Inter-Bold.ttf → 700). */
@@ -47,8 +48,8 @@ export class PersoService {
   async import(win: BrowserWindow, kind: Kind): Promise<{ file: string; family?: string } | null> {
     const filter = FILTERS[kind]
     const result = await dialog.showOpenDialog(win, {
-      title: 'Importer',
-      filters: [{ name: filter.name, extensions: filter.extensions }],
+      title: t('Importer'),
+      filters: [{ name: t(filter.name), extensions: filter.extensions }],
       properties: kind === 'police' ? ['openFile', 'multiSelections'] : ['openFile']
     })
     if (result.canceled || result.filePaths.length === 0) return null
@@ -100,7 +101,7 @@ export class PersoService {
         break
       }
     }
-    if (!css) throw new Error(`Police introuvable sur Google Fonts : ${name}`)
+    if (!css) throw new Error(t('Police introuvable sur Google Fonts : {nom}', { nom: name }))
 
     const slug = safeName(name.toLowerCase().replace(/\s+/g, '-'))
     const folder = `google/${slug}`
@@ -125,7 +126,7 @@ export class PersoService {
         unicodeRange: /unicode-range:\s*([^;]+);/.exec(block)?.[1]?.trim()
       })
     }
-    if (faces.length === 0) throw new Error('Téléchargement de la police impossible')
+    if (faces.length === 0) throw new Error(t('Téléchargement de la police impossible'))
     const fonts = this.settings.get().appearance.customFonts.filter((f) => f.family !== name)
     this.settings.setAppearance({ customFonts: [...fonts, { family: name, source: 'google', faces }] })
     return name
@@ -144,9 +145,9 @@ export class PersoService {
     const appearance = this.settings.get().appearance
     const theme = this.settings.activeTheme()
     const result = await dialog.showSaveDialog(win, {
-      title: 'Exporter le thème',
+      title: t('Exporter le thème'),
       defaultPath: `${theme.name}.kazetheme`,
-      filters: [{ name: 'Thème Kaze', extensions: ['kazetheme'] }]
+      filters: [{ name: t('Thème Kaze'), extensions: ['kazetheme'] }]
     })
     if (result.canceled || !result.filePath) return false
     // Les fichiers perso (polices importées, images, curseur) restent sur cette machine.
@@ -164,13 +165,13 @@ export class PersoService {
 
   async importTheme(win: BrowserWindow): Promise<boolean> {
     const result = await dialog.showOpenDialog(win, {
-      title: 'Importer un thème',
-      filters: [{ name: 'Thème Kaze', extensions: ['kazetheme', 'json'] }],
+      title: t('Importer un thème'),
+      filters: [{ name: t('Thème Kaze'), extensions: ['kazetheme', 'json'] }],
       properties: ['openFile']
     })
     if (result.canceled || !result.filePaths[0]) return false
     const raw = JSON.parse(await readFile(result.filePaths[0], 'utf8')) as Record<string, unknown>
-    if (raw['kazetheme'] !== 1) throw new Error('Ce fichier n’est pas un thème Kaze')
+    if (raw['kazetheme'] !== 1) throw new Error(t('Ce fichier n’est pas un thème Kaze'))
     const current = this.settings.get().appearance
     const parsedTheme = themeSchema.safeParse(raw['theme'])
     const parsedAppearance = appearanceSchema.partial().safeParse(raw['appearance'])

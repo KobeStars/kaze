@@ -1,8 +1,8 @@
 /**
  * Thèmes de Kaze : palettes prédéfinies et outils de couleur.
- * Ce fichier ne dépend de rien : il est utilisé par le principal, l'interface,
- * la page d'accueil et Kaze Studio.
+ * Utilisé par le principal, l'interface, la page d'accueil et Kaze Studio.
  */
+import { N_, t } from './i18n'
 
 /** Couleurs modifiables dans le créateur de thème. */
 export interface ThemeColors {
@@ -31,7 +31,7 @@ export interface Theme {
 export const PRESET_THEMES: Theme[] = [
   {
     id: 'encre',
-    name: 'Encre',
+    name: N_('Encre'),
     dark: true,
     colors: {
       accent: '#D7372A',
@@ -47,7 +47,7 @@ export const PRESET_THEMES: Theme[] = [
   },
   {
     id: 'washi',
-    name: 'Washi',
+    name: N_('Washi'),
     dark: false,
     colors: {
       accent: '#D7372A',
@@ -63,7 +63,7 @@ export const PRESET_THEMES: Theme[] = [
   },
   {
     id: 'sakura',
-    name: 'Sakura',
+    name: N_('Sakura'),
     dark: false,
     colors: {
       accent: '#D45D79',
@@ -79,7 +79,7 @@ export const PRESET_THEMES: Theme[] = [
   },
   {
     id: 'nuit-tokyo',
-    name: 'Nuit de Tokyo',
+    name: N_('Nuit de Tokyo'),
     dark: true,
     colors: {
       accent: '#FF3D7F',
@@ -95,7 +95,7 @@ export const PRESET_THEMES: Theme[] = [
   },
   {
     id: 'bambou',
-    name: 'Bambou',
+    name: N_('Bambou'),
     dark: true,
     colors: {
       accent: '#8DBF4E',
@@ -111,7 +111,7 @@ export const PRESET_THEMES: Theme[] = [
   },
   {
     id: 'acier',
-    name: 'Acier',
+    name: N_('Acier'),
     dark: true,
     colors: {
       accent: '#6C9BD2',
@@ -126,6 +126,11 @@ export const PRESET_THEMES: Theme[] = [
     }
   }
 ]
+
+/** Nom affiché d'un thème : les thèmes fournis sont traduits, les thèmes perso gardent leur nom. */
+export function themeName(theme: Theme): string {
+  return t(theme.name)
+}
 
 export function findTheme(id: string, custom: Theme[]): Theme {
   return custom.find((t) => t.id === id) ?? PRESET_THEMES.find((t) => t.id === id) ?? PRESET_THEMES[0]!

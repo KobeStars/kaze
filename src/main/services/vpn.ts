@@ -24,6 +24,7 @@ import { app, webContents, type Session, type WebContents } from 'electron'
 import type { VpnCountry } from '@shared/constants'
 import type { VpnState } from '@shared/types'
 import type { SettingsService } from './settings'
+import { t } from '@shared/i18n'
 
 /** Au-delà, la connexion au réseau Tor est considérée comme impossible. */
 const BOOTSTRAP_TIMEOUT = 120_000
@@ -77,7 +78,7 @@ export class VpnService extends EventEmitter<{ changed: [] }> {
   }
 
   private enqueue(task: () => Promise<void>): Promise<void> {
-    this.queue = this.queue.then(task).catch((error: Error) => this.fail(`Brume n’a pas pu démarrer : ${error.message}`))
+    this.queue = this.queue.then(task).catch((error: Error) => this.fail(t('Brume n’a pas pu démarrer : {erreur}', { erreur: error.message })))
     return this.queue
   }
 
@@ -92,7 +93,7 @@ export class VpnService extends EventEmitter<{ changed: [] }> {
     const dir = app.isPackaged ? join(process.resourcesPath, 'tor') : join(app.getAppPath(), 'resources', 'tor')
     const exe = join(dir, 'tor', 'tor.exe')
     if (!existsSync(exe)) {
-      this.fail(app.isPackaged ? 'Tor est introuvable : réinstallez Kaze.' : 'Tor n’est pas installé : lancez « npm run tor ».')
+      this.fail(app.isPackaged ? t('Tor est introuvable : réinstallez Kaze.') : t('Tor n’est pas installé : lancez « npm run tor ».'))
       return
     }
     const args = [
@@ -123,17 +124,17 @@ export class VpnService extends EventEmitter<{ changed: [] }> {
     readLines(child.stdout, onLine)
     readLines(child.stderr, onLine)
     child.on('error', (error) => {
-      if (this.child === child) this.fail(`Impossible de lancer Tor : ${error.message}`)
+      if (this.child === child) this.fail(t('Impossible de lancer Tor : {erreur}', { erreur: error.message }))
     })
     child.on('exit', () => {
       if (this.child !== child) return
       this.child = null
-      this.fail(`Tor s’est arrêté${lastProblem ? ` (${lastProblem})` : ''}.`)
+      this.fail(lastProblem ? t('Tor s’est arrêté ({probleme}).', { probleme: lastProblem }) : t('Tor s’est arrêté.'))
     })
     this.timeout = setTimeout(() => {
       if (this.child !== child || this.current.status !== 'connexion') return
       this.stopTor()
-      this.fail('Le réseau Tor ne répond pas. Vérifiez la connexion Internet, puis réessayez.')
+      this.fail(t('Le réseau Tor ne répond pas. Vérifiez la connexion Internet, puis réessayez.'))
     }, BOOTSTRAP_TIMEOUT)
   }
 
@@ -161,7 +162,7 @@ export class VpnService extends EventEmitter<{ changed: [] }> {
       const data = (await response.json()) as { IsTor?: unknown; IP?: unknown }
       if (this.child !== child) return
       if (data.IsTor === false) {
-        this.fail('Le trafic ne semble pas passer par Tor : réessayez.')
+        this.fail(t('Le trafic ne semble pas passer par Tor : réessayez.'))
         return
       }
       const ip = typeof data.IP === 'string' && /^[0-9a-fA-F.:]{3,45}$/.test(data.IP) ? data.IP : null

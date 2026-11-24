@@ -3,11 +3,12 @@
  * Tab fait parcourir après l'insertion, « $0 » la position finale du curseur.
  */
 import type { Snippet } from '@shared/settings'
+import { t } from '@shared/i18n'
 
 export const BUILTIN_SNIPPETS: Snippet[] = [
   {
     id: 'page',
-    name: 'Page HTML de base',
+    name: t('Page HTML de base'),
     language: 'html',
     body: `<!doctype html>
 <html lang="fr">
@@ -25,7 +26,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'navbar',
-    name: 'Barre de navigation',
+    name: t('Barre de navigation'),
     language: 'html',
     body: `<header class="navbar">
   <a class="navbar__logo" href="/">\${1:Kaze}</a>
@@ -45,7 +46,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'grille',
-    name: 'Grille de cartes',
+    name: t('Grille de cartes'),
     language: 'html',
     body: `<section class="grille">
   <article class="carte">
@@ -62,7 +63,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'formulaire',
-    name: 'Formulaire de contact',
+    name: t('Formulaire de contact'),
     language: 'html',
     body: `<form class="formulaire">
   <label>Nom <input name="nom" required /></label>
@@ -79,7 +80,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'hero',
-    name: 'Section d’accroche (hero)',
+    name: t('Section d’accroche (hero)'),
     language: 'html',
     body: `<section class="hero">
   <h1>\${1:Navigue comme le vent}</h1>
@@ -94,7 +95,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'flex-centre',
-    name: 'Centrer avec flexbox',
+    name: t('Centrer avec flexbox'),
     language: 'css',
     body: `\${1:.conteneur} {
   display: flex;
@@ -105,7 +106,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'grid-responsive',
-    name: 'Grille responsive',
+    name: t('Grille responsive'),
     language: 'css',
     body: `\${1:.grille} {
   display: grid;
@@ -115,7 +116,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'media',
-    name: 'Media query mobile',
+    name: t('Media query mobile'),
     language: 'css',
     body: `@media (max-width: \${1:640px}) {
   $0
@@ -123,7 +124,7 @@ export const BUILTIN_SNIPPETS: Snippet[] = [
   },
   {
     id: 'theme-sombre',
-    name: 'Thème sombre automatique',
+    name: t('Thème sombre automatique'),
     language: 'css',
     body: `:root {
   --fond: #f5f2eb;
@@ -144,7 +145,7 @@ body {
   },
   {
     id: 'fetch',
-    name: 'Charger du JSON (fetch)',
+    name: t('Charger du JSON (fetch)'),
     language: 'javascript',
     body: `const reponse = await fetch('\${1:donnees.json}')
 const \${2:donnees} = await reponse.json()
@@ -152,7 +153,7 @@ console.log(\${2:donnees})$0`
   },
   {
     id: 'evenement',
-    name: 'Écouter un clic',
+    name: t('Écouter un clic'),
     language: 'javascript',
     body: `document.querySelector('\${1:button}').addEventListener('click', (event) => {
   $0
@@ -160,7 +161,7 @@ console.log(\${2:donnees})$0`
   },
   {
     id: 'dom-pret',
-    name: 'Quand la page est prête',
+    name: t('Quand la page est prête'),
     language: 'javascript',
     body: `document.addEventListener('DOMContentLoaded', () => {
   $0

@@ -11,13 +11,14 @@
     "dev": "electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "preview": "electron-vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run i18n && tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false",
     "polices": "node scripts/polices-jp.mjs",
     "logo": "electron scripts/logo.mjs",
     "dist": "npm run tor && npm run build && electron-builder --win --publish never",
     "postinstall": "node node_modules/electron/install.js",
     "release": "node scripts/publier.mjs",
-    "tor": "node scripts/tor.mjs"
+    "tor": "node scripts/tor.mjs",
+    "i18n": "node scripts/i18n.mjs"
   },
   "dependencies": {
     "@ghostery/adblocker-electron": "^2.20.3",

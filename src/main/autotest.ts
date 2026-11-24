@@ -299,6 +299,12 @@ export async function runAutotest(dir: string, win: BrowserWindow, browser: Brow
       return
     }
 
+    if (process.env['KAZE_AUTOTEST_LANGUE']) {
+      await langue(dir, win, browser, services)
+      app.quit()
+      return
+    }
+
     if (process.env['KAZE_AUTOTEST_VITRINE']) {
       await vitrine(dir, win, browser, services)
       app.quit()
@@ -785,6 +791,59 @@ async function compositeShot(win: BrowserWindow, dir: string, name: string): Pro
   } finally {
     helper.destroy()
   }
+}
+
+/**
+ * Relève les textes affichés (interface, chaque section des paramètres, Souffle, tiroirs, pages
+ * internes) et signale les lignes qui ont l'air françaises. À lancer avec un profil réglé en anglais.
+ */
+async function langue(dir: string, win: BrowserWindow, browser: BrowserController, services: Services): Promise<void> {
+  const textes: string[] = []
+  const ui = (code: string): Promise<string> => win.webContents.executeJavaScript(code) as Promise<string>
+  const page = async (input: string): Promise<void> => {
+    const id = browser.createTab({ url: input })
+    await wait(4000)
+    textes.push(`## ${input}`, ((await browser.get(id)?.contents?.executeJavaScript('document.body.innerText')) as string) ?? '')
+  }
+  await page('kaze://accueil/')
+  await page('kaze://bienvenue/')
+  await page('kaze://studio/')
+  textes.push('## interface', await ui('document.body.innerText'))
+  for (const command of ['open-history', 'open-bookmarks', 'open-downloads', 'open-souffle'] as const) {
+    browser.uiCommand(command)
+    await wait(1200)
+    textes.push(`## ${command}`, await ui('document.body.innerText'))
+    await ui("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); ''")
+    await wait(500)
+  }
+  browser.uiCommand('open-settings')
+  await wait(1500)
+  textes.push(
+    '## paramètres',
+    await ui(`(async () => {
+      const out = [];
+      for (const link of document.querySelectorAll('.settings__link')) {
+        link.click();
+        await new Promise((r) => setTimeout(r, 400));
+        out.push('# ' + link.innerText, document.querySelector('.settings')?.innerText ?? document.body.innerText);
+      }
+      return out.join('\\n');
+    })()`)
+  )
+  writeFileSync(join(dir, 'textes.txt'), textes.join('\n'), 'utf8')
+  const francais = /[éèêàçùâîôûœ«»]|\b(le|la|les|des|du|une|et|pour|avec|dans|sur|vos|votre|est|pas)\b/i
+  const suspects = [...new Set(textes.join('\n').split('\n').map((l) => l.trim()))].filter((l) => francais.test(l))
+  // Changement de langue en cours de route : l'interface doit se recharger dans l'autre langue.
+  const avant = services.settings.get().language
+  services.settings.set({ language: avant === 'en' ? 'fr' : 'en' })
+  await wait(4000)
+  const apres = await ui('document.body.innerText')
+  const bascule = avant === 'en' ? apres.includes('Nouvel onglet') : apres.includes('New tab')
+  writeFileSync(
+    join(dir, 'rapport.txt'),
+    [`${suspects.length} ligne(s) suspecte(s)`, ...suspects, '', `${bascule ? 'OK' : 'ÉCHEC'}  Bascule de langue en direct`].join('\n'),
+    'utf8'
+  )
 }
 
 async function vitrine(dir: string, win: BrowserWindow, browser: BrowserController, services: Services): Promise<void> {

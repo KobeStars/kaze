@@ -14,6 +14,7 @@ import type { UpdaterService } from '../services/updater'
 import type { ExtensionsService } from '../services/extensions'
 import { windowState } from '../window'
 import { emit, handle, handleInternal, handleStudio, listen } from './router'
+import { t } from '@shared/i18n'
 
 export function registerIpc(
   win: BrowserWindow,
@@ -114,7 +115,7 @@ export function registerIpc(
   handle('settings:reset-shortcuts', () => settings.resetShortcuts())
   handle('settings:choose-download-dir', async () => {
     const result = await dialog.showOpenDialog(win, {
-      title: 'Dossier des téléchargements',
+      title: t('Dossier des téléchargements'),
       defaultPath: settings.downloadDir(),
       properties: ['openDirectory', 'createDirectory']
     })

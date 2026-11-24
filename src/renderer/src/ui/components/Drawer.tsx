@@ -9,16 +9,17 @@ import { formatBytes } from '../hooks'
 import { bookmarksStore, downloadsStore, historyVersion, kaze, useStore } from '../store'
 import { Favicon, Icon } from './Icon'
 import type { DrawerTab } from './Toolbar'
+import { locale, t } from '@shared/i18n'
 
-const DAY_FORMAT = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
-const TIME_FORMAT = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' })
+const DAY_FORMAT = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
+const TIME_FORMAT = new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit' })
 
 function dayLabel(timestamp: number): string {
   const date = new Date(timestamp)
   const today = new Date()
   const yesterday = new Date(Date.now() - 86_400_000)
-  if (date.toDateString() === today.toDateString()) return 'Aujourd’hui'
-  if (date.toDateString() === yesterday.toDateString()) return 'Hier'
+  if (date.toDateString() === today.toDateString()) return t('Aujourd’hui')
+  if (date.toDateString() === yesterday.toDateString()) return t('Hier')
   const label = DAY_FORMAT.format(date)
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
@@ -43,7 +44,7 @@ function HistoryList({ query }: { query: string }): JSX.Element {
     return [...map.entries()]
   }, [entries])
 
-  if (entries.length === 0) return <p className="drawer__empty">{query ? 'Aucun résultat.' : 'Votre historique est vide.'}</p>
+  if (entries.length === 0) return <p className="drawer__empty">{query ? t('Aucun résultat.') : t('Votre historique est vide.')}</p>
   return (
     <>
       {groups.map(([label, list]) => (
@@ -61,7 +62,7 @@ function HistoryList({ query }: { query: string }): JSX.Element {
                 <button
                   type="button"
                   className="row__action"
-                  title="Supprimer de l’historique"
+                  title={t('Supprimer de l’historique')}
                   onClick={(ev) => {
                     ev.stopPropagation()
                     void kaze.invoke('history:remove', e.id).then(() => setEntries((l) => l.filter((x) => x.id !== e.id)))
@@ -92,14 +93,14 @@ function BookmarkRow({ bookmark }: { bookmark: Bookmark }): JSX.Element {
             setEditing(false)
           }}
         >
-          <input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} aria-label="Titre" />
-          <input value={url} onChange={(e) => setUrl(e.target.value)} aria-label="Adresse" />
+          <input autoFocus value={title} onChange={(e) => setTitle(e.target.value)} aria-label={t('Titre')} />
+          <input value={url} onChange={(e) => setUrl(e.target.value)} aria-label={t('Adresse')} />
           <div className="row__buttons">
             <button type="button" className="btn btn--ghost btn--s" onClick={() => setEditing(false)}>
-              Annuler
+              {t('Annuler')}
             </button>
             <button type="submit" className="btn btn--primary btn--s">
-              Enregistrer
+              {t('Enregistrer')}
             </button>
           </div>
         </form>
@@ -113,13 +114,13 @@ function BookmarkRow({ bookmark }: { bookmark: Bookmark }): JSX.Element {
         <span className="row__title">{bookmark.title}</span>
         <span className="row__sub">{displayUrl(bookmark.url)}</span>
       </span>
-      <button type="button" className="row__action" title="Modifier" onClick={(e) => {
+      <button type="button" className="row__action" title={t('Modifier')} onClick={(e) => {
         e.stopPropagation()
         setEditing(true)
       }}>
         <Icon name="pen" size={13} />
       </button>
-      <button type="button" className="row__action" title="Supprimer" onClick={(e) => {
+      <button type="button" className="row__action" title={t('Supprimer')} onClick={(e) => {
         e.stopPropagation()
         void kaze.invoke('bookmarks:remove', bookmark.id)
       }}>
@@ -134,7 +135,7 @@ function BookmarkList({ query }: { query: string }): JSX.Element {
   const q = query.trim().toLowerCase()
   const list = q ? bookmarks.filter((b) => `${b.title} ${b.url}`.toLowerCase().includes(q)) : bookmarks
   if (list.length === 0) {
-    return <p className="drawer__empty">{q ? 'Aucun résultat.' : 'Aucun favori pour l’instant. Ajoutez une page avec Ctrl+D.'}</p>
+    return <p className="drawer__empty">{q ? t('Aucun résultat.') : t('Aucun favori pour l’instant. Ajoutez une page avec Ctrl+D.')}</p>
   }
   return (
     <ul className="drawer__group">
@@ -151,9 +152,9 @@ function DownloadRow({ d }: { d: DownloadEntry }): JSX.Element {
     d.status === 'completed'
       ? formatBytes(d.totalBytes || d.receivedBytes)
       : d.status === 'cancelled'
-        ? 'Annulé'
+        ? t('Annulé')
         : d.status === 'interrupted'
-          ? 'Interrompu'
+          ? t('Interrompu')
           : d.status === 'paused'
             ? `En pause — ${formatBytes(d.receivedBytes)}`
             : `${formatBytes(d.receivedBytes)}${d.totalBytes ? ` sur ${formatBytes(d.totalBytes)}` : ''}${d.speed ? ` — ${formatBytes(d.speed)}/s` : ''}`
@@ -173,27 +174,27 @@ function DownloadRow({ d }: { d: DownloadEntry }): JSX.Element {
         )}
       </span>
       {d.status === 'progressing' && (
-        <button type="button" className="row__action is-visible" title="Pause" onClick={(e) => (e.stopPropagation(), act('pause'))}>
+        <button type="button" className="row__action is-visible" title={t('Pause')} onClick={(e) => (e.stopPropagation(), act('pause'))}>
           <Icon name="pause" size={13} />
         </button>
       )}
       {d.status === 'paused' && (
-        <button type="button" className="row__action is-visible" title="Reprendre" onClick={(e) => (e.stopPropagation(), act('resume'))}>
+        <button type="button" className="row__action is-visible" title={t('Reprendre')} onClick={(e) => (e.stopPropagation(), act('resume'))}>
           <Icon name="play" size={13} />
         </button>
       )}
       {(d.status === 'progressing' || d.status === 'paused') && (
-        <button type="button" className="row__action is-visible" title="Annuler" onClick={(e) => (e.stopPropagation(), act('cancel'))}>
+        <button type="button" className="row__action is-visible" title={t('Annuler')} onClick={(e) => (e.stopPropagation(), act('cancel'))}>
           <Icon name="close" size={13} />
         </button>
       )}
       {d.status === 'completed' && (
-        <button type="button" className="row__action" title="Afficher dans le dossier" onClick={(e) => (e.stopPropagation(), act('show'))}>
+        <button type="button" className="row__action" title={t('Afficher dans le dossier')} onClick={(e) => (e.stopPropagation(), act('show'))}>
           <Icon name="folder" size={13} />
         </button>
       )}
       {d.status !== 'progressing' && d.status !== 'paused' && (
-        <button type="button" className="row__action" title="Retirer de la liste" onClick={(e) => (e.stopPropagation(), act('remove'))}>
+        <button type="button" className="row__action" title={t('Retirer de la liste')} onClick={(e) => (e.stopPropagation(), act('remove'))}>
           <Icon name="trash" size={13} />
         </button>
       )}
@@ -205,7 +206,7 @@ function DownloadList({ query }: { query: string }): JSX.Element {
   const downloads = useStore(downloadsStore)
   const q = query.trim().toLowerCase()
   const list = q ? downloads.filter((d) => d.filename.toLowerCase().includes(q)) : downloads
-  if (list.length === 0) return <p className="drawer__empty">{q ? 'Aucun résultat.' : 'Aucun téléchargement.'}</p>
+  if (list.length === 0) return <p className="drawer__empty">{q ? t('Aucun résultat.') : t('Aucun téléchargement.')}</p>
   return (
     <ul className="drawer__group">
       {list.map((d) => (
@@ -216,9 +217,9 @@ function DownloadList({ query }: { query: string }): JSX.Element {
 }
 
 const TABS: { id: DrawerTab; label: string }[] = [
-  { id: 'historique', label: 'Historique' },
-  { id: 'favoris', label: 'Favoris' },
-  { id: 'telechargements', label: 'Téléchargements' }
+  { id: 'historique', label: t('Historique') },
+  { id: 'favoris', label: t('Favoris') },
+  { id: 'telechargements', label: t('Téléchargements') }
 ]
 
 export function Drawer({ tab, onTab, onClose }: { tab: DrawerTab; onTab: (t: DrawerTab) => void; onClose: () => void }): JSX.Element {
@@ -239,13 +240,13 @@ export function Drawer({ tab, onTab, onClose }: { tab: DrawerTab; onTab: (t: Dra
             </button>
           ))}
         </div>
-        <button type="button" className="btn-icon btn-icon--s" title="Fermer" onClick={onClose}>
+        <button type="button" className="btn-icon btn-icon--s" title={t('Fermer')} onClick={onClose}>
           <Icon name="close" size={14} />
         </button>
       </header>
       <div className="drawer__search">
         <Icon name="search" size={15} />
-        <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher…" aria-label="Rechercher" />
+        <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('Rechercher…')} aria-label={t('Rechercher')} />
       </div>
       <div className="drawer__body">
         {tab === 'historique' && <HistoryList query={query} />}
@@ -256,24 +257,24 @@ export function Drawer({ tab, onTab, onClose }: { tab: DrawerTab; onTab: (t: Dra
         {tab === 'historique' &&
           (confirmClear ? (
             <div className="drawer__confirm">
-              <span>Effacer :</span>
+              <span>{t('Effacer :')}</span>
               {(['heure', 'jour', 'tout'] as const).map((range) => (
                 <button key={range} type="button" className="btn btn--s btn--ghost" onClick={() => {
                   void kaze.invoke('history:clear', range)
                   setConfirmClear(false)
                 }}>
-                  {range === 'heure' ? 'Dernière heure' : range === 'jour' ? '24 h' : 'Tout'}
+                  {range === 'heure' ? t('Dernière heure') : range === 'jour' ? t('24 h') : t('Tout')}
                 </button>
               ))}
             </div>
           ) : (
             <button type="button" className="btn btn--s btn--ghost" onClick={() => setConfirmClear(true)}>
-              <Icon name="trash" size={14} /> Effacer l’historique…
+              <Icon name="trash" size={14} /> {t('Effacer l’historique…')}
             </button>
           ))}
         {tab === 'telechargements' && (
           <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('downloads:clear')}>
-            Vider la liste
+            {t('Vider la liste')}
           </button>
         )}
       </footer>

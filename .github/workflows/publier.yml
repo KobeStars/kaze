@@ -27,7 +27,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Une version publiée depuis le PC (npm run release) crée aussi son tag : rien à refaire ici.
+  deja-publiee:
+    runs-on: ubuntu-latest
+    outputs:
+      publiee: ${{ steps.release.outputs.publiee }}
+    steps:
+      - id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "publiee=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$GITHUB_REF_NAME est déjà publiée : rien à construire."
+          else
+            echo "publiee=false" >> "$GITHUB_OUTPUT"
+          fi
+
   windows:
+    needs: deja-publiee
+    if: needs.deja-publiee.outputs.publiee != 'true'
     runs-on: windows-latest
     timeout-minutes: 120
     env:

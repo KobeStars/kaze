@@ -1,0 +1,38 @@
+﻿Kaze — license and privacy
+
+PRIVACY
+Kaze has no account, no ads, no telemetry and no usage statistics. Your bookmarks, history, cookies, settings and tabs stay on your PC (%APPDATA%\Kaze). Kordix Studio receives no data.
+
+Kaze connects on its own to:
+- GitHub, to check for and download its updates (can be turned off in Settings > About > Automatic updates);
+- Ghostery, to download the Shield's filter lists, at most once a week;
+- Google, to download the Widevine module (Netflix, Spotify).
+Everything else (sites, search, Brume/Tor, weather, Bing image of the day, fonts, extensions) only happens when you ask for it.
+
+The installer adds Kaze to the "Open with" menu for .html and .htm files. It does not change your default browser.
+
+Full policy (in French): https://kobestars.github.io/kaze/politique.html
+
+
+LICENSE (MIT)
+MIT License
+
+Copyright (c) 2026 Kordix Studio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

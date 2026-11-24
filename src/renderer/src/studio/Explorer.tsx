@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useState, type JSX } from 'react'
 import type { StudioEntry } from '@shared/types'
 import { Icon } from '../ui/components/Icon'
+import { t } from '@shared/i18n'
 
 const api = window.kazeStudio!
 
@@ -167,16 +168,16 @@ export function Explorer({ version, activePath, onOpen, onRenamed, onDeleted, on
   return (
     <div className="explorer">
       <div className="explorer__tools">
-        <span>Fichiers</span>
-        <button type="button" title="Nouveau fichier" onClick={() => (setEditing({ kind: 'nouveau-fichier', dir: selectedDir() }), setDraft(''))}>
+        <span>{t('Fichiers')}</span>
+        <button type="button" title={t('Nouveau fichier')} onClick={() => (setEditing({ kind: 'nouveau-fichier', dir: selectedDir() }), setDraft(''))}>
           <Icon name="plus" size={14} />
         </button>
-        <button type="button" title="Nouveau dossier" onClick={() => (setEditing({ kind: 'nouveau-dossier', dir: selectedDir() }), setDraft(''))}>
+        <button type="button" title={t('Nouveau dossier')} onClick={() => (setEditing({ kind: 'nouveau-dossier', dir: selectedDir() }), setDraft(''))}>
           <Icon name="folder" size={14} />
         </button>
         <button
           type="button"
-          title="Renommer (double-clic)"
+          title={t('Renommer (double-clic)')}
           disabled={!selected}
           onClick={() => {
             setEditing({ kind: 'renommer', path: selected })
@@ -187,10 +188,10 @@ export function Explorer({ version, activePath, onOpen, onRenamed, onDeleted, on
         </button>
         <button
           type="button"
-          title="Mettre à la Corbeille"
+          title={t('Mettre à la Corbeille')}
           disabled={!selected}
           onClick={() => {
-            if (!window.confirm(`Mettre « ${selected} » à la Corbeille ?`)) return
+            if (!window.confirm(t('Mettre « {nom} » à la Corbeille ?', { nom: selected }))) return
             const path = selected
             run(api.invoke('studio:delete', path).then(() => onDeleted(path)))
             setSelected('')

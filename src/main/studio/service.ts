@@ -14,22 +14,24 @@ import type { StudioEntry, StudioEvent, StudioLog, StudioState } from '@shared/t
 import type { StudioSettings } from '@shared/settings'
 import type { SettingsService } from '../services/settings'
 import { PreviewServer } from './server'
+import { lang, t } from '@shared/i18n'
 
 const HIDDEN = new Set(['.git', 'node_modules', '.DS_Store', 'Thumbs.db'])
 const MAX_TEXT = 8 * 1024 * 1024
 
-const TEMPLATE_HTML = `<!doctype html>
-<html lang="fr">
+/** Fichiers d'un nouveau projet, dans la langue de Kaze. */
+const templateHtml = (): string => `<!doctype html>
+<html lang="${lang()}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mon projet</title>
+    <title>${t('Mon projet')}</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main>
-      <h1>Bonjour 風</h1>
-      <p>Modifiez ce fichier : l’aperçu se met à jour pendant que vous tapez.</p>
+      <h1>${t('Bonjour 風')}</h1>
+      <p>${t('Modifiez ce fichier : l’aperçu se met à jour pendant que vous tapez.')}</p>
     </main>
     <script type="module" src="script.js"></script>
   </body>
@@ -53,7 +55,7 @@ h1 {
   color: #d7372a;
 }
 `
-const TEMPLATE_JS = `console.log('Kaze Studio est prêt ✓')
+const templateJs = (): string => `console.log('${t('Kaze Studio est prêt ✓')}')
 `
 
 export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
@@ -110,7 +112,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
   // ───────────── Ouvrir un projet ─────────────
 
   async openFolder(win: BrowserWindow | null): Promise<StudioState> {
-    const options = { title: 'Ouvrir un dossier', properties: ['openDirectory', 'createDirectory'] as ('openDirectory' | 'createDirectory')[] }
+    const options = { title: t('Ouvrir un dossier'), properties: ['openDirectory', 'createDirectory'] as ('openDirectory' | 'createDirectory')[] }
     const result = win ? await dialog.showOpenDialog(win, options) : await dialog.showOpenDialog(options)
     if (!result.canceled && result.filePaths[0]) this.setRoot(result.filePaths[0])
     return this.state()
@@ -118,11 +120,11 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
 
   async openFile(win: BrowserWindow | null): Promise<{ state: StudioState; file: string } | null> {
     const options = {
-      title: 'Ouvrir un fichier',
+      title: t('Ouvrir un fichier'),
       properties: ['openFile'] as 'openFile'[],
       filters: [
-        { name: 'Fichiers web', extensions: ['html', 'htm', 'css', 'js', 'mjs', 'json', 'svg', 'md', 'txt'] },
-        { name: 'Tous les fichiers', extensions: ['*'] }
+        { name: t('Fichiers web'), extensions: ['html', 'htm', 'css', 'js', 'mjs', 'json', 'svg', 'md', 'txt'] },
+        { name: t('Tous les fichiers'), extensions: ['*'] }
       ]
     }
     const result = win ? await dialog.showOpenDialog(win, options) : await dialog.showOpenDialog(options)
@@ -133,8 +135,8 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
   }
 
   openRecent(path: string): StudioState {
-    if (!this.settings.get().studio.recent.includes(path)) throw new Error('Projet inconnu')
-    if (!existsSync(path)) throw new Error('Ce dossier n’existe plus')
+    if (!this.settings.get().studio.recent.includes(path)) throw new Error(t('Projet inconnu'))
+    if (!existsSync(path)) throw new Error(t('Ce dossier n’existe plus'))
     this.setRoot(path)
     return this.state()
   }
@@ -144,9 +146,9 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
     let dir = join(this.projectsDir, name)
     for (let i = 2; existsSync(dir); i++) dir = join(this.projectsDir, `${name} ${i}`)
     await mkdir(dir, { recursive: true })
-    await writeFile(join(dir, 'index.html'), TEMPLATE_HTML)
+    await writeFile(join(dir, 'index.html'), templateHtml())
     await writeFile(join(dir, 'style.css'), TEMPLATE_CSS)
-    await writeFile(join(dir, 'script.js'), TEMPLATE_JS)
+    await writeFile(join(dir, 'script.js'), templateJs())
     this.setRoot(dir)
     return this.state()
   }
@@ -180,10 +182,10 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
 
   /** Chemin absolu confiné dans le projet. */
   private resolve(rel: string): string {
-    if (!this.root) throw new Error('Aucun projet ouvert')
+    if (!this.root) throw new Error(t('Aucun projet ouvert'))
     const file = normalize(join(this.root, rel))
     const inside = relative(this.root, file)
-    if (inside.startsWith('..') || isAbsolute(inside)) throw new Error('Chemin hors du projet')
+    if (inside.startsWith('..') || isAbsolute(inside)) throw new Error(t('Chemin hors du projet'))
     return file
   }
 
@@ -203,7 +205,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
   async read(rel: string): Promise<string> {
     const file = this.resolve(rel)
     const info = await stat(file)
-    if (info.size > MAX_TEXT) throw new Error('Fichier trop volumineux pour l’éditeur (8 Mo max)')
+    if (info.size > MAX_TEXT) throw new Error(t('Fichier trop volumineux pour l’éditeur (8 Mo max)'))
     return readFile(file, 'utf8')
   }
 
@@ -217,7 +219,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
 
   async create(relDir: string, name: string, kind: 'fichier' | 'dossier'): Promise<string> {
     const target = this.resolve(join(relDir, name))
-    if (existsSync(target)) throw new Error('Ce nom existe déjà')
+    if (existsSync(target)) throw new Error(t('Ce nom existe déjà'))
     if (kind === 'dossier') await mkdir(target, { recursive: true })
     else {
       await mkdir(dirname(target), { recursive: true })
@@ -229,7 +231,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
   async rename(rel: string, name: string): Promise<string> {
     const from = this.resolve(rel)
     const to = this.resolve(join(dirname(rel), name))
-    if (existsSync(to)) throw new Error('Ce nom existe déjà')
+    if (existsSync(to)) throw new Error(t('Ce nom existe déjà'))
     await rename(from, to)
     this.moveOverlay(rel, this.toRel(to))
     return this.toRel(to)
@@ -241,8 +243,8 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
     const to = join(dir, basename(from))
     if (to === from) return rel
     const inside = relative(from, dir)
-    if (!inside.startsWith('..') && !isAbsolute(inside)) throw new Error('Impossible de déplacer un dossier dans lui-même')
-    if (existsSync(to)) throw new Error('Un élément du même nom existe déjà dans ce dossier')
+    if (!inside.startsWith('..') && !isAbsolute(inside)) throw new Error(t('Impossible de déplacer un dossier dans lui-même'))
+    if (existsSync(to)) throw new Error(t('Un élément du même nom existe déjà dans ce dossier'))
     await rename(from, to)
     this.moveOverlay(rel, this.toRel(to))
     return this.toRel(to)
@@ -250,7 +252,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
 
   /** Suppression vers la Corbeille de Windows (récupérable). */
   async delete(rel: string): Promise<void> {
-    if (!rel) throw new Error('Impossible de supprimer la racine du projet')
+    if (!rel) throw new Error(t('Impossible de supprimer la racine du projet'))
     await shell.trashItem(this.resolve(rel))
     for (const key of [...this.overlay.keys()]) if (key === rel || key.startsWith(`${rel}/`)) this.overlay.delete(key)
   }
@@ -291,7 +293,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
     this.previewWindow = new BrowserWindow({
       width: 1100,
       height: 780,
-      title: 'Aperçu — Kaze Studio',
+      title: t('Aperçu — Kaze Studio'),
       autoHideMenuBar: true,
       backgroundColor: '#FFFFFF',
       webPreferences: { session: this.session, sandbox: true, contextIsolation: true, nodeIntegration: false }
@@ -308,7 +310,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
 
   async exportZip(win: BrowserWindow | null): Promise<boolean> {
     if (!this.root) return false
-    const options = { title: 'Exporter le projet', defaultPath: join(app.getPath('downloads'), `${basename(this.root)}.zip`), filters: [{ name: 'Archive ZIP', extensions: ['zip'] }] }
+    const options = { title: t('Exporter le projet'), defaultPath: join(app.getPath('downloads'), `${basename(this.root)}.zip`), filters: [{ name: t('Archive ZIP'), extensions: ['zip'] }] }
     const result = win ? await dialog.showSaveDialog(win, options) : await dialog.showSaveDialog(options)
     if (result.canceled || !result.filePath) return false
     const files: Record<string, Uint8Array> = {}
@@ -322,7 +324,7 @@ export class StudioService extends EventEmitter<{ event: [StudioEvent] }> {
           const rel = this.toRel(full)
           const data = this.overlay.has(rel) ? Buffer.from(this.overlay.get(rel)!, 'utf8') : await readFile(full)
           total += data.length
-          if (total > 500 * 1024 * 1024) throw new Error('Projet trop volumineux (500 Mo max)')
+          if (total > 500 * 1024 * 1024) throw new Error(t('Projet trop volumineux (500 Mo max)'))
           files[rel] = new Uint8Array(data)
         }
       }

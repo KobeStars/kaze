@@ -6,6 +6,7 @@ import { useState, type FormEvent, type JSX } from 'react'
 import { extensionsStore, kaze, useStore } from '../../store'
 import { Icon } from '../Icon'
 import { Block, SectionTitle, Toggle } from './controls'
+import { t } from '@shared/i18n'
 
 export function ExtensionsSection(): JSX.Element {
   const list = useStore(extensionsStore)
@@ -18,7 +19,7 @@ export function ExtensionsSection(): JSX.Element {
     setMessage(null)
     try {
       const added = await task()
-      if (added) setMessage({ ok: true, text: `« ${added.name} » est installée.` })
+      if (added) setMessage({ ok: true, text: t('« {nom} » est installée.', { nom: added.name }) })
       setInput('')
     } catch (error) {
       setMessage({ ok: false, text: String(error instanceof Error ? error.message : error).replace(/^Error invoking remote method '[^']+': (Error: )?/, '') })
@@ -33,11 +34,9 @@ export function ExtensionsSection(): JSX.Element {
 
   return (
     <>
-      <SectionTitle>Extensions</SectionTitle>
+      <SectionTitle>{t('Extensions')}</SectionTitle>
       <p className="settings__intro">
-        Les extensions Chrome s’installent depuis le Chrome Web Store : collez le lien de la page de l’extension. Kaze fait tourner
-        celles qui agissent dans les pages (thème sombre, traduction, outils de développement…) ; certaines fonctions avancées de
-        Chrome ne sont pas encore disponibles.
+        {t('Les extensions Chrome s’installent depuis le Chrome Web Store : collez le lien de la page de l’extension. Kaze fait tourner celles qui agissent dans les pages (thème sombre, traduction, outils de développement…) ; certaines fonctions avancées de Chrome ne sont pas encore disponibles.')}
       </p>
 
       <form className="ext-install" onSubmit={install}>
@@ -46,24 +45,24 @@ export function ExtensionsSection(): JSX.Element {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="https://chromewebstore.google.com/detail/…"
-          aria-label="Lien ou identifiant du Chrome Web Store"
+          aria-label={t('Lien ou identifiant du Chrome Web Store')}
           spellCheck={false}
         />
         <button type="submit" className="btn btn--primary" disabled={busy || !input.trim()}>
-          {busy ? 'Installation…' : 'Installer'}
+          {busy ? t('Installation…') : t('Installer')}
         </button>
       </form>
       <div className="button-row ext-actions">
         <button type="button" className="btn btn--s btn--ghost" onClick={() => void kaze.invoke('tab:create', { input: 'https://chromewebstore.google.com/' })}>
-          <Icon name="external" size={14} /> Ouvrir le Chrome Web Store
+          <Icon name="external" size={14} /> {t('Ouvrir le Chrome Web Store')}
         </button>
         <button type="button" className="btn btn--s btn--ghost" disabled={busy} onClick={() => void run(() => kaze.invoke('ext:install-folder'))}>
-          <Icon name="folder" size={14} /> Depuis un dossier…
+          <Icon name="folder" size={14} /> {t('Depuis un dossier…')}
         </button>
       </div>
       {message && <p className={`ext-message${message.ok ? '' : ' is-error'}`}>{message.text}</p>}
 
-      <Block label={list.length ? `Installées (${list.length})` : 'Aucune extension installée'}>
+      <Block label={list.length ? t('Installées ({n})', { n: list.length }) : t('Aucune extension installée')}>
         <ul className="ext-list">
           {list.map((ext) => (
             <li key={ext.path} className={`ext-item${ext.enabled ? '' : ' is-off'}`}>
@@ -72,10 +71,10 @@ export function ExtensionsSection(): JSX.Element {
                 <strong>
                   {ext.name} <span>{ext.version}</span>
                 </strong>
-                <p>{ext.error ? `Erreur : ${ext.error}` : ext.description || (ext.storeId ? 'Chrome Web Store' : 'Dossier local')}</p>
+                <p>{ext.error ? `Erreur : ${ext.error}` : ext.description || (ext.storeId ? 'Chrome Web Store' : t('Dossier local'))}</p>
               </div>
               <Toggle checked={ext.enabled} label={`Activer ${ext.name}`} onChange={(v) => void kaze.invoke('ext:toggle', ext.path, v)} />
-              <button type="button" className="btn-icon" title="Supprimer cette extension" onClick={() => void kaze.invoke('ext:remove', ext.path)}>
+              <button type="button" className="btn-icon" title={t('Supprimer cette extension')} onClick={() => void kaze.invoke('ext:remove', ext.path)}>
                 <Icon name="trash" size={15} />
               </button>
             </li>

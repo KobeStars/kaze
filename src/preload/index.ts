@@ -7,6 +7,7 @@
  */
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 import type { KazeApi } from '@shared/api'
+import type { Lang } from '@shared/i18n'
 
 /** Familles de canaux autorisées (le principal refuse de toute façon les canaux inconnus). */
 const ALLOWED = /^(window|app|browser|tab|view|workspace|split|panel|bookmarks|history|downloads|settings|shortcuts|shield|storm|vpn|responsive|ext|suggest|data|layout|find|ui|update):[a-z-]+$/
@@ -16,6 +17,7 @@ function check(channel: string): void {
 }
 
 const api: KazeApi = {
+  lang: ipcRenderer.sendSync('app:lang') as Lang,
   invoke(channel, ...args) {
     check(channel)
     return ipcRenderer.invoke(channel, ...args)
