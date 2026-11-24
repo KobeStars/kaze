@@ -16,7 +16,7 @@ Un navigateur pour Windows, rapide et élégant, pensé pour les développeurs e
 ![Gratuit](https://img.shields.io/badge/prix-gratuit-3d3b37)
 [![Licence MIT](https://img.shields.io/badge/licence-MIT-3d3b37)](LICENSE)
 
-[**Télécharger pour Windows**](https://github.com/KobeStars/kaze/releases/latest) · [Site de présentation](https://kobestars.github.io/kaze/) · [Toutes les versions](https://github.com/KobeStars/kaze/releases)
+[**Télécharger pour Windows**](https://github.com/KobeStars/kaze/releases/latest) · [Site de présentation](https://kobestars.github.io/kaze/) · [Toutes les versions](https://github.com/KobeStars/kaze/releases) · [English](README.en.md)
 
 <br>
 

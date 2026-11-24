@@ -105,9 +105,10 @@ git push nas main
 ```
 
 Le workflow construit Kaze sur une machine Windows de GitHub, le signe VMP (compte castLabs dans les secrets
-`EVS_ACCOUNT_NAME` / `EVS_PASSWD`), envoie l'installateur à [SignPath](https://signpath.org/) (la demande se valide
-à la main sur app.signpath.io), recalcule `latest.yml` et le `.blockmap` du fichier signé
-(`scripts/apres-signature.mjs`) puis crée la release. Lancé à la main depuis l'onglet Actions, il construit
+`EVS_ACCOUNT_NAME` / `EVS_PASSWD`) puis crée la release. La signature [SignPath](https://signpath.org/) est prête
+mais pas encore active (Kaze n'a pas encore été accepté par SignPath Foundation) : elle s'enclenche quand les
+variables `SIGNPATH_*` existent. L'installateur part alors à SignPath (la demande se valide à la main sur
+app.signpath.io), puis `latest.yml` et le `.blockmap` du fichier signé sont recalculés (`scripts/apres-signature.mjs`). Lancé à la main depuis l'onglet Actions, il construit
 seulement, sans rien publier. La configuration d'artefact SignPath est dans [`.signpath/`](../.signpath/artifact-configuration.xml).
 
 `npm run release` publie encore depuis le PC du mainteneur, sans signature SignPath.

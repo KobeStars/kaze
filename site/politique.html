@@ -58,10 +58,10 @@
 
   <h2 id="signature">Politique de signature du code <span lang="en">(code signing policy)</span></h2>
 
-  <p class="encart" lang="en">Free code signing provided by <a href="https://about.signpath.io/">SignPath.io</a>, certificate by <a href="https://signpath.org/">SignPath Foundation</a>.<br><span lang="fr">Kaze a demandé à en bénéficier : tant que la demande n’est pas acceptée, l’installateur n’est pas signé.</span></p>
+  <p class="encart">Pour l’instant, l’installateur de Kaze n’est pas signé : Windows SmartScreen affiche un avertissement au premier lancement. Kaze compte demander une signature gratuite au programme <a href="https://signpath.org/">SignPath Foundation</a>, réservé aux projets libres déjà connus. Cette page décrit les règles qui s’appliqueront alors.</p>
 
-  <h3>Ce qui est signé</h3>
-  <p>Seul l’installateur <code>Kaze-Setup-x.y.z.exe</code> publié sur la <a href="https://github.com/KobeStars/kaze/releases">page des versions</a> est signé. Il est construit à partir du <a href="https://github.com/KobeStars/kaze">code source public</a> (licence MIT), sur les machines de GitHub Actions, par le workflow <a href="https://github.com/KobeStars/kaze/blob/main/.github/workflows/publier.yml"><code>publier.yml</code></a>. Chaque demande de signature est approuvée à la main.</p>
+  <h3>Ce qui sera signé</h3>
+  <p>Seul l’installateur <code>Kaze-Setup-x.y.z.exe</code> publié sur la <a href="https://github.com/KobeStars/kaze/releases">page des versions</a> sera signé. Il est construit à partir du <a href="https://github.com/KobeStars/kaze">code source public</a> (licence MIT), sur les machines de GitHub Actions, par le workflow <a href="https://github.com/KobeStars/kaze/blob/main/.github/workflows/publier.yml"><code>publier.yml</code></a>. Chaque demande de signature sera approuvée à la main.</p>
   <p>L’installateur contient aussi des programmes d’autres projets libres, livrés tels quels : Electron dans sa version <a href="https://github.com/castlabs/electron-releases">castLabs</a> (qui sert de base à <code>Kaze.exe</code>) et <code>tor.exe</code> du <a href="https://www.torproject.org/">Tor Project</a>, dont l’empreinte SHA-256 est vérifiée à chaque construction.</p>
 
   <h3>Équipe</h3>
