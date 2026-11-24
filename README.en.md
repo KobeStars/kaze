@@ -24,9 +24,6 @@ A fast, elegant web browser for Windows, made for developers and creators.
 
 </div>
 
-> [!IMPORTANT]
-> Kaze's interface is **in French only** for now.
-
 ---
 
 ## At a glance
@@ -36,6 +33,7 @@ A fast, elegant web browser for Windows, made for developers and creators.
 - **Privacy first**: ad and tracker blocker, built-in VPN over Tor, your data stays on your PC.
 - **Make it yours**: 14 style templates, 6 themes, 20 home backgrounds, your own fonts and CSS.
 - **Compatible**: Chrome extensions, Netflix and Spotify, automatic updates.
+- **In English and French**: Kaze follows your Windows language.
 
 ## Features
 
@@ -135,7 +133,7 @@ Yes, completely.
 <details>
 <summary><b>Is it in English?</b></summary>
 
-Not yet: the interface is in French only for now.
+Yes. Kaze follows your Windows language (English or French), and you can switch in Settings → General → Language.
 </details>
 
 <details>
@@ -147,7 +145,7 @@ Electron (Chromium), with TypeScript, React and Vite. Pages render with the same
 <details>
 <summary><b>How do I report a bug or suggest an idea?</b></summary>
 
-Open an [issue](https://github.com/KobeStars/kaze/issues) describing what happens and your Kaze version (Paramètres → À propos). English is fine.
+Open an [issue](https://github.com/KobeStars/kaze/issues) describing what happens and your Kaze version (Settings → About). English is fine.
 </details>
 
 ## Develop

@@ -33,6 +33,7 @@ Un navigateur pour Windows, rapide et élégant, pensé pour les développeurs e
 - **Vie privée d’abord** : bloqueur de publicités, VPN intégré par Tor, données gardées sur votre PC.
 - **À votre image** : 14 templates de style, 6 thèmes, 20 fonds d’accueil, vos polices et votre CSS.
 - **Compatible** : extensions Chrome, Netflix et Spotify, mises à jour automatiques.
+- **En français et en anglais** : Kaze suit la langue de Windows.
 
 ## Fonctions
 
@@ -131,6 +132,12 @@ Oui, entièrement.
 <summary><b>Le code source est-il disponible ?</b></summary>
 
 Oui, ici même, sous licence [MIT](LICENSE) : vous pouvez le lire, le modifier et le reprendre. Seuls le nom « Kaze » et le logo restent réservés (voir [Licence](#licence)).
+</details>
+
+<details>
+<summary><b>Kaze existe-t-il en anglais ?</b></summary>
+
+Oui. Kaze suit la langue de Windows (français ou anglais) ; elle se change dans Paramètres → Général → Langue.
 </details>
 
 <details>
